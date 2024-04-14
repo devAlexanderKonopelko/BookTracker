@@ -19,6 +19,7 @@ import com.konopelko.booksgoals.presentation.addbook.AddBookUiState.AddBookParti
 import com.konopelko.booksgoals.presentation.addbook.AddBookUiState.AddBookPartialState.PagesAmountError
 import com.konopelko.booksgoals.presentation.addbook.AddBookUiState.AddBookPartialState.PublishYearChanged
 import com.konopelko.booksgoals.presentation.addbook.AddBookUiState.AddBookPartialState.PublishYearError
+import com.konopelko.booksgoals.presentation.addbook.AddBookUiState.AddBookPartialState.SavingBookState
 import com.konopelko.booksgoals.presentation.common.base.BaseViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -41,7 +42,7 @@ class AddBookViewModel(
         updateUiState(
             BookTitleChanged(
                 title = bookTitle,
-                isValid = bookTitle.isNotEmpty() //todo: use in mapUiState
+                isValid = bookTitle.isNotEmpty()
             )
         )
     }
@@ -75,14 +76,7 @@ class AddBookViewModel(
 
     private fun onAddBookClicked() {
         with(uiState.value) {
-            if(areFieldsValid()) {
-                val book = Book(
-                    title = bookTitle,
-                    authorName = authorName,
-                    publishYear = publishYear,
-                    pagesAmount = pagesAmount
-                )
-
+            if(book.areFieldsValid()) {
                 viewModelScope.launch(Dispatchers.IO) {
                     addBookUseCase(book).onSuccess {
                         updateUiState(BookSavedSuccessfullyState)
@@ -98,11 +92,39 @@ class AddBookViewModel(
         previousState: AddBookUiState,
         partialState: AddBookPartialState
     ): AddBookUiState = when(partialState) {
-        BookSavedSuccessfullyState -> previousState.copy(isBookSaved = true)
-        is BookTitleChanged -> previousState.copy(bookTitle = partialState.title)
-        is AuthorNameChanged -> previousState.copy(authorName = partialState.authorName)
-        is PublishYearChanged -> previousState.copy(publishYear = partialState.publishYear)
-        is PagesAmountChanged -> previousState.copy(pagesAmount = partialState.pagesAmount)
+        SavingBookState -> previousState.copy(isSaveButtonLoading = true)
+        BookSavedSuccessfullyState -> previousState.copy(
+            isBookSaved = true,
+            isSaveButtonLoading = false
+        )
+        is BookTitleChanged -> previousState.copy(
+            book = previousState.book.copy(title = partialState.title),
+            isBookTitleError = partialState.isValid.not(),
+            isSaveButtonEnabled = previousState.book.copy(
+                title = partialState.title
+            ).areFieldsValid() //todo: refactor somehow
+        )
+        is AuthorNameChanged -> previousState.copy(
+            book = previousState.book.copy(authorName = partialState.authorName),
+            isAuthorNameError = partialState.isValid.not(),
+            isSaveButtonEnabled = previousState.book.copy(
+                authorName = partialState.authorName
+            ).areFieldsValid() //todo: refactor somehow
+        )
+        is PublishYearChanged -> previousState.copy(
+            book = previousState.book.copy(publishYear = partialState.publishYear),
+            isPublishYearError = partialState.isValid.not(),
+            isSaveButtonEnabled = previousState.book.copy(
+                publishYear = partialState.publishYear
+            ).areFieldsValid() //todo: refactor somehow
+        )
+        is PagesAmountChanged -> previousState.copy(
+            book = previousState.book.copy(pagesAmount = partialState.pagesAmount),
+            isPagesAmountError = partialState.isValid.not(),
+            isSaveButtonEnabled = previousState.book.copy(
+                pagesAmount = partialState.pagesAmount
+            ).areFieldsValid() //todo: refactor somehow
+        )
         is BookTitleError -> previousState.copy(isBookTitleError = partialState.isError)
         is AuthorNameError -> previousState.copy(isAuthorNameError = partialState.isError)
         is PublishYearError -> previousState.copy(isPublishYearError = partialState.isError)
@@ -111,8 +133,8 @@ class AddBookViewModel(
 
 }
 
-private fun AddBookUiState.areFieldsValid(): Boolean =
-    isBookTitleError.not() &&
-    isAuthorNameError.not() &&
-    isPublishYearError.not() &&
-    isPagesAmountError.not()
+private fun Book.areFieldsValid(): Boolean =
+    title.isNotEmpty() &&
+    authorName.isNotEmpty() &&
+    publishYear.isNotEmpty() &&
+    pagesAmount.isNotEmpty()

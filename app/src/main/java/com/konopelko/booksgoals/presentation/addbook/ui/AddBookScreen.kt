@@ -21,7 +21,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.text.isDigitsOnly
-import com.konopelko.booksgoals.domain.model.goal.Book
 import com.konopelko.booksgoals.presentation.addbook.AddBookIntent
 import com.konopelko.booksgoals.presentation.addbook.AddBookIntent.AddBookNavigationIntent
 import com.konopelko.booksgoals.presentation.addbook.AddBookIntent.AddBookNavigationIntent.NavigateToAddGoalScreen
@@ -53,19 +52,7 @@ fun AddBookScreen(
     if(uiState.isBookSaved) {
         LaunchedEffect("toast key") {
             Toast.makeText(context, "Book saved successfully!", Toast.LENGTH_SHORT).show()
-
-            with(uiState) {
-                onNavigate(
-                    NavigateToAddGoalScreen(
-                        Book( //todo: pass saved book via uiState
-                            title = bookTitle,
-                            authorName = authorName,
-                            publishYear = publishYear,
-                            pagesAmount = pagesAmount
-                        )
-                    )
-                )
-            }
+            onNavigate(NavigateToAddGoalScreen(uiState.book))
         }
     }
 }
@@ -92,7 +79,7 @@ private fun AddBookContent(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(top = 16.dp),
-            value = bookTitle,
+            value = book.title,
             onValueChange = {
                 onIntent(OnTitleChanged(bookTitle = it))
             },
@@ -104,7 +91,7 @@ private fun AddBookContent(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(top = 16.dp),
-            value = authorName,
+            value = book.authorName,
             onValueChange = {
                 onIntent(OnAuthorNameChanged(authorName = it))
             },
@@ -116,7 +103,7 @@ private fun AddBookContent(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(top = 16.dp),
-            value = publishYear,
+            value = book.publishYear,
             onValueChange = {
                 if(it.isDigitsOnly()) {
                     onIntent(OnPublishYearChanged(publishYear = it))
@@ -131,7 +118,7 @@ private fun AddBookContent(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(top = 16.dp),
-            value = pagesAmount,
+            value = book.pagesAmount,
             onValueChange = {
                 if(it.isDigitsOnly()) {
                     onIntent(OnPagesAmountChanged(pagesAmount = it))
@@ -147,6 +134,7 @@ private fun AddBookContent(
         BaseButton(
             text = "Add a book",
             enabled = isSaveButtonEnabled,
+            isLoading = isSaveButtonLoading,
             onClick = { onIntent(OnAddBookClicked) }
         )
     }

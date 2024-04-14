@@ -17,24 +17,19 @@ class AddBookNavigation(
 
     private fun navigateToAddGoalScreen(book: Book) {
         navController.apply {
-            getBackStackEntry(MainNavOption.AddGoalScreen.name).savedStateHandle.apply {
-                set(
-                    "book",
-                    BookResponse( //todo: replace with [Book] domain model
-                        title = book.title,
-                        authorName = listOf(book.authorName),
-                        publishYear = book.publishYear.toInt(),
-                        pagesAmount = book.pagesAmount.toInt()
-                    )
-                ) //todo: make key constant
+            navigate(MainNavOption.AddGoalScreen.name) {
+                popUpTo(MainNavOption.GoalsScreen.name)
             }
 
-            navigate(MainNavOption.AddGoalScreen.name) {
-                launchSingleTop = true
-
-                popUpTo(MainNavOption.AddBookScreen.name) {
-                    inclusive = true
-                }
+            currentBackStackEntry?.apply {
+                //todo: replace with [Book] domain model
+                //todo: make key constant
+                savedStateHandle["book"] = BookResponse(
+                    title = book.title,
+                    authorName = listOf(book.authorName),
+                    publishYear = book.publishYear.toInt(),
+                    pagesAmount = book.pagesAmount.toInt()
+                )
             }
         }
     }

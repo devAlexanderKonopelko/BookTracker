@@ -16,7 +16,9 @@ class AddGoalScreenNavigation(
     }
 
     private fun navigateToSearchBooksScreen() {
-        navController.navigate(MainNavOption.SearchBooksScreen.name)
+        navController.navigate(MainNavOption.SearchBooksScreen.name) {
+            launchSingleTop = true
+        }
     }
 
     private fun navigateToGoalsScreen() {

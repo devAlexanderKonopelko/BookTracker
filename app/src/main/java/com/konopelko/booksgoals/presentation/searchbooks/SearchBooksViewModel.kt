@@ -48,9 +48,13 @@ class SearchBooksViewModel(
     private fun onSearchBooks(text: String) {
         Log.e("SearchBooksViewModel", "onSearchBooks called")
 
-        if (text.isNotEmpty() && uiState.value.isSearching.not()) {
-            updateUiState(SearchInProgress)
-            searchBooks(text)
+        if (text.isNotEmpty()) {
+            if (uiState.value.isSearching.not()) {
+                updateUiState(SearchInProgress)
+                searchBooks(text)
+            }
+        } else {
+            updateUiState(SearchResultsReceived(searchResultBooks = emptyList()))
         }
     }
 

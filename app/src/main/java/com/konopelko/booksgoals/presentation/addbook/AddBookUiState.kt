@@ -1,21 +1,22 @@
 package com.konopelko.booksgoals.presentation.addbook
 
+import com.konopelko.booksgoals.domain.model.goal.Book
+
 //todo: refactor fields to be inside one data class model
 data class AddBookUiState(
-    val bookTitle: String = "",
-    val authorName: String = "",
-    val publishYear: String = "",
-    val pagesAmount: String = "",
+    val book: Book = Book(),
     val isBookTitleError: Boolean = false,
     val isAuthorNameError: Boolean = false,
     val isPublishYearError: Boolean = false,
     val isPagesAmountError: Boolean = false,
     val isBookSaved: Boolean = false,
-    val isSaveButtonEnabled: Boolean = false
+    val isSaveButtonEnabled: Boolean = false,
+    val isSaveButtonLoading: Boolean = false
 ) {
 
     sealed interface AddBookPartialState {
 
+        data object SavingBookState : AddBookPartialState
         data object BookSavedSuccessfullyState : AddBookPartialState
 
         data class BookTitleChanged(
