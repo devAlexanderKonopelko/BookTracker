@@ -1,5 +1,6 @@
 package com.konopelko.booksgoals.presentation.goals.ui
 
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -30,6 +31,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -45,6 +47,7 @@ import com.konopelko.booksgoals.presentation.goals.GoalsIntent
 import com.konopelko.booksgoals.presentation.goals.GoalsIntent.OnArgsReceived
 import com.konopelko.booksgoals.presentation.goals.GoalsIntent.GoalsNavigationIntent
 import com.konopelko.booksgoals.presentation.goals.GoalsIntent.GoalsNavigationIntent.NavigateToAddGoalScreen
+import com.konopelko.booksgoals.presentation.goals.GoalsIntent.HideGoalCompletedMessage
 import com.konopelko.booksgoals.presentation.goals.GoalsViewModel
 import org.koin.androidx.compose.getViewModel
 
@@ -63,6 +66,7 @@ fun GoalsScreen(
         .background(color = backgroundCream),
     horizontalAlignment = Alignment.CenterHorizontally
 ) {
+    val context = LocalContext.current
     val uiState by viewModel.uiState.collectAsState()
 
     var showGoalMenuOptions by remember { mutableStateOf(false) }
@@ -96,6 +100,13 @@ fun GoalsScreen(
             onOptionClicked = viewModel::acceptIntent,
             onDismiss = { showGoalMenuOptions = false }
         )
+    }
+
+    if(uiState.showGoalCompletedMessage) {
+        LaunchedEffect("toast key") {
+            Toast.makeText(context, "Goal completed successfully!", Toast.LENGTH_SHORT).show()
+            viewModel.acceptIntent(HideGoalCompletedMessage)
+        }
     }
 }
 
@@ -224,7 +235,7 @@ private fun GoalCard(
 
             Text(
                 modifier = Modifier.padding(start = 16.dp),
-                text = goal.publishYear.toString()
+                text = goal.bookPublishYear.toString()
             )
         }
 
@@ -274,21 +285,21 @@ private fun HomeScreenPreviewGoalsList() = BooksGoalsAppTheme {
                 id = 0,
                 bookName = "Book Asdfgsdfg dsfgsdfgsdfg sdfgsdfgsdfg",
                 bookAuthor = "Author A",
-                publishYear = 2005,
+                bookPublishYear = 2005,
                 progress = 1
             ),
             Goal(
                 id = 0,
                 bookName = "Book B",
                 bookAuthor = "Author B",
-                publishYear = 2006,
+                bookPublishYear = 2006,
                 progress = 65
             ),
             Goal(
                 id = 0,
                 bookName = "Book C",
                 bookAuthor = "Author C",
-                publishYear = 2045,
+                bookPublishYear = 2045,
                 progress = 100
             )
         ),

@@ -73,7 +73,7 @@ private fun GoalOptionsList(
             onClick = {
                 onOptionClicked(
                     OnGoalOptionClicked(
-                        goalId = goal.id,
+                        goal = goal,
                         goalMenuOption = option
                     )
                 )

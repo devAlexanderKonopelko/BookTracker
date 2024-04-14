@@ -2,13 +2,19 @@ package com.konopelko.booksgoals.presentation.goals
 
 import android.util.Log
 import androidx.lifecycle.viewModelScope
+import com.konopelko.booksgoals.domain.model.goal.Book
+import com.konopelko.booksgoals.domain.model.goal.Goal
 import com.konopelko.booksgoals.domain.model.goal.GoalMenuOption
+import com.konopelko.booksgoals.domain.usecase.addbook.AddBookUseCase
 import com.konopelko.booksgoals.domain.usecase.deletegoal.DeleteGoalUseCase
 import com.konopelko.booksgoals.domain.usecase.getgoals.GetGoalsUseCase
 import com.konopelko.booksgoals.presentation.common.base.BaseViewModel
+import com.konopelko.booksgoals.presentation.goals.GoalsIntent.HideGoalCompletedMessage
 import com.konopelko.booksgoals.presentation.goals.GoalsIntent.OnArgsReceived
 import com.konopelko.booksgoals.presentation.goals.GoalsIntent.OnGoalOptionClicked
 import com.konopelko.booksgoals.presentation.goals.GoalsUiState.PartialGoalsState
+import com.konopelko.booksgoals.presentation.goals.GoalsUiState.PartialGoalsState.GoalCompletedMessageHidden
+import com.konopelko.booksgoals.presentation.goals.GoalsUiState.PartialGoalsState.GoalCompletedSuccessfullyState
 import com.konopelko.booksgoals.presentation.goals.GoalsUiState.PartialGoalsState.GoalsUpdated
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collectLatest
@@ -17,7 +23,8 @@ import kotlinx.coroutines.launch
 class GoalsViewModel(
     initialState: GoalsUiState,
     private val getGoalsUseCase: GetGoalsUseCase,
-    private val deleteGoalUseCase: DeleteGoalUseCase
+    private val deleteGoalUseCase: DeleteGoalUseCase,
+    private val addBookUseCase: AddBookUseCase,
 ) : BaseViewModel<GoalsIntent, GoalsUiState, PartialGoalsState>(
     initialState = initialState
 ) {
@@ -28,30 +35,67 @@ class GoalsViewModel(
     }
 
     override fun acceptIntent(intent: GoalsIntent) = when (intent) {
+        HideGoalCompletedMessage -> onHideGoalCompletedMessageClicked()
         is OnArgsReceived -> onArgsReceived(intent.args)
         is OnGoalOptionClicked -> onGoalMenuOptionClicked(
-            goalId = intent.goalId,
+            goal = intent.goal,
             goalMenuOption = intent.goalMenuOption
         )
     }
 
+    override fun mapUiState(
+        previousState: GoalsUiState,
+        partialState: PartialGoalsState
+    ) = when (partialState) {
+        GoalCompletedMessageHidden -> previousState.copy(showGoalCompletedMessage = false)
+        is GoalsUpdated -> previousState.copy(goals = partialState.goals)
+        is GoalCompletedSuccessfullyState -> previousState.copy(
+            goals = previousState.goals.filter { it.id != partialState.goalId },
+            showGoalCompletedMessage = true
+        )
+    }
+
+    private fun onHideGoalCompletedMessageClicked() {
+        updateUiState(GoalCompletedMessageHidden)
+    }
+
     private fun onGoalMenuOptionClicked(
-        goalId: Int,
+        goal: Goal,
         goalMenuOption: GoalMenuOption
     ) {
         when(goalMenuOption) {
             GoalMenuOption.FREEZE -> onFreezeGoalClicked()
-            GoalMenuOption.FINISH -> onFinishGoalClicked()
-            GoalMenuOption.DELETE -> onDeleteGoalClicked(goalId)
+            GoalMenuOption.FINISH -> onFinishGoalClicked(goal)
+            GoalMenuOption.DELETE -> onDeleteGoalClicked(goal.id)
         }
     }
 
     private fun onFreezeGoalClicked() {
-        TODO("Not yet implemented")
+        //TODO("Not yet implemented")
     }
 
-    private fun onFinishGoalClicked() {
-        TODO("Not yet implemented")
+    private fun onFinishGoalClicked(goal: Goal) {
+        //todo: move to usecase/repo
+        val book = Book(
+            title = goal.bookName,
+            authorName = goal.bookAuthor,
+            publishYear = goal.bookPublishYear.toString(), //todo: refactor to remove toString() call
+            pagesAmount = goal.bookPagesAmount.toString(),
+            isFinished = true
+        )
+
+        viewModelScope.launch(Dispatchers.IO) {
+            //todo: избавиться от вложенности, реализовать последовательное выполнение, что-то типа zip() из rx
+            deleteGoalUseCase(goal.id).onSuccess {
+                addBookUseCase(book).onSuccess {
+                    updateUiState(GoalCompletedSuccessfullyState(goal.id))
+                }.onError {
+                    Log.e("GoalsViewModel", "error occurred while saving a book: ${it.exception}")
+                }
+            }.onError {
+                Log.e("GoalsViewModel", "error occurred while deleting a goal: ${it.exception}")
+            }
+        }
     }
 
     private fun onDeleteGoalClicked(goalId: Int) {
@@ -63,13 +107,6 @@ class GoalsViewModel(
                 Log.e("GoalsViewModel", "failed to delete goal, id: $goalId")
             }
         }
-    }
-
-    override fun mapUiState(
-        previousState: GoalsUiState,
-        partialState: PartialGoalsState
-    ) = when (partialState) {
-        is GoalsUpdated -> previousState.copy(goals = partialState.goals)
     }
 
     private fun onArgsReceived(isGoalAdded: Boolean) {

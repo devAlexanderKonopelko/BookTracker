@@ -6,11 +6,14 @@ import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data class GoalsUiState(
-    val goals: List<Goal> = emptyList()
+    val goals: List<Goal> = emptyList(),
+    val showGoalCompletedMessage: Boolean = false
 ): Parcelable {
 
     sealed interface PartialGoalsState {
+        data object GoalCompletedMessageHidden : PartialGoalsState
 
         data class GoalsUpdated(val goals: List<Goal>) : PartialGoalsState
+        data class GoalCompletedSuccessfullyState(val goalId: Int) : PartialGoalsState
     }
 }

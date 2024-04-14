@@ -21,5 +21,8 @@ data class BookEntity(
     val bookPublishYear: String,
 
     @ColumnInfo(name = "pages_amount")
-    val bookPagesAmount: Int
+    val bookPagesAmount: Int,
+
+    @ColumnInfo(name = "is_finished")
+    val isFinished: Boolean
 )

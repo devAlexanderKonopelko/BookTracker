@@ -1,5 +1,6 @@
 package com.konopelko.booksgoals.di.ui.home
 
+import com.konopelko.booksgoals.domain.usecase.addbook.AddBookUseCase
 import com.konopelko.booksgoals.domain.usecase.deletegoal.DeleteGoalUseCase
 import com.konopelko.booksgoals.domain.usecase.getgoals.GetGoalsUseCase
 import com.konopelko.booksgoals.presentation.goals.GoalsUiState
@@ -21,11 +22,18 @@ val homeModule = module {
         )
     }
 
+    factory {
+        AddBookUseCase(
+            bookRepository = get()
+        )
+    }
+
     viewModel {
         GoalsViewModel(
             initialState = GoalsUiState(),
             getGoalsUseCase = get(),
-            deleteGoalUseCase = get()
+            deleteGoalUseCase = get(),
+            addBookUseCase = get()
         )
     }
 }

@@ -55,6 +55,7 @@ class AddGoalViewModel(
     private fun calculatePagesPerDay(pagesAmount: Int): Int =
         ceil(pagesAmount / bookPagesPerDay.toDouble()).toInt()
 
+    //todo: refactor to receive [Book] domain model
     private fun onArgsReceived(args: BookResponse?) {
         Log.e("AddGoalViewModel", "onArgsReceived")
         Log.e("AddGoalViewModel", "args = $args")

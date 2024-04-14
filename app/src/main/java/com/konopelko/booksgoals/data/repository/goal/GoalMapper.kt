@@ -7,7 +7,8 @@ fun GoalEntity.toDomainModel(): Goal = Goal(
     id = id,
     bookName = bookName,
     bookAuthor = bookAuthorName,
-    publishYear = bookPublishYear.toInt(),
+    bookPublishYear = bookPublishYear.toInt(),
+    bookPagesAmount = bookPagesAmount,
     progress = getGoalProgress(
         bookPagesAmount,
         pagesCompletedAmount

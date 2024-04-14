@@ -7,5 +7,6 @@ fun Book.toDatabaseModel(): BookEntity = BookEntity(
     bookName = title,
     bookAuthorName = authorName,
     bookPublishYear = publishYear,
-    bookPagesAmount = pagesAmount.toInt()
+    bookPagesAmount = pagesAmount.toInt(),
+    isFinished = isFinished
 )

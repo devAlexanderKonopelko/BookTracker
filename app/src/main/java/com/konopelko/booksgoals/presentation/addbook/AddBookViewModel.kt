@@ -1,9 +1,6 @@
 package com.konopelko.booksgoals.presentation.addbook
 
-import android.util.Log
-import androidx.lifecycle.viewModelScope
 import com.konopelko.booksgoals.domain.model.goal.Book
-import com.konopelko.booksgoals.domain.usecase.addbook.AddBookUseCase
 import com.konopelko.booksgoals.presentation.addbook.AddBookIntent.OnAddBookClicked
 import com.konopelko.booksgoals.presentation.addbook.AddBookIntent.OnAuthorNameChanged
 import com.konopelko.booksgoals.presentation.addbook.AddBookIntent.OnPagesAmountChanged
@@ -21,12 +18,9 @@ import com.konopelko.booksgoals.presentation.addbook.AddBookUiState.AddBookParti
 import com.konopelko.booksgoals.presentation.addbook.AddBookUiState.AddBookPartialState.PublishYearError
 import com.konopelko.booksgoals.presentation.addbook.AddBookUiState.AddBookPartialState.SavingBookState
 import com.konopelko.booksgoals.presentation.common.base.BaseViewModel
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 
 class AddBookViewModel(
-    initialState: AddBookUiState,
-    private val addBookUseCase: AddBookUseCase
+    initialState: AddBookUiState
 ) : BaseViewModel<AddBookIntent, AddBookUiState, AddBookPartialState>(
     initialState = initialState
 ) {
@@ -77,13 +71,7 @@ class AddBookViewModel(
     private fun onAddBookClicked() {
         with(uiState.value) {
             if(book.areFieldsValid()) {
-                viewModelScope.launch(Dispatchers.IO) {
-                    addBookUseCase(book).onSuccess {
-                        updateUiState(BookSavedSuccessfullyState)
-                    }.onError {
-                        Log.e("AddBookViewModel", "error occurred while saving a book: ${it.exception}")
-                    }
-                }
+                updateUiState(BookSavedSuccessfullyState)
             }
         }
     }

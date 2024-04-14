@@ -8,6 +8,7 @@ data class Goal(
     val id: Int = 0,
     val bookName: String = "",
     val bookAuthor: String = "",
-    val publishYear: Int = 0,
+    val bookPublishYear: Int = 0,
+    val bookPagesAmount: Int = 0,
     val progress: Int = 0
 ) : Parcelable
