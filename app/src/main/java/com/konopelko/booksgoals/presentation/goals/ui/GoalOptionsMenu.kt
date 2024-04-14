@@ -18,8 +18,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.capitalize
 import androidx.compose.ui.text.intl.Locale
 import androidx.compose.ui.tooling.preview.Preview
+import com.konopelko.booksgoals.domain.model.goal.Goal
 import com.konopelko.booksgoals.domain.model.goal.GoalMenuOption
 import com.konopelko.booksgoals.domain.model.goal.GoalMenuOption.DELETE
+import com.konopelko.booksgoals.domain.model.goal.GoalMenuOption.FREEZE
 import com.konopelko.booksgoals.presentation.common.theme.BooksGoalsAppTheme
 import com.konopelko.booksgoals.presentation.goals.GoalsIntent
 import com.konopelko.booksgoals.presentation.goals.GoalsIntent.OnGoalOptionClicked
@@ -28,7 +30,7 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun GoalOptionsMenu(
-    goalId: Int,
+    goal: Goal,
     onDismiss: () -> Unit,
     onOptionClicked: (GoalsIntent) -> Unit,
     modifier: Modifier = Modifier
@@ -42,7 +44,7 @@ fun GoalOptionsMenu(
         dragHandle = { BottomSheetDefaults.DragHandle() },
     ) {
         GoalOptionsList(
-            goalId = goalId,
+            goal = goal,
             bottomSheetState = modalBottomSheetState,
             onDismiss = onDismiss,
             onOptionClicked = onOptionClicked
@@ -53,7 +55,7 @@ fun GoalOptionsMenu(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun GoalOptionsList(
-    goalId: Int,
+    goal: Goal,
     bottomSheetState: SheetState,
     onDismiss: () -> Unit,
     onOptionClicked: (GoalsIntent) -> Unit,
@@ -64,14 +66,14 @@ private fun GoalOptionsList(
     verticalArrangement = Arrangement.Center
 ) {
     val coroutineScope = rememberCoroutineScope()
-    val options = GoalMenuOption.entries
+    val options = getGoalMenuOptions(goal)
 
     options.forEach { option ->
         TextButton(
             onClick = {
                 onOptionClicked(
                     OnGoalOptionClicked(
-                        goalId = goalId,
+                        goalId = goal.id,
                         goalMenuOption = option
                     )
                 )
@@ -90,12 +92,28 @@ private fun GoalOptionsList(
     }
 }
 
+private fun getGoalMenuOptions(goal: Goal): List<GoalMenuOption> = if(goal.progress == 100) {
+    GoalMenuOption.entries.filter { it != FREEZE }
+} else GoalMenuOption.entries
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Preview(showBackground = true)
 @Composable
-private fun GoalOptionMenuPreview() = BooksGoalsAppTheme {
+private fun NotFullProgressGoalOptionMenuPreview() = BooksGoalsAppTheme {
     GoalOptionsList(
-        goalId = 0,
+        goal = Goal(),
+        bottomSheetState = rememberModalBottomSheetState(),
+        onDismiss = {},
+        onOptionClicked = {}
+    )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Preview(showBackground = true)
+@Composable
+private fun FullProgressGoalOptionMenuPreview() = BooksGoalsAppTheme {
+    GoalOptionsList(
+        goal = Goal(progress = 100),
         bottomSheetState = rememberModalBottomSheetState(),
         onDismiss = {},
         onOptionClicked = {}

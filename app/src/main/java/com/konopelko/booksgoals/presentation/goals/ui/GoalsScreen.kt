@@ -1,39 +1,25 @@
 package com.konopelko.booksgoals.presentation.goals.ui
 
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.TextButton
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material3.BottomSheetDefaults
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Button
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
-import androidx.compose.material3.MenuDefaults
-import androidx.compose.material3.ModalBottomSheet
-import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
-import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -54,6 +40,7 @@ import com.konopelko.booksgoals.domain.model.goal.Goal
 import com.konopelko.booksgoals.presentation.common.theme.BooksGoalsAppTheme
 import com.konopelko.booksgoals.presentation.common.theme.Typography
 import com.konopelko.booksgoals.presentation.common.theme.backgroundCream
+import com.konopelko.booksgoals.presentation.common.utils.debounce.drawRightBorder
 import com.konopelko.booksgoals.presentation.goals.GoalsIntent
 import com.konopelko.booksgoals.presentation.goals.GoalsIntent.OnArgsReceived
 import com.konopelko.booksgoals.presentation.goals.GoalsIntent.GoalsNavigationIntent
@@ -79,7 +66,7 @@ fun GoalsScreen(
     val uiState by viewModel.uiState.collectAsState()
 
     var showGoalMenuOptions by remember { mutableStateOf(false) }
-    var menuOptionGoalId by remember { mutableStateOf(0) }
+    var menuOptionGoal by remember { mutableStateOf(Goal()) }
 
     //todo: add key constant
     args?.let {
@@ -96,16 +83,16 @@ fun GoalsScreen(
             goals = uiState.goals,
             onIntent = viewModel::acceptIntent,
             onNavigate = onNavigate,
-            onGoalMenuClicked = { goalId ->
+            onGoalMenuClicked = { goal ->
                 showGoalMenuOptions = true
-                menuOptionGoalId = goalId
+                menuOptionGoal = goal
             }
         )
     }
 
     if(showGoalMenuOptions) {
         GoalOptionsMenu(
-            goalId = menuOptionGoalId,
+            goal = menuOptionGoal,
             onOptionClicked = viewModel::acceptIntent,
             onDismiss = { showGoalMenuOptions = false }
         )
@@ -117,7 +104,7 @@ private fun HomeScreenGoalsContent(
     goals: List<Goal>,
     onIntent: (GoalsIntent) -> Unit,
     onNavigate: (GoalsNavigationIntent) -> Unit,
-    onGoalMenuClicked: (Int) -> Unit,
+    onGoalMenuClicked: (Goal) -> Unit,
     modifier: Modifier = Modifier
 ) = Box(
     modifier = modifier.fillMaxSize(),
@@ -156,7 +143,7 @@ private fun HomeScreenGoalsContent(
 private fun GoalsListContent(
     goals: List<Goal>,
     onIntent: (GoalsIntent) -> Unit,
-    onGoalMenuClicked: (Int) -> Unit,
+    onGoalMenuClicked: (Goal) -> Unit,
     modifier: Modifier = Modifier
 ) {
     LazyColumn(
@@ -181,17 +168,26 @@ private fun GoalsListContent(
 private fun GoalCard(
     goal: Goal,
     onIntent: (GoalsIntent) -> Unit,
-    onGoalMenuClicked: (Int) -> Unit
+    onGoalMenuClicked: (Goal) -> Unit
 ) = Row(
     modifier = Modifier
         .fillMaxWidth()
         .padding(top = 16.dp)
-        .background(color = Color.LightGray),
+        .background(
+            color = Color.LightGray,
+            shape = RoundedCornerShape(12.dp)
+        )
+        .drawRightBorder(
+            strokeWidth = 20.dp,
+            color = getProgressColor(goal.progress),
+            shape = RoundedCornerShape(12.dp)
+        ),
     verticalAlignment = Alignment.CenterVertically
 ) {
     Box(
         modifier = Modifier
             .size(50.dp)
+            .padding(start = 8.dp)
             .background(
                 color = Color.Gray,
                 shape = RoundedCornerShape(4.dp)
@@ -208,14 +204,14 @@ private fun GoalCard(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                modifier = Modifier.fillMaxWidth(0.85f),
+                modifier = Modifier.fillMaxWidth(0.8f),
                 text = goal.bookName,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis
             )
 
             IconButton(
-                onClick = { onGoalMenuClicked(goal.id) }
+                onClick = { onGoalMenuClicked(goal) }
             ) {
                 Icon(
                     painter = painterResource(id = R.drawable.ic_options_menu),
@@ -241,7 +237,7 @@ private fun GoalCard(
             )
 
             Text(
-                modifier = Modifier.padding(start = 16.dp),
+                modifier = Modifier.padding(start = 8.dp),
                 text = "${goal.progress}%" // todo: make res with param
             )
         }
@@ -267,143 +263,7 @@ private fun HomeScreenContentNoGoals(
     }
 }
 
-//todo: remove
-@Composable
-private fun WishListOptionContent(
-    title: String,
-    isSelected: Boolean,
-    onSelected: () -> Unit
-) = Column(
-    modifier = Modifier,
-    verticalArrangement = Arrangement.Center
-) {
-    var expanded by remember { mutableStateOf(false) }
-    val items = listOf("AAAAA", "BBBBB", "CCCCC", "DDDDD", "EEEEE", "FFFFF")
-    var selectedIndex by remember { mutableStateOf(0) }
-
-    Row(
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        RadioButton(
-            selected = isSelected,
-            onClick = {
-                onSelected()
-            }
-        )
-
-        Text(
-            text = title
-        )
-
-        AnimatedVisibility(visible = isSelected) {
-            Box(
-                modifier = Modifier
-                    .padding(start = 16.dp)
-            ) {
-                Text(
-                    modifier = Modifier
-                        .clickable(
-                            onClick = {
-                                expanded = true
-                            }
-                        ),
-                    text = items[selectedIndex]
-                )
-
-                DropdownMenu(
-                    modifier = Modifier
-                        .height(100.dp),
-                    expanded = expanded,
-                    onDismissRequest = { expanded = false }
-                ) {
-                    items.forEachIndexed { index, item ->
-                        DropdownMenuItem(
-                            text = { Text(text = item) },
-                            onClick = {
-                                selectedIndex = index
-                                expanded = false
-                            },
-                            colors = MenuDefaults.itemColors(
-                                textColor = Color.Black
-                            )
-                        )
-                    }
-                }
-
-            }
-        }
-    }
-}
-
-//todo: remove
-@Composable
-private fun NewBookOptionContent(
-    title: String,
-    isSelected: Boolean,
-    onSelected: () -> Unit,
-) = Column {
-    var inputText by remember { mutableStateOf("") }
-    var expanded by remember { mutableStateOf(false) }
-    val items = listOf("New A", "New B", "New C", "Add new book")
-    var selectedIndex: Int? by remember { mutableStateOf(null) }
-
-    Row(
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        RadioButton(
-            selected = isSelected,
-            onClick = { onSelected() }
-        )
-
-        Text(
-            text = title
-        )
-    }
-
-    AnimatedVisibility(visible = isSelected) {
-        Column {
-            TextField(
-                value = inputText,
-                onValueChange = {
-                    inputText = it
-                    expanded = it.isNotEmpty()
-                },
-                placeholder = {
-                    Text(text = "Type book name")
-                }
-            )
-
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-            ) {
-                Text(
-                    text = "smth"
-                )
-                DropdownMenu(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(100.dp),
-                    expanded = expanded,
-                    onDismissRequest = { expanded = false }
-                ) {
-                    items.forEachIndexed { index, item ->
-                        DropdownMenuItem(
-                            text = { Text(text = item) },
-                            onClick = {
-                                selectedIndex = index
-                                expanded = false
-                            },
-                            colors = MenuDefaults.itemColors(
-                                textColor = Color.Black
-                            )
-                        )
-                    }
-                }
-            }
-        }
-    }
-}
+private fun getProgressColor(progress: Int): Color = if(progress == 100) Color.Green else Color.Blue
 
 @Preview(showBackground = true)
 @Composable
@@ -423,6 +283,13 @@ private fun HomeScreenPreviewGoalsList() = BooksGoalsAppTheme {
                 bookAuthor = "Author B",
                 publishYear = 2006,
                 progress = 65
+            ),
+            Goal(
+                id = 0,
+                bookName = "Book C",
+                bookAuthor = "Author C",
+                publishYear = 2045,
+                progress = 100
             )
         ),
         onIntent = {},

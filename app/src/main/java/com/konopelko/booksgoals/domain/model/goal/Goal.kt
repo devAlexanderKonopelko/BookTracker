@@ -5,9 +5,9 @@ import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data class Goal(
-    val id: Int,
-    val bookName: String,
-    val bookAuthor: String,
-    val publishYear: Int,
-    val progress: Int
+    val id: Int = 0,
+    val bookName: String = "",
+    val bookAuthor: String = "",
+    val publishYear: Int = 0,
+    val progress: Int = 0
 ) : Parcelable
