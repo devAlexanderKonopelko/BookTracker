@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -20,6 +21,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -27,6 +29,7 @@ import com.konopelko.booksgoals.domain.model.book.Book
 import com.konopelko.booksgoals.presentation.common.theme.BooksGoalsAppTheme
 import com.konopelko.booksgoals.presentation.common.theme.Typography
 import com.konopelko.booksgoals.presentation.finishedbooks.FinishedBooksViewModel
+import com.konopelko.booksgoals.presentation.goals.GoalsIntent.GoalsNavigationIntent.NavigateToAddGoalScreen
 import org.koin.androidx.compose.getViewModel
 
 @Composable
@@ -35,7 +38,10 @@ fun FinishedBooksScreen(
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
-    FinishedBooksContent(finishedBooks = uiState.books)
+    when {
+        uiState.books.isNotEmpty() -> FinishedBooksContent(finishedBooks = uiState.books)
+        else -> NoFinishedBooksContent()
+    }
 }
 
 @Composable
@@ -126,6 +132,18 @@ private fun FinishedBookCard(
     }
 }
 
+@Composable
+private fun NoFinishedBooksContent() = Column(
+    modifier = Modifier.fillMaxSize(),
+    verticalArrangement = Arrangement.Center,
+    horizontalAlignment = Alignment.CenterHorizontally
+) {
+    Text(
+        text = "No finished books yet",
+        textAlign = TextAlign.Center
+    )
+}
+
 @Preview(showBackground = true)
 @Composable
 private fun FinishedBooksPreview() = BooksGoalsAppTheme {
@@ -153,7 +171,5 @@ private fun FinishedBooksPreview() = BooksGoalsAppTheme {
 @Preview(showBackground = true)
 @Composable
 private fun NoFinishedBooksPreview() = BooksGoalsAppTheme {
-    FinishedBooksContent(
-        finishedBooks = emptyList()
-    )
+    NoFinishedBooksContent()
 }
