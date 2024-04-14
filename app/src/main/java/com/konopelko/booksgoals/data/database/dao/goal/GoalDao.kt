@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.Flow
 interface GoalDao {
 
     @Query("SELECT * FROM goals")
-    fun getGoals(): Flow<List<GoalEntity>>
+    fun getGoals(): Flow<List<GoalEntity>> //todo: refactor, remove [Flow]
 
     @Insert
     fun addGoals(vararg goalsList: GoalEntity)

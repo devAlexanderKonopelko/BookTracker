@@ -10,7 +10,7 @@ import com.konopelko.booksgoals.presentation.addbook.navigation.AddBookNavigatio
 import com.konopelko.booksgoals.presentation.addbook.ui.AddBookScreen
 import com.konopelko.booksgoals.presentation.addgoal.navigation.AddGoalScreenNavigation
 import com.konopelko.booksgoals.presentation.addgoal.ui.AddGoalScreen
-import com.konopelko.booksgoals.presentation.books.ui.BooksScreen
+import com.konopelko.booksgoals.presentation.finishedbooks.ui.FinishedBooksScreen
 import com.konopelko.booksgoals.presentation.goals.navigation.GoalsScreenNavigation
 import com.konopelko.booksgoals.presentation.goals.ui.GoalsScreen
 import com.konopelko.booksgoals.presentation.searchbooks.navigation.SearchBooksNavigation
@@ -46,8 +46,8 @@ fun NavGraphBuilder.mainGraph(
         composable(MainNavOption.WishesScreen.name) {
             WishesScreen()
         }
-        composable(MainNavOption.BooksScreen.name) {
-            BooksScreen()
+        composable(MainNavOption.FinishedBooksScreen.name) {
+            FinishedBooksScreen()
         }
         composable(MainNavOption.StatisticsScreen.name) {
             StatisticsScreen()
@@ -67,7 +67,7 @@ fun NavGraphBuilder.mainGraph(
 enum class MainNavOption {
     WishesScreen,
     GoalsScreen,
-    BooksScreen,
+    FinishedBooksScreen,
     StatisticsScreen,
     AchievementsScreen,
 

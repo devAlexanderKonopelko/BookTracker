@@ -119,13 +119,13 @@ private fun HomeScreenGoalsContent(
     modifier: Modifier = Modifier
 ) = Box(
     modifier = modifier.fillMaxSize(),
-
 ) {
     Column(
         modifier = Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
+            modifier = Modifier.padding(top = 16.dp),
             text = "My goals",
             style = Typography.headlineLarge,
         )
@@ -168,7 +168,6 @@ private fun GoalsListContent(
         items(goals) { goal ->
             GoalCard(
                 goal = goal,
-                onIntent = onIntent,
                 onGoalMenuClicked = onGoalMenuClicked
             )
         }
@@ -178,7 +177,6 @@ private fun GoalsListContent(
 @Composable
 private fun GoalCard(
     goal: Goal,
-    onIntent: (GoalsIntent) -> Unit,
     onGoalMenuClicked: (Goal) -> Unit
 ) = Row(
     modifier = Modifier

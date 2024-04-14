@@ -2,7 +2,7 @@ package com.konopelko.booksgoals.presentation.goals
 
 import android.util.Log
 import androidx.lifecycle.viewModelScope
-import com.konopelko.booksgoals.domain.model.goal.Book
+import com.konopelko.booksgoals.domain.model.book.Book
 import com.konopelko.booksgoals.domain.model.goal.Goal
 import com.konopelko.booksgoals.domain.model.goal.GoalMenuOption
 import com.konopelko.booksgoals.domain.usecase.addbook.AddBookUseCase

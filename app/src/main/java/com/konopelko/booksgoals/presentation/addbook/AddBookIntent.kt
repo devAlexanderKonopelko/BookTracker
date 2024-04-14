@@ -1,6 +1,6 @@
 package com.konopelko.booksgoals.presentation.addbook
 
-import com.konopelko.booksgoals.domain.model.goal.Book
+import com.konopelko.booksgoals.domain.model.book.Book
 
 sealed interface AddBookIntent {
 

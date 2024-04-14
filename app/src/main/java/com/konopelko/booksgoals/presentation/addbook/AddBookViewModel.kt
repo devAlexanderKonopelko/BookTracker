@@ -1,6 +1,6 @@
 package com.konopelko.booksgoals.presentation.addbook
 
-import com.konopelko.booksgoals.domain.model.goal.Book
+import com.konopelko.booksgoals.domain.model.book.Book
 import com.konopelko.booksgoals.presentation.addbook.AddBookIntent.OnAddBookClicked
 import com.konopelko.booksgoals.presentation.addbook.AddBookIntent.OnAuthorNameChanged
 import com.konopelko.booksgoals.presentation.addbook.AddBookIntent.OnPagesAmountChanged

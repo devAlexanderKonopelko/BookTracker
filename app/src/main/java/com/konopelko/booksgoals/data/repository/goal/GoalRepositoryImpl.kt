@@ -13,6 +13,7 @@ class GoalRepositoryImpl(
     private val goalDao: GoalDao
 ): GoalRepository {
 
+    //todo: refactor, remove [Flow] and use databaseCall()
     override suspend fun getGoals(): Flow<List<Goal>> =
         goalDao.getGoals().map { goals ->
             goals.map { it.toDomainModel() }

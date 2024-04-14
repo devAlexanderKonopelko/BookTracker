@@ -3,7 +3,7 @@ package com.konopelko.booksgoals.presentation.common.component.navdrawer
 import com.konopelko.booksgoals.R.string
 import com.konopelko.booksgoals.presentation.common.component.navdrawer.model.AppDrawerItemInfo
 import com.konopelko.booksgoals.presentation.navigation.MainNavOption.AchievementsScreen
-import com.konopelko.booksgoals.presentation.navigation.MainNavOption.BooksScreen
+import com.konopelko.booksgoals.presentation.navigation.MainNavOption.FinishedBooksScreen
 import com.konopelko.booksgoals.presentation.navigation.MainNavOption.GoalsScreen
 import com.konopelko.booksgoals.presentation.navigation.MainNavOption.StatisticsScreen
 import com.konopelko.booksgoals.presentation.navigation.MainNavOption.WishesScreen
@@ -19,7 +19,7 @@ object NavDrawerItems {
             string.side_menu_goals_title
         ),
         AppDrawerItemInfo(
-            BooksScreen,
+            FinishedBooksScreen,
             string.side_menu_books_title
         ),
         AppDrawerItemInfo(

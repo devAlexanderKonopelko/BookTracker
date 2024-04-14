@@ -6,6 +6,7 @@ import com.konopelko.booksgoals.di.network.networkModule
 import com.konopelko.booksgoals.di.repository.repositoryModule
 import com.konopelko.booksgoals.di.ui.addbook.addBookModule
 import com.konopelko.booksgoals.di.ui.addgoal.addGoalModule
+import com.konopelko.booksgoals.di.ui.finishedbooks.finishedBooksModule
 import com.konopelko.booksgoals.di.ui.home.homeModule
 import com.konopelko.booksgoals.di.ui.searchbooks.searchBooksModule
 import org.koin.android.ext.koin.androidContext
@@ -20,13 +21,17 @@ class BooksGoalsApplication: Application() {
             androidContext(this@BooksGoalsApplication)
 
             modules(
+                // base modules
                 networkModule,
                 databaseModule,
                 repositoryModule,
+
+                // ui related modules
                 homeModule,
                 searchBooksModule,
                 addGoalModule,
-                addBookModule
+                addBookModule,
+                finishedBooksModule
             )
         }
     }

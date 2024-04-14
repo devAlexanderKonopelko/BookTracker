@@ -1,13 +1,13 @@
-package com.konopelko.booksgoals.domain.usecase.addbook
+package com.konopelko.booksgoals.domain.usecase.getfinishedbooks
 
 import com.konopelko.booksgoals.data.utils.Result
 import com.konopelko.booksgoals.domain.model.book.Book
 import com.konopelko.booksgoals.domain.repository.book.BookRepository
 
-class AddBookUseCase(
+class GetFinishedBooksUseCase(
     private val bookRepository: BookRepository
 ) {
 
-    suspend operator fun invoke(book: Book): Result<Unit> =
-        bookRepository.addBook(book)
+    suspend operator fun invoke(): Result<List<Book>> =
+        bookRepository.getFinishedBooks()
 }

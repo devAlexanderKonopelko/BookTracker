@@ -2,7 +2,7 @@ package com.konopelko.booksgoals.presentation.addbook.navigation
 
 import androidx.navigation.NavController
 import com.konopelko.booksgoals.data.api.response.searchbooks.SearchBooksResponse.BookResponse
-import com.konopelko.booksgoals.domain.model.goal.Book
+import com.konopelko.booksgoals.domain.model.book.Book
 import com.konopelko.booksgoals.presentation.addbook.AddBookIntent.AddBookNavigationIntent
 import com.konopelko.booksgoals.presentation.addbook.AddBookIntent.AddBookNavigationIntent.NavigateToAddGoalScreen
 import com.konopelko.booksgoals.presentation.navigation.MainNavOption

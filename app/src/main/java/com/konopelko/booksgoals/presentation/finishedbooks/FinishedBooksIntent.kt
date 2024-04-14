@@ -1,0 +1,3 @@
+package com.konopelko.booksgoals.presentation.finishedbooks
+
+sealed interface FinishedBooksIntent

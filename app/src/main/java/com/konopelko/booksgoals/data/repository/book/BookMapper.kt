@@ -1,12 +1,20 @@
 package com.konopelko.booksgoals.data.repository.book
 
 import com.konopelko.booksgoals.data.database.entity.book.BookEntity
-import com.konopelko.booksgoals.domain.model.goal.Book
+import com.konopelko.booksgoals.domain.model.book.Book
 
 fun Book.toDatabaseModel(): BookEntity = BookEntity(
     bookName = title,
     bookAuthorName = authorName,
     bookPublishYear = publishYear,
     bookPagesAmount = pagesAmount.toInt(),
+    isFinished = isFinished
+)
+
+fun BookEntity.toDomainModel(): Book = Book(
+    title = bookName,
+    authorName = bookAuthorName,
+    publishYear = bookPublishYear,
+    pagesAmount = bookPagesAmount.toString(),
     isFinished = isFinished
 )
