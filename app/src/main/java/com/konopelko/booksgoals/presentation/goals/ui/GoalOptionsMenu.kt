@@ -1,0 +1,103 @@
+package com.konopelko.booksgoals.presentation.goals.ui
+
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.material.TextButton
+import androidx.compose.material3.BottomSheetDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.SheetState
+import androidx.compose.material3.Text
+import androidx.compose.material3.rememberModalBottomSheetState
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.capitalize
+import androidx.compose.ui.text.intl.Locale
+import androidx.compose.ui.tooling.preview.Preview
+import com.konopelko.booksgoals.domain.model.goal.GoalMenuOption
+import com.konopelko.booksgoals.domain.model.goal.GoalMenuOption.DELETE
+import com.konopelko.booksgoals.presentation.common.theme.BooksGoalsAppTheme
+import com.konopelko.booksgoals.presentation.goals.GoalsIntent
+import com.konopelko.booksgoals.presentation.goals.GoalsIntent.OnGoalOptionClicked
+import kotlinx.coroutines.launch
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun GoalOptionsMenu(
+    goalId: Int,
+    onDismiss: () -> Unit,
+    onOptionClicked: (GoalsIntent) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    val modalBottomSheetState = rememberModalBottomSheetState()
+
+    ModalBottomSheet(
+        modifier = modifier,
+        onDismissRequest = { onDismiss() },
+        sheetState = modalBottomSheetState,
+        dragHandle = { BottomSheetDefaults.DragHandle() },
+    ) {
+        GoalOptionsList(
+            goalId = goalId,
+            bottomSheetState = modalBottomSheetState,
+            onDismiss = onDismiss,
+            onOptionClicked = onOptionClicked
+        )
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun GoalOptionsList(
+    goalId: Int,
+    bottomSheetState: SheetState,
+    onDismiss: () -> Unit,
+    onOptionClicked: (GoalsIntent) -> Unit,
+    modifier: Modifier = Modifier
+) = Column(
+    modifier = modifier.fillMaxWidth(),
+    horizontalAlignment = Alignment.CenterHorizontally,
+    verticalArrangement = Arrangement.Center
+) {
+    val coroutineScope = rememberCoroutineScope()
+    val options = GoalMenuOption.entries
+
+    options.forEach { option ->
+        TextButton(
+            onClick = {
+                onOptionClicked(
+                    OnGoalOptionClicked(
+                        goalId = goalId,
+                        goalMenuOption = option
+                    )
+                )
+
+                coroutineScope.launch {
+                    bottomSheetState.hide()
+                    onDismiss()
+                }
+            }
+        ) {
+            Text(
+                text = option.name.lowercase().capitalize(Locale.current),
+                color = if (option == DELETE) Color.Red else Color.Black
+            )
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Preview(showBackground = true)
+@Composable
+private fun GoalOptionMenuPreview() = BooksGoalsAppTheme {
+    GoalOptionsList(
+        goalId = 0,
+        bottomSheetState = rememberModalBottomSheetState(),
+        onDismiss = {},
+        onOptionClicked = {}
+    )
+}

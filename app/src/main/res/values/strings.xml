@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">BooksGoals</string>
+
+    <string name="side_menu_wishes_title">My Wishes</string>
+    <string name="side_menu_goals_title">Current Goals</string>
+    <string name="side_menu_books_title">Finished Books</string>
+    <string name="side_menu_statistics_title">My Statistics</string>
+    <string name="side_menu_achievements_title">Achievements</string>
+
+    <!-- Side Navigation Menu -->
+    <string name="side_menu_header_username_text">Username</string>
+</resources>
