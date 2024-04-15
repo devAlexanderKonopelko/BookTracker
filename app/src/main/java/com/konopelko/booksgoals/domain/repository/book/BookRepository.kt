@@ -8,4 +8,8 @@ interface BookRepository {
     suspend fun addBook(book: Book): Result<Unit>
 
     suspend fun getFinishedBooks(): Result<List<Book>>
+
+    suspend fun getWishesBooks(): Result<List<Book>>
+
+    suspend fun deleteBook(bookId: Int): Result<Unit>
 }

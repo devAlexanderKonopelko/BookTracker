@@ -1,5 +1,6 @@
 package com.konopelko.booksgoals.di.ui.searchbooks
 
+import com.konopelko.booksgoals.domain.usecase.addbook.AddBookUseCase
 import com.konopelko.booksgoals.domain.usecase.searchbooks.SearchBooksUseCase
 import com.konopelko.booksgoals.presentation.searchbooks.SearchBooksUiState
 import com.konopelko.booksgoals.presentation.searchbooks.SearchBooksViewModel
@@ -14,10 +15,17 @@ val searchBooksModule = module {
         )
     }
 
+    factory {
+        AddBookUseCase(
+            bookRepository = get()
+        )
+    }
+
     viewModel {
         SearchBooksViewModel(
             initialState = SearchBooksUiState(),
-            searchBooksUseCase = get()
+            searchBooksUseCase = get(),
+            addBookUseCase = get()
         )
     }
 }

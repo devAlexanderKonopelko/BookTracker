@@ -17,4 +17,12 @@ class BookRepositoryImpl(
     override suspend fun getFinishedBooks(): Result<List<Book>> = databaseCall {
         bookDao.getFinishedBooks().map { it.toDomainModel() }
     }
+
+    override suspend fun getWishesBooks(): Result<List<Book>> = databaseCall {
+        bookDao.getUnfinishedBooks().map { it.toDomainModel() }
+    }
+
+    override suspend fun deleteBook(bookId: Int): Result<Unit> = databaseCall {
+        bookDao.deleteBook(bookId)
+    }
 }

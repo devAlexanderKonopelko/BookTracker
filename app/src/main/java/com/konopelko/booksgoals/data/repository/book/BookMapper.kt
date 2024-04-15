@@ -12,6 +12,7 @@ fun Book.toDatabaseModel(): BookEntity = BookEntity(
 )
 
 fun BookEntity.toDomainModel(): Book = Book(
+    id = id,
     title = bookName,
     authorName = bookAuthorName,
     publishYear = bookPublishYear,

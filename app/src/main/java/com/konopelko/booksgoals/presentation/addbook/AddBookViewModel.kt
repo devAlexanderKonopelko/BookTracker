@@ -19,6 +19,10 @@ import com.konopelko.booksgoals.presentation.addbook.AddBookUiState.AddBookParti
 import com.konopelko.booksgoals.presentation.addbook.AddBookUiState.AddBookPartialState.SavingBookState
 import com.konopelko.booksgoals.presentation.common.base.BaseViewModel
 
+//todo: ----------------------------
+//todo: handle adding a wish book
+//todo: ----------------------------
+
 class AddBookViewModel(
     initialState: AddBookUiState
 ) : BaseViewModel<AddBookIntent, AddBookUiState, AddBookPartialState>(

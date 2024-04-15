@@ -11,6 +11,12 @@ interface BookDao {
     @Query("SELECT * FROM books WHERE is_finished = 1")
     fun getFinishedBooks(): List<BookEntity>
 
+    @Query("SELECT * FROM books WHERE is_finished = 0")
+    fun getUnfinishedBooks(): List<BookEntity>
+
     @Insert
     fun addBook(book: BookEntity)
+
+    @Query("DELETE FROM books WHERE id = :bookId")
+    fun deleteBook(bookId: Int)
 }

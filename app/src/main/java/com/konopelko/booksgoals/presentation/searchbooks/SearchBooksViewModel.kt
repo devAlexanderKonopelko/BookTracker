@@ -2,34 +2,48 @@ package com.konopelko.booksgoals.presentation.searchbooks
 
 import android.util.Log
 import androidx.lifecycle.viewModelScope
+import com.konopelko.booksgoals.domain.model.book.Book
+import com.konopelko.booksgoals.domain.model.booksearch.SearchScreenOrigin
+import com.konopelko.booksgoals.domain.model.booksearch.SearchScreenOrigin.ADD_GOAL
+import com.konopelko.booksgoals.domain.model.booksearch.SearchScreenOrigin.ADD_WISH_BOOK
+import com.konopelko.booksgoals.domain.usecase.addbook.AddBookUseCase
 import com.konopelko.booksgoals.domain.usecase.searchbooks.SearchBooksUseCase
 import com.konopelko.booksgoals.presentation.common.base.BaseViewModel
+import com.konopelko.booksgoals.presentation.searchbooks.SearchBooksIntent.OnArgsReceived
+import com.konopelko.booksgoals.presentation.searchbooks.SearchBooksIntent.OnBookClicked
 import com.konopelko.booksgoals.presentation.searchbooks.SearchBooksIntent.OnSearchBooks
 import com.konopelko.booksgoals.presentation.searchbooks.SearchBooksIntent.OnSearchTextChanged
 import com.konopelko.booksgoals.presentation.searchbooks.SearchBooksUiState.PartialSearchBooksState
+import com.konopelko.booksgoals.presentation.searchbooks.SearchBooksUiState.PartialSearchBooksState.BookSavedSuccessfully
+import com.konopelko.booksgoals.presentation.searchbooks.SearchBooksUiState.PartialSearchBooksState.NavigateToAddGoalState
 import com.konopelko.booksgoals.presentation.searchbooks.SearchBooksUiState.PartialSearchBooksState.SearchInProgress
 import com.konopelko.booksgoals.presentation.searchbooks.SearchBooksUiState.PartialSearchBooksState.SearchResultsReceived
 import com.konopelko.booksgoals.presentation.searchbooks.SearchBooksUiState.PartialSearchBooksState.SearchTextChanged
-import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class SearchBooksViewModel(
     initialState: SearchBooksUiState,
     private val searchBooksUseCase: SearchBooksUseCase,
+    private val addBookUseCase: AddBookUseCase
 ) : BaseViewModel<SearchBooksIntent, SearchBooksUiState, PartialSearchBooksState>(
     initialState = initialState
 ) {
 
+    private var screenOrigin: SearchScreenOrigin = ADD_GOAL
+
     override fun acceptIntent(intent: SearchBooksIntent) = when (intent) {
+        is OnArgsReceived -> onArgsReceived(intent.args)
         is OnSearchTextChanged -> onSearchTextChanged(intent.text)
         is OnSearchBooks -> onSearchBooks(intent.text)
+        is OnBookClicked -> onBookClicked(intent.book)
     }
 
     override fun mapUiState(
         previousState: SearchBooksUiState,
         partialState: PartialSearchBooksState
     ): SearchBooksUiState = when (partialState) {
+        BookSavedSuccessfully -> previousState.copy(shouldNavigateToWishesScreen = true)
         SearchInProgress -> previousState.copy(isSearching = true)
         is SearchTextChanged -> {
             Log.e("SearchBooksViewModel", "SearchTextChanged called")
@@ -42,6 +56,32 @@ class SearchBooksViewModel(
                 searchResults = partialState.searchResultBooks,
                 isSearching = false
             )
+        }
+        is NavigateToAddGoalState -> previousState.copy(
+            bookToCreateGoal = partialState.book,
+            shouldNavigateToAddGoalScreen = true
+        )
+    }
+
+    private fun onArgsReceived(args: SearchScreenOrigin) {
+        Log.e("SearchBooksViewModel", "args received: $args")
+        screenOrigin = args
+    }
+
+    private fun onBookClicked(book: Book) {
+        when(screenOrigin) {
+            ADD_GOAL -> updateUiState(NavigateToAddGoalState(book))
+            ADD_WISH_BOOK -> onAddWishBookClicked(book)
+        }
+    }
+
+    private fun onAddWishBookClicked(book: Book) {
+        viewModelScope.launch(Dispatchers.IO) {
+            addBookUseCase(book).onSuccess {
+                updateUiState(BookSavedSuccessfully)
+            }.onError {
+                Log.e("SearchBooksViewModel", "error occurred when saving a book: ${it.exception}")
+            }
         }
     }
 
@@ -60,24 +100,20 @@ class SearchBooksViewModel(
 
     private fun searchBooks(text: String) {
         viewModelScope.launch {
-            searchBooksUseCase(text)
-                .catch {
-                    it.printStackTrace()
-                }
-                .collectLatest { response ->
-                    val results = response.books
-                    Log.e("SearchBooksViewModel", "updateUiState called")
-                    updateUiState(
-                        SearchResultsReceived(
-                            searchResultBooks = results
-                        )
-                    )
-                }
-
+            searchBooksUseCase(text).onSuccess { books ->
+                Log.e("SearchBooksViewModel", "updateUiState called")
+                updateUiState(SearchResultsReceived(searchResultBooks = books))
+            }.onError {
+                Log.e("SearchBooksViewModel", "error occurred when searching books: ${it.exception}")
+            }
         }
     }
 
     private fun onSearchTextChanged(text: String) {
         updateUiState(SearchTextChanged(text))
+    }
+
+    companion object {
+        const val ARGS_SCREEN_ORIGIN_KEY = "screen_origin"
     }
 }

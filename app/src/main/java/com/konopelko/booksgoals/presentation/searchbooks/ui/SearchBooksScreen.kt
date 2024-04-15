@@ -1,6 +1,7 @@
 package com.konopelko.booksgoals.presentation.searchbooks.ui
 
 import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -16,22 +17,28 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.konopelko.booksgoals.data.api.response.searchbooks.SearchBooksResponse.BookResponse
+import com.konopelko.booksgoals.domain.model.book.Book
+import com.konopelko.booksgoals.domain.model.booksearch.SearchScreenOrigin
 import com.konopelko.booksgoals.presentation.common.theme.BooksGoalsAppTheme
 import com.konopelko.booksgoals.presentation.common.utils.debounce.DebounceEffect
 import com.konopelko.booksgoals.presentation.searchbooks.SearchBooksIntent
+import com.konopelko.booksgoals.presentation.searchbooks.SearchBooksIntent.OnArgsReceived
+import com.konopelko.booksgoals.presentation.searchbooks.SearchBooksIntent.OnBookClicked
 import com.konopelko.booksgoals.presentation.searchbooks.SearchBooksIntent.OnSearchBooks
 import com.konopelko.booksgoals.presentation.searchbooks.SearchBooksIntent.OnSearchTextChanged
 import com.konopelko.booksgoals.presentation.searchbooks.SearchBooksIntent.SearchBooksNavigationIntent
+import com.konopelko.booksgoals.presentation.searchbooks.SearchBooksIntent.SearchBooksNavigationIntent.NavigateToAddGoalScreen
+import com.konopelko.booksgoals.presentation.searchbooks.SearchBooksIntent.SearchBooksNavigationIntent.NavigateToWishesScreen
 import com.konopelko.booksgoals.presentation.searchbooks.SearchBooksIntent.SearchBooksNavigationIntent.OnAddNewBookClicked
-import com.konopelko.booksgoals.presentation.searchbooks.SearchBooksIntent.SearchBooksNavigationIntent.OnBookClicked
 import com.konopelko.booksgoals.presentation.searchbooks.SearchBooksUiState
 import com.konopelko.booksgoals.presentation.searchbooks.SearchBooksViewModel
 import org.koin.androidx.compose.getViewModel
@@ -40,8 +47,10 @@ import org.koin.androidx.compose.getViewModel
 @Composable
 fun SearchBooksScreen(
     viewModel: SearchBooksViewModel = getViewModel(),
-    onNavigate: (SearchBooksNavigationIntent) -> Unit
+    onNavigate: (SearchBooksNavigationIntent) -> Unit,
+    args: SearchScreenOrigin?
 ) {
+    val context = LocalContext.current
     val uiState by viewModel.uiState.collectAsState()
 
     SearchBooksScreenContent(
@@ -50,6 +59,25 @@ fun SearchBooksScreen(
         onIntent = viewModel::acceptIntent,
         onNavigate = onNavigate
     )
+
+    LaunchedEffect("args_key") {
+        args?.let {
+            viewModel.acceptIntent(OnArgsReceived(it))
+        }
+    }
+
+    if(uiState.shouldNavigateToAddGoalScreen) {
+        LaunchedEffect("navigate_to_add_goal_key") {
+            onNavigate(NavigateToAddGoalScreen(uiState.bookToCreateGoal))
+        }
+    }
+
+    if(uiState.shouldNavigateToWishesScreen) {
+        LaunchedEffect("navigate_to_wishes_key") {
+            Toast.makeText(context, "Book added to wishes successfully!", Toast.LENGTH_SHORT).show()
+            onNavigate(NavigateToWishesScreen)
+        }
+    }
 }
 
 @Composable
@@ -82,8 +110,7 @@ fun SearchBooksScreenContent(
             else -> SearchedBooksContent(
                 modifier = Modifier.weight(1f),
                 searchResults = searchResults,
-                onIntent = onIntent,
-                onNavigate = onNavigate
+                onIntent = onIntent
             )
         }
 
@@ -95,9 +122,8 @@ fun SearchBooksScreenContent(
 
 @Composable
 private fun SearchedBooksContent(
-    searchResults: List<BookResponse>,
+    searchResults: List<Book>,
     onIntent: (SearchBooksIntent) -> Unit,
-    onNavigate: (SearchBooksNavigationIntent) -> Unit,
     modifier: Modifier = Modifier
 ) = LazyColumn(
     modifier = modifier.fillMaxWidth()
@@ -105,22 +131,22 @@ private fun SearchedBooksContent(
     items(searchResults) { resultItem ->
         SearchResultItem(
             item = resultItem,
-            onNavigate = onNavigate
+            onIntent = onIntent
         )
     }
 }
 
 @Composable
 fun SearchResultItem(
-    item: BookResponse,
-    onNavigate: (SearchBooksNavigationIntent) -> Unit
+    item: Book,
+    onIntent: (SearchBooksIntent) -> Unit
 ) {
     Text(
         modifier = Modifier
             .fillMaxWidth()
             .padding(8.dp)
             .clickable {
-                onNavigate(OnBookClicked(book = item))
+                onIntent(OnBookClicked(book = item))
             },
         text = item.title
     )

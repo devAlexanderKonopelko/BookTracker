@@ -9,6 +9,7 @@ import com.konopelko.booksgoals.di.ui.addgoal.addGoalModule
 import com.konopelko.booksgoals.di.ui.finishedbooks.finishedBooksModule
 import com.konopelko.booksgoals.di.ui.home.homeModule
 import com.konopelko.booksgoals.di.ui.searchbooks.searchBooksModule
+import com.konopelko.booksgoals.di.ui.wishes.wishesModule
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.startKoin
 
@@ -31,7 +32,8 @@ class BooksGoalsApplication: Application() {
                 searchBooksModule,
                 addGoalModule,
                 addBookModule,
-                finishedBooksModule
+                finishedBooksModule,
+                wishesModule
             )
         }
     }

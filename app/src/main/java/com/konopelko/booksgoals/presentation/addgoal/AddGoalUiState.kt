@@ -1,9 +1,9 @@
 package com.konopelko.booksgoals.presentation.addgoal
 
-import com.konopelko.booksgoals.data.api.response.searchbooks.SearchBooksResponse.BookResponse
+import com.konopelko.booksgoals.domain.model.book.Book
 
 data class AddGoalUiState(
-    val selectedBook: BookResponse? = null,
+    val selectedBook: Book? = null,
     val daysToFinishGoal: Int = 0,
     val isAddGoalButtonEnabled: Boolean = false,
     val isSavingGoal: Boolean = false,
@@ -12,7 +12,7 @@ data class AddGoalUiState(
 
     sealed interface AddGoalPartialState {
 
-        data class BookSelected(val book: BookResponse) : AddGoalPartialState
+        data class BookSelected(val book: Book) : AddGoalPartialState
         data class PagesPerDayChanged(val newPagesPerDay: Int) : AddGoalPartialState
 
         data class SavingGoalState(

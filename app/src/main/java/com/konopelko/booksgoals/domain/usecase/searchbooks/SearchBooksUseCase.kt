@@ -1,15 +1,13 @@
 package com.konopelko.booksgoals.domain.usecase.searchbooks
 
-import com.konopelko.booksgoals.data.api.response.searchbooks.SearchBooksResponse
+import com.konopelko.booksgoals.data.utils.Result
+import com.konopelko.booksgoals.domain.model.book.Book
 import com.konopelko.booksgoals.domain.repository.searchbooks.SearchBooksRepository
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
 
 class SearchBooksUseCase(
     private val searchBooksRepository: SearchBooksRepository
 ) {
 
-    operator fun invoke(searchText: String): Flow<SearchBooksResponse> = flow {
-        emit(searchBooksRepository.searchBooks(searchText))
-    }
+    suspend operator fun invoke(searchText: String): Result<List<Book>> =
+        searchBooksRepository.searchBooks(searchText)
 }

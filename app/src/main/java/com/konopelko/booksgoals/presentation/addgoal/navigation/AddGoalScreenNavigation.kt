@@ -15,6 +15,7 @@ class AddGoalScreenNavigation(
         NavigateToGoalsScreen -> navigateToGoalsScreen()
     }
 
+    //todo: pass [SearchScreenOrigin.ADD_GOAL]
     private fun navigateToSearchBooksScreen() {
         navController.navigate(MainNavOption.SearchBooksScreen.name) {
             launchSingleTop = true

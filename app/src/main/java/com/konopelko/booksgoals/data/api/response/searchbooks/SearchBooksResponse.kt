@@ -20,12 +20,12 @@ data class SearchBooksResponse(
         val title: String,
 
         @SerializedName(FIELD_AUTHOR_NAME)
-        val authorName: List<String> = emptyList(),
+        val authorName: List<String>? = emptyList(),
 
         @SerializedName(FIELD_PUBLISH_YEAR)
         val publishYear: Int = 0,
 
         @SerializedName(FIELD_NUMBER_OF_PAGES)
-        val pagesAmount: Int = 0
+        val pagesAmount: Int = 1
     ): Parcelable
 }

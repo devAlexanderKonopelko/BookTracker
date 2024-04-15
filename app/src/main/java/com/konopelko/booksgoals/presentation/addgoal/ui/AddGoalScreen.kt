@@ -23,7 +23,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.konopelko.booksgoals.data.api.response.searchbooks.SearchBooksResponse.BookResponse
+import com.konopelko.booksgoals.domain.model.book.Book
 import com.konopelko.booksgoals.presentation.addgoal.AddGoalIntent
 import com.konopelko.booksgoals.presentation.addgoal.AddGoalIntent.AddGoalNavigationIntent
 import com.konopelko.booksgoals.presentation.addgoal.AddGoalIntent.AddGoalNavigationIntent.NavigateToGoalsScreen
@@ -51,7 +51,7 @@ private val pagesPerDayRange = 20f..200f
 fun AddGoalScreen(
     viewModel: AddGoalViewModel = getViewModel(),
     onNavigate: (AddGoalNavigationIntent) -> Unit,
-    args: BookResponse?
+    args: Book?
 ) {
     Log.e("HomeScreen", "args = $args")
 
@@ -128,7 +128,7 @@ private fun AddGoalContent(
 
 @Composable
 private fun SelectBookContent(
-    selectedBook: BookResponse?,
+    selectedBook: Book?,
     modifier: Modifier = Modifier,
     onNavigate: (AddGoalNavigationIntent) -> Unit = {}
 ) = Column(
@@ -208,11 +208,11 @@ private fun AddGoalScreenNoSelectedBookPreview() = BooksGoalsAppTheme {
 private fun AddGoalScreenBookSelectedPreview() = BooksGoalsAppTheme {
     AddGoalContent(
         uiState = AddGoalUiState(
-            selectedBook = BookResponse(
+            selectedBook = Book(
                 title = "New Interesting Book",
-                authorName = listOf("Sashka"),
-                publishYear = 1999,
-                pagesAmount = 496
+                authorName = "Sashka",
+                publishYear = "1999",
+                pagesAmount = "496"
             )
         )
     )

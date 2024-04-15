@@ -2,8 +2,8 @@ package com.konopelko.booksgoals.presentation.addgoal
 
 import android.util.Log
 import androidx.lifecycle.viewModelScope
-import com.konopelko.booksgoals.data.api.response.searchbooks.SearchBooksResponse.BookResponse
 import com.konopelko.booksgoals.data.database.entity.goal.GoalEntity
+import com.konopelko.booksgoals.domain.model.book.Book
 import com.konopelko.booksgoals.domain.usecase.addgoal.AddGoalUseCase
 import com.konopelko.booksgoals.presentation.addgoal.AddGoalIntent.OnArgsReceived
 import com.konopelko.booksgoals.presentation.addgoal.AddGoalIntent.OnCreateGoalClicked
@@ -38,12 +38,12 @@ class AddGoalViewModel(
     ): AddGoalUiState =  when(partialState) {
         is BookSelected -> previousState.copy(
             selectedBook = partialState.book,
-            daysToFinishGoal = calculatePagesPerDay(pagesAmount = partialState.book.pagesAmount),
+            daysToFinishGoal = calculatePagesPerDay(pagesAmount = partialState.book.pagesAmount.toInt()),
             isAddGoalButtonEnabled = true
         )
         is PagesPerDayChanged -> previousState.copy(
             daysToFinishGoal = calculatePagesPerDay(
-                pagesAmount = previousState.selectedBook?.pagesAmount ?: 0
+                pagesAmount = previousState.selectedBook?.pagesAmount?.toInt() ?: 0
             ),
         )
         is SavingGoalState -> previousState.copy(
@@ -56,7 +56,7 @@ class AddGoalViewModel(
         ceil(pagesAmount / bookPagesPerDay.toDouble()).toInt()
 
     //todo: refactor to receive [Book] domain model
-    private fun onArgsReceived(args: BookResponse?) {
+    private fun onArgsReceived(args: Book?) {
         Log.e("AddGoalViewModel", "onArgsReceived")
         Log.e("AddGoalViewModel", "args = $args")
 
@@ -83,12 +83,12 @@ class AddGoalViewModel(
                 val goalToAdd = GoalEntity(
                     bookName = selectedBook?.title ?: "",
                     bookAuthorName = prepareBookAuthorName(selectedBook) ?: "",
-                    bookPublishYear = selectedBook?.publishYear?.toString() ?: "", //todo: make publishYear Int
+                    bookPublishYear = selectedBook?.publishYear ?: "", //todo: make publishYear Int
                     bookPagesAmount = preparePagesAmount(selectedBook),
                     expectedPagesPerDay = bookPagesPerDay,
                     expectedFinishDaysAmount = calculateExpectedFinishDaysAmount(
                         expectedPagesPerDay = bookPagesPerDay,
-                        booksPagesAmount = selectedBook?.pagesAmount ?: 0
+                        booksPagesAmount = selectedBook?.pagesAmount?.toInt() ?: 0
                     ) // todo: make expectedFinishDaysAmount Int
                 )
 
@@ -106,15 +106,19 @@ class AddGoalViewModel(
         }
     }
 
-    private fun preparePagesAmount(selectedBook: BookResponse?): Int = selectedBook?.let {
-        if(it.pagesAmount > 0) it.pagesAmount else 1
+    private fun preparePagesAmount(selectedBook: Book?): Int = selectedBook?.let {
+        if(it.pagesAmount.toInt() > 0) it.pagesAmount.toInt() else 1
     } ?: 1
 
-    private fun prepareBookAuthorName(newGoalSelectedBook: BookResponse?): String? =
-        newGoalSelectedBook?.authorName?.joinToString(separator = ", ")
+    private fun prepareBookAuthorName(newGoalSelectedBook: Book?): String? =
+        newGoalSelectedBook?.authorName
 
     private fun calculateExpectedFinishDaysAmount(
         expectedPagesPerDay: Int,
         booksPagesAmount: Int
     ): Float = booksPagesAmount / expectedPagesPerDay.toFloat()
+
+    companion object {
+        const val ARGS_BOOK_KEY = "book"
+    }
 }

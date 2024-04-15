@@ -1,24 +1,41 @@
 package com.konopelko.booksgoals.presentation.searchbooks.navigation
 
 import androidx.navigation.NavController
-import com.konopelko.booksgoals.data.api.response.searchbooks.SearchBooksResponse.BookResponse
+import com.konopelko.booksgoals.domain.model.book.Book
+import com.konopelko.booksgoals.presentation.addgoal.AddGoalViewModel
 import com.konopelko.booksgoals.presentation.navigation.MainNavOption
 import com.konopelko.booksgoals.presentation.searchbooks.SearchBooksIntent.SearchBooksNavigationIntent
+import com.konopelko.booksgoals.presentation.searchbooks.SearchBooksIntent.SearchBooksNavigationIntent.NavigateToAddGoalScreen
+import com.konopelko.booksgoals.presentation.searchbooks.SearchBooksIntent.SearchBooksNavigationIntent.NavigateToWishesScreen
 import com.konopelko.booksgoals.presentation.searchbooks.SearchBooksIntent.SearchBooksNavigationIntent.OnAddNewBookClicked
-import com.konopelko.booksgoals.presentation.searchbooks.SearchBooksIntent.SearchBooksNavigationIntent.OnBookClicked
+import com.konopelko.booksgoals.presentation.wishes.WishesViewModel
 
+//todo: create [BaseNavigationHandler]
 class SearchBooksNavigation(
     private val navController: NavController
 ) {
 
     fun onNavigate(intent: SearchBooksNavigationIntent) = when(intent) {
         OnAddNewBookClicked -> navigateToAddBookScreen()
-        is OnBookClicked -> navigateToAddGoalScreen(intent.book)
+        NavigateToWishesScreen -> navigateToWishesScreen()
+        is NavigateToAddGoalScreen -> navigateToAddGoalScreen(intent.book)
     }
 
-    private fun navigateToAddGoalScreen(book: BookResponse) {
+    private fun navigateToAddBookScreen() {
+        navController.navigate(MainNavOption.AddBookScreen.name)
+    }
+
+    private fun navigateToWishesScreen() {
         navController.previousBackStackEntry?.savedStateHandle?.apply {
-            set("book", book) //todo: make key constant
+            set(WishesViewModel.ARGS_WISH_BOOK_ADDED_KEY, true)
+        }
+
+        navController.popBackStack()
+    }
+
+    private fun navigateToAddGoalScreen(book: Book) {
+        navController.previousBackStackEntry?.savedStateHandle?.apply {
+            set(AddGoalViewModel.ARGS_BOOK_KEY, book)
         }
         navController.navigate(MainNavOption.AddGoalScreen.name) {
 
@@ -27,9 +44,5 @@ class SearchBooksNavigation(
                 inclusive = true
             }
         }
-    }
-
-    private fun navigateToAddBookScreen() {
-        navController.navigate(MainNavOption.AddBookScreen.name)
     }
 }

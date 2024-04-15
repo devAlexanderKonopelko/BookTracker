@@ -92,7 +92,7 @@ private fun FinishedBookCard(
             color = Color.LightGray,
             shape = RoundedCornerShape(12.dp)
         )
-        .border(3.dp, Color.Green, RoundedCornerShape(12.dp)),
+        .border(2.dp, Color.Green, RoundedCornerShape(12.dp)),
     verticalAlignment = Alignment.CenterVertically
 ) {
     Box(
