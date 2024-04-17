@@ -1,6 +1,8 @@
 package com.konopelko.booksgoals.presentation.addbook
 
 import com.konopelko.booksgoals.domain.model.book.Book
+import com.konopelko.booksgoals.domain.model.booksearch.SearchScreenOrigin
+import com.konopelko.booksgoals.domain.model.booksearch.SearchScreenOrigin.ADD_GOAL
 
 //todo: refactor fields to be inside one data class model
 data class AddBookUiState(
@@ -9,15 +11,18 @@ data class AddBookUiState(
     val isAuthorNameError: Boolean = false,
     val isPublishYearError: Boolean = false,
     val isPagesAmountError: Boolean = false,
-    val isBookSaved: Boolean = false,
+    val isBookAdded: Boolean = false,
     val isSaveButtonEnabled: Boolean = false,
-    val isSaveButtonLoading: Boolean = false
+    val isSaveButtonLoading: Boolean = false,
+    val screenOrigin: SearchScreenOrigin = ADD_GOAL
 ) {
 
     sealed interface AddBookPartialState {
 
         data object SavingBookState : AddBookPartialState
-        data object BookSavedSuccessfullyState : AddBookPartialState
+        data object BookAddedSuccessfullyState : AddBookPartialState
+
+        data class ScreenOriginChangedState(val origin: SearchScreenOrigin) : AddBookPartialState
 
         data class BookTitleChanged(
             val title: String,

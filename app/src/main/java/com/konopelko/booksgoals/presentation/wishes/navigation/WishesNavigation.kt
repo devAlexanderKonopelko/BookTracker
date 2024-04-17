@@ -32,10 +32,6 @@ class WishesNavigation(
         }
     }
 
-    //todo: move to SearchScreenNavigation
-    private fun prepareSearchScreenNameWithArgs(screenOrigin: SearchScreenOrigin): String =
-        "SearchBooksScreen/{$screenOrigin}"
-
     private fun onNavigateToAddGoalScreen(book: Book) {
         with(navController) {
             navigate(MainNavOption.AddGoalScreen.name) {
@@ -45,4 +41,8 @@ class WishesNavigation(
             }
         }
     }
+
+    //todo: move to SearchScreenNavigation
+    private fun prepareSearchScreenNameWithArgs(screenOrigin: SearchScreenOrigin): String =
+        "SearchBooksScreen/{$screenOrigin}"
 }

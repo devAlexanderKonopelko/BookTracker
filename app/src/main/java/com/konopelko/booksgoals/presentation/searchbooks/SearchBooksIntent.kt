@@ -12,8 +12,8 @@ sealed interface SearchBooksIntent {
 
     sealed interface SearchBooksNavigationIntent {
 
-        data object OnAddNewBookClicked : SearchBooksNavigationIntent
         data object NavigateToWishesScreen : SearchBooksNavigationIntent
         data class NavigateToAddGoalScreen(val book: Book) : SearchBooksNavigationIntent
+        data class OnAddNewBookClicked(val origin: SearchScreenOrigin) : SearchBooksNavigationIntent
     }
 }

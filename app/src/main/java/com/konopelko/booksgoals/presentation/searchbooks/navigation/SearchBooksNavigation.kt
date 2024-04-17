@@ -1,7 +1,10 @@
 package com.konopelko.booksgoals.presentation.searchbooks.navigation
 
+import android.util.Log
 import androidx.navigation.NavController
 import com.konopelko.booksgoals.domain.model.book.Book
+import com.konopelko.booksgoals.domain.model.booksearch.SearchScreenOrigin
+import com.konopelko.booksgoals.presentation.addbook.AddBookViewModel
 import com.konopelko.booksgoals.presentation.addgoal.AddGoalViewModel
 import com.konopelko.booksgoals.presentation.navigation.MainNavOption
 import com.konopelko.booksgoals.presentation.searchbooks.SearchBooksIntent.SearchBooksNavigationIntent
@@ -16,13 +19,20 @@ class SearchBooksNavigation(
 ) {
 
     fun onNavigate(intent: SearchBooksNavigationIntent) = when(intent) {
-        OnAddNewBookClicked -> navigateToAddBookScreen()
         NavigateToWishesScreen -> navigateToWishesScreen()
         is NavigateToAddGoalScreen -> navigateToAddGoalScreen(intent.book)
+        is OnAddNewBookClicked -> navigateToAddBookScreen(intent.origin)
     }
 
-    private fun navigateToAddBookScreen() {
-        navController.navigate(MainNavOption.AddBookScreen.name)
+    private fun navigateToAddBookScreen(origin: SearchScreenOrigin) {
+        with(navController) {
+            navigate(prepareAddBookScreenNameWithArgs(origin)) {
+                currentBackStackEntry?.apply {
+                    Log.e("WishesNavigation", "set search screen origin")
+                    savedStateHandle[AddBookViewModel.ARGS_SCREEN_ORIGIN_KEY] = origin
+                }
+            }
+        }
     }
 
     private fun navigateToWishesScreen() {
@@ -45,4 +55,8 @@ class SearchBooksNavigation(
             }
         }
     }
+
+    //todo: move to AddBookScreenNavigation
+    private fun prepareAddBookScreenNameWithArgs(origin: SearchScreenOrigin): String =
+        "${MainNavOption.AddBookScreen.name}/{${origin}}"
 }

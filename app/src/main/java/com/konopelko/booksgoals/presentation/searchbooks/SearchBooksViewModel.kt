@@ -30,7 +30,8 @@ class SearchBooksViewModel(
     initialState = initialState
 ) {
 
-    private var screenOrigin: SearchScreenOrigin = ADD_GOAL
+    //todo: move to uiState
+    internal var screenOrigin: SearchScreenOrigin = ADD_GOAL
 
     override fun acceptIntent(intent: SearchBooksIntent) = when (intent) {
         is OnArgsReceived -> onArgsReceived(intent.args)

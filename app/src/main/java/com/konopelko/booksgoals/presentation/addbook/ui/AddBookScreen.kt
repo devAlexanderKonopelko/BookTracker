@@ -21,10 +21,13 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.text.isDigitsOnly
+import com.konopelko.booksgoals.domain.model.booksearch.SearchScreenOrigin
 import com.konopelko.booksgoals.presentation.addbook.AddBookIntent
 import com.konopelko.booksgoals.presentation.addbook.AddBookIntent.AddBookNavigationIntent
 import com.konopelko.booksgoals.presentation.addbook.AddBookIntent.AddBookNavigationIntent.NavigateToAddGoalScreen
+import com.konopelko.booksgoals.presentation.addbook.AddBookIntent.AddBookNavigationIntent.NavigateToWishesScreen
 import com.konopelko.booksgoals.presentation.addbook.AddBookIntent.OnAddBookClicked
+import com.konopelko.booksgoals.presentation.addbook.AddBookIntent.OnArgsReceived
 import com.konopelko.booksgoals.presentation.addbook.AddBookIntent.OnAuthorNameChanged
 import com.konopelko.booksgoals.presentation.addbook.AddBookIntent.OnPagesAmountChanged
 import com.konopelko.booksgoals.presentation.addbook.AddBookIntent.OnPublishYearChanged
@@ -39,7 +42,8 @@ import org.koin.androidx.compose.getViewModel
 @Composable
 fun AddBookScreen(
     viewModel: AddBookViewModel = getViewModel(),
-    onNavigate: (AddBookNavigationIntent) -> Unit
+    onNavigate: (AddBookNavigationIntent) -> Unit,
+    args: SearchScreenOrigin?
 ) {
     val context = LocalContext.current
     val uiState by viewModel.uiState.collectAsState()
@@ -49,11 +53,19 @@ fun AddBookScreen(
         onIntent = viewModel::acceptIntent
     )
 
-    if(uiState.isBookSaved) {
+    if(uiState.isBookAdded) {
         LaunchedEffect("toast key") {
-            Toast.makeText(context, "Book saved successfully!", Toast.LENGTH_SHORT).show()
-            onNavigate(NavigateToAddGoalScreen(uiState.book))
+            Toast.makeText(context, "Book added successfully!", Toast.LENGTH_SHORT).show()
+
+            when(uiState.screenOrigin) {
+                SearchScreenOrigin.ADD_GOAL -> onNavigate(NavigateToAddGoalScreen(uiState.book))
+                SearchScreenOrigin.ADD_WISH_BOOK -> onNavigate(NavigateToWishesScreen)
+            }
         }
+    }
+
+    LaunchedEffect("args_key") {
+        args?.let { viewModel.acceptIntent(OnArgsReceived(it)) }
     }
 }
 

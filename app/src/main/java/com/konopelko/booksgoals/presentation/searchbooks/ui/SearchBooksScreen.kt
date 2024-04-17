@@ -57,13 +57,12 @@ fun SearchBooksScreen(
         modifier = Modifier.fillMaxSize(),
         uiState = uiState,
         onIntent = viewModel::acceptIntent,
+        screenOrigin = viewModel.screenOrigin,
         onNavigate = onNavigate
     )
 
     LaunchedEffect("args_key") {
-        args?.let {
-            viewModel.acceptIntent(OnArgsReceived(it))
-        }
+        args?.let { viewModel.acceptIntent(OnArgsReceived(it)) }
     }
 
     if(uiState.shouldNavigateToAddGoalScreen) {
@@ -84,6 +83,7 @@ fun SearchBooksScreen(
 fun SearchBooksScreenContent(
     modifier: Modifier = Modifier,
     uiState: SearchBooksUiState,
+    screenOrigin: SearchScreenOrigin,
     onIntent: (SearchBooksIntent) -> Unit = {},
     onNavigate: (SearchBooksNavigationIntent) -> Unit = {}
 ) = Column(
@@ -105,6 +105,7 @@ fun SearchBooksScreenContent(
         when {
             isSearching -> LoadingContent()
             searchResults.isEmpty() -> NoBooksContent(
+                screenOrigin = screenOrigin,
                 onNavigate = onNavigate
             )
             else -> SearchedBooksContent(
@@ -154,6 +155,7 @@ fun SearchResultItem(
 
 @Composable
 private fun NoBooksContent(
+    screenOrigin: SearchScreenOrigin,
     onNavigate: (SearchBooksNavigationIntent) -> Unit
 ) = Column(
     modifier = Modifier.fillMaxSize(),
@@ -167,7 +169,7 @@ private fun NoBooksContent(
     Button(
         modifier = Modifier.padding(start = 16.dp),
         onClick = {
-            onNavigate(OnAddNewBookClicked)
+            onNavigate(OnAddNewBookClicked(screenOrigin))
         }
     ) {
         Text(text = "Add new book")
@@ -189,6 +191,7 @@ private fun SearchBooksScreenPreview() = BooksGoalsAppTheme {
         uiState = SearchBooksUiState(
             searchResults = listOf(),
             isSearching = false
-        )
+        ),
+        screenOrigin = SearchScreenOrigin.ADD_GOAL
     )
 }

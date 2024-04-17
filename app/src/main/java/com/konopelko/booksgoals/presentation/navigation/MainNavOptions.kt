@@ -87,8 +87,22 @@ fun NavGraphBuilder.mainGraph(
                 args = args
             )
         }
-        composable(MainNavOption.AddBookScreen.name) {
-            AddBookScreen(onNavigate = AddBookNavigation(navController)::onNavigate)
+        composable(MainNavOption.AddBookScreen.name+"/{screen_origin}") { backStackEntry ->
+            // todo: refactor somehow args receiving
+            val args = backStackEntry
+                .arguments
+                ?.getString(SearchBooksViewModel.ARGS_SCREEN_ORIGIN_KEY)
+                ?.let { screenOriginName ->
+                    val preparedOriginScreenName = screenOriginName.filter { it != '{' && it != '}' }
+                    SearchScreenOrigin.valueOf(preparedOriginScreenName)
+                }
+
+            Log.e("Navigation", "add book screen navigated, args: $args")
+
+            AddBookScreen(
+                onNavigate = AddBookNavigation(navController)::onNavigate,
+                args = args
+            )
         }
     }
 }
