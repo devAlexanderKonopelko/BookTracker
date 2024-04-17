@@ -27,11 +27,7 @@ class AddGoalScreenNavigation(
             set("goal_added", true) //todo: make key constant
         }
         navController.navigate(MainNavOption.GoalsScreen.name) {
-            launchSingleTop = true
-
-            popUpTo(MainNavOption.AddGoalScreen.name) {
-                inclusive = true
-            }
+            popUpTo(navController.graph.startDestinationId)
         }
     }
 }

@@ -45,12 +45,6 @@ class WishesViewModel(
         )
     }
 
-    private fun onArgsReceived(isBookAdded: Boolean) {
-        if(isBookAdded) {
-            loadWishesBooks()
-        }
-    }
-
     override fun mapUiState(
         previousState: WishesUiState,
         partialState: WishesPartialState
@@ -66,6 +60,12 @@ class WishesViewModel(
             bookToStartGoalWith = partialState.book
         )
         is WishesBooksLoaded -> previousState.copy(wishesBooks = partialState.books)
+    }
+
+    private fun onArgsReceived(isBookAdded: Boolean) {
+        if(isBookAdded) {
+            loadWishesBooks()
+        }
     }
 
     private fun resetNavigateToAddGoalScreen() {
@@ -90,8 +90,14 @@ class WishesViewModel(
         book: Book,
         menuOption: WishBookMenuOption
     ) = when(menuOption) {
-        START -> updateUiState(StartGoalClickedState(book))
+        START -> onStartGoalClicked(book)
         DELETE -> onDeleteWishBookClicked(book)
+    }
+
+    private fun onStartGoalClicked(book: Book) {
+        //todo: add [isStarted] param and update to true?
+        //todo: or delete [Book] from db to update wishes?
+        updateUiState(StartGoalClickedState(book))
     }
 
     private fun onDeleteWishBookClicked(book: Book) {
