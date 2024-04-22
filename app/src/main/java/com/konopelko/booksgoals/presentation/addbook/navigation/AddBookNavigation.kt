@@ -6,6 +6,7 @@ import com.konopelko.booksgoals.presentation.addbook.AddBookIntent.AddBookNaviga
 import com.konopelko.booksgoals.presentation.addbook.AddBookIntent.AddBookNavigationIntent.NavigateToAddGoalScreen
 import com.konopelko.booksgoals.presentation.addbook.AddBookIntent.AddBookNavigationIntent.NavigateToWishesScreen
 import com.konopelko.booksgoals.presentation.addgoal.AddGoalViewModel
+import com.konopelko.booksgoals.presentation.addgoal.model.AddGoalArgs
 import com.konopelko.booksgoals.presentation.navigation.MainNavOption
 import com.konopelko.booksgoals.presentation.wishes.WishesViewModel
 
@@ -37,7 +38,7 @@ class AddBookNavigation(
             }
 
             currentBackStackEntry?.apply {
-                savedStateHandle[AddGoalViewModel.ARGS_BOOK_KEY] = book
+                savedStateHandle[AddGoalViewModel.ARGS_ADD_GOAL_KEY] = AddGoalArgs(selectedBook = book)
             }
         }
     }

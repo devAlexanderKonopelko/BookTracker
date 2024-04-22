@@ -1,29 +1,23 @@
 package com.konopelko.booksgoals.presentation.navigation
 
 import android.util.Log
-import androidx.navigation.NavArgument
-import androidx.navigation.NavArgumentBuilder
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
-import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import androidx.navigation.navArgument
-import com.google.gson.Gson
-import com.konopelko.booksgoals.data.api.response.searchbooks.SearchBooksResponse.BookResponse
-import com.konopelko.booksgoals.domain.model.book.Book
-import com.konopelko.booksgoals.domain.model.booksearch.SearchScreenOrigin
-import com.konopelko.booksgoals.domain.model.booksearch.SearchScreenOrigin.ADD_GOAL
+import com.konopelko.booksgoals.presentation.searchbooks.model.SearchScreenOrigin
 import com.konopelko.booksgoals.presentation.achievements.ui.AchievementsScreen
 import com.konopelko.booksgoals.presentation.addbook.navigation.AddBookNavigation
 import com.konopelko.booksgoals.presentation.addbook.ui.AddBookScreen
 import com.konopelko.booksgoals.presentation.addgoal.AddGoalViewModel
+import com.konopelko.booksgoals.presentation.addgoal.model.AddGoalArgs
 import com.konopelko.booksgoals.presentation.addgoal.navigation.AddGoalScreenNavigation
 import com.konopelko.booksgoals.presentation.addgoal.ui.AddGoalScreen
 import com.konopelko.booksgoals.presentation.finishedbooks.ui.FinishedBooksScreen
 import com.konopelko.booksgoals.presentation.goals.navigation.GoalsScreenNavigation
 import com.konopelko.booksgoals.presentation.goals.ui.GoalsScreen
-import com.konopelko.booksgoals.presentation.navigation.args.BookArgType
+import com.konopelko.booksgoals.presentation.navigation.args.AddGoalArgsType
 import com.konopelko.booksgoals.presentation.searchbooks.SearchBooksViewModel
 import com.konopelko.booksgoals.presentation.searchbooks.navigation.SearchBooksNavigation
 import com.konopelko.booksgoals.presentation.searchbooks.ui.SearchBooksScreen
@@ -44,18 +38,18 @@ fun NavGraphBuilder.mainGraph(
     ) {
         composable(
             route = MainNavOption.AddGoalScreen.name +
-                    "?${AddGoalViewModel.ARGS_BOOK_KEY}={${AddGoalViewModel.ARGS_BOOK_KEY}}",
+                    "?${AddGoalViewModel.ARGS_ADD_GOAL_KEY}={${AddGoalViewModel.ARGS_ADD_GOAL_KEY}}",
             arguments = listOf(
-                navArgument(AddGoalViewModel.ARGS_BOOK_KEY) {
-                    type = BookArgType()
+                navArgument(AddGoalViewModel.ARGS_ADD_GOAL_KEY) {
+                    type = AddGoalArgsType()
                     nullable = true
-                }
+                },
             )
         ) { backStackEntry ->
             val args = backStackEntry
                 .arguments
-                ?.getParcelable(AddGoalViewModel.ARGS_BOOK_KEY)
-                ?: backStackEntry.savedStateHandle.get<Book>(AddGoalViewModel.ARGS_BOOK_KEY)
+                ?.getParcelable(AddGoalViewModel.ARGS_ADD_GOAL_KEY)
+                ?: backStackEntry.savedStateHandle.get<AddGoalArgs>(AddGoalViewModel.ARGS_ADD_GOAL_KEY)
 
             Log.e("Navigation", "add goal screen navigated, args: $args")
 
@@ -72,14 +66,6 @@ fun NavGraphBuilder.mainGraph(
                 args = args
             )
         }
-        composable(MainNavOption.WishesScreen.name) {
-            val args = it.savedStateHandle.get<Boolean>(WishesViewModel.ARGS_WISH_BOOK_ADDED_KEY)
-
-            WishesScreen(
-                onNavigate = WishesNavigation(navController)::onNavigate,
-                args = args
-            )
-        }
         composable(MainNavOption.FinishedBooksScreen.name) {
             FinishedBooksScreen()
         }
@@ -90,7 +76,7 @@ fun NavGraphBuilder.mainGraph(
             AchievementsScreen()
         }
         //todo: move preparing screen name with args to [SearchBooksNavigation]
-        composable(MainNavOption.SearchBooksScreen.name + "/{screen_origin}") { backStackEntry ->
+        composable(MainNavOption.SearchBooksScreen.name + "?screen_origin={screen_origin}") { backStackEntry ->
             // todo: refactor somehow args receiving
             val args = backStackEntry
                 .arguments
@@ -123,6 +109,14 @@ fun NavGraphBuilder.mainGraph(
 
             AddBookScreen(
                 onNavigate = AddBookNavigation(navController)::onNavigate,
+                args = args
+            )
+        }
+        composable(MainNavOption.WishesScreen.name) {
+            val args = it.savedStateHandle.get<Boolean>(WishesViewModel.ARGS_WISH_BOOK_ADDED_KEY)
+
+            WishesScreen(
+                onNavigate = WishesNavigation(navController)::onNavigate,
                 args = args
             )
         }

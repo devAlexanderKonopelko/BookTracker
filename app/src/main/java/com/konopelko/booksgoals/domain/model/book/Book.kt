@@ -10,5 +10,6 @@ data class Book(
     val authorName: String = "",
     val publishYear: String = "", //todo: make Int
     val pagesAmount: String = "", //todo: make Int
+    val isStarted: Boolean = false,
     val isFinished: Boolean = false
 ): Parcelable

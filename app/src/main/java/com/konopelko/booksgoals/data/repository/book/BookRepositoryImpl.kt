@@ -10,8 +10,8 @@ class BookRepositoryImpl(
     private val bookDao: BookDao
 ) : BookRepository {
 
-    override suspend fun addBook(book: Book): Result<Unit> = databaseCall {
-        bookDao.addBook(book.toDatabaseModel())
+    override suspend fun addBook(book: Book): Result<Int> = databaseCall {
+        bookDao.addBook(book.toDatabaseModel()).toInt()
     }
 
     override suspend fun getFinishedBooks(): Result<List<Book>> = databaseCall {
@@ -19,10 +19,30 @@ class BookRepositoryImpl(
     }
 
     override suspend fun getWishesBooks(): Result<List<Book>> = databaseCall {
-        bookDao.getUnfinishedBooks().map { it.toDomainModel() }
+        bookDao.getNotStartedUnfinishedBooks().map { it.toDomainModel() }
     }
 
     override suspend fun deleteBook(bookId: Int): Result<Unit> = databaseCall {
         bookDao.deleteBook(bookId)
+    }
+
+    override suspend fun updateBookIsStarted(
+        isStarted: Boolean,
+        bookId: Int
+    ): Result<Unit> = databaseCall {
+        bookDao.updateBookIsStarted(
+            isStarted = isStarted,
+            bookId = bookId
+        )
+    }
+
+    override suspend fun updateBookIsFinished(
+        isFinished: Boolean,
+        bookId: Int
+    ): Result<Unit> = databaseCall {
+        bookDao.updateBookIsFinished(
+            isFinished = isFinished,
+            bookId = bookId
+        )
     }
 }

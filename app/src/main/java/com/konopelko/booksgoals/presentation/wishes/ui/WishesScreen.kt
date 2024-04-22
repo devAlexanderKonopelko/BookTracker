@@ -40,7 +40,7 @@ import com.konopelko.booksgoals.domain.model.book.Book
 import com.konopelko.booksgoals.presentation.common.theme.BooksGoalsAppTheme
 import com.konopelko.booksgoals.presentation.common.theme.Typography
 import com.konopelko.booksgoals.presentation.common.theme.backgroundCream
-import com.konopelko.booksgoals.presentation.common.utils.debounce.drawRightBorder
+import com.konopelko.booksgoals.presentation.common.utils.border.drawRightBorder
 import com.konopelko.booksgoals.presentation.wishes.WishesIntent.HideWishBookDeletedMessage
 import com.konopelko.booksgoals.presentation.wishes.WishesIntent.OnArgsReceived
 import com.konopelko.booksgoals.presentation.wishes.WishesIntent.ResetNavigateToAddGoalScreen
@@ -97,7 +97,7 @@ fun WishesScreen(
 
     if(uiState.showWishBookDeletedMessage) {
         LaunchedEffect("toast_key") {
-            Toast.makeText(context, "Book deleted successfully!", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, "Книга успешно удалена!", Toast.LENGTH_SHORT).show()
             viewModel.acceptIntent(HideWishBookDeletedMessage)
         }
     }
@@ -233,7 +233,7 @@ private fun WishBookCard(
 @Composable
 private fun WishesHeader() = Text(
     modifier = Modifier.padding(top = 16.dp),
-    text = "Books I want to read",
+    text = "Книги, которые я хочу прочитать",
     style = Typography.headlineLarge,
 )
 
@@ -249,7 +249,7 @@ private fun NoWishesContent(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
-            text = "No wishes yet",
+            text = "Здесь ничего нет",
             textAlign = TextAlign.Center
         )
     }

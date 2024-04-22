@@ -10,7 +10,7 @@ import androidx.compose.ui.text.style.TextAlign
 fun StatisticsScreen() {
     Text(
         modifier = Modifier.fillMaxSize(),
-        text = "Statistics Screen",
+        text = "Моя статистика",
         textAlign = TextAlign.Center
     )
 }

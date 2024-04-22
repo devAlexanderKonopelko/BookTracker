@@ -59,7 +59,7 @@ private fun FinishedBooksContent(
 @Composable
 private fun FinishedBooksHeader() = Text(
     modifier = Modifier.padding(top = 16.dp),
-    text = "My finished books",
+    text = "Мои прочитанные книги",
     style = Typography.headlineLarge,
 )
 
@@ -139,7 +139,7 @@ private fun NoFinishedBooksContent() = Column(
     horizontalAlignment = Alignment.CenterHorizontally
 ) {
     Text(
-        text = "No finished books yet",
+        text = "У Вас еще нет книг, которые вы прочитали",
         textAlign = TextAlign.Center
     )
 }

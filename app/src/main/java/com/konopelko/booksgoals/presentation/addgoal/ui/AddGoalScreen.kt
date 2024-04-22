@@ -33,6 +33,7 @@ import com.konopelko.booksgoals.presentation.addgoal.AddGoalIntent.OnCreateGoalC
 import com.konopelko.booksgoals.presentation.addgoal.AddGoalIntent.OnPagesPerDayChanged
 import com.konopelko.booksgoals.presentation.addgoal.AddGoalUiState
 import com.konopelko.booksgoals.presentation.addgoal.AddGoalViewModel
+import com.konopelko.booksgoals.presentation.addgoal.model.AddGoalArgs
 import com.konopelko.booksgoals.presentation.common.component.button.BaseButton
 import com.konopelko.booksgoals.presentation.common.component.slider.BookPagesPerDaySlider
 import com.konopelko.booksgoals.presentation.common.theme.BooksGoalsAppTheme
@@ -51,7 +52,7 @@ private val pagesPerDayRange = 20f..200f
 fun AddGoalScreen(
     viewModel: AddGoalViewModel = getViewModel(),
     onNavigate: (AddGoalNavigationIntent) -> Unit,
-    args: Book?
+    args: AddGoalArgs?
 ) {
     Log.e("HomeScreen", "args = $args")
 
@@ -84,7 +85,7 @@ private fun AddGoalContent(
     with(uiState) {
         Text(
             modifier = Modifier.padding(top = 16.dp),
-            text = "Adding new goal!",
+            text = "Добавляем новую цель!",
             textAlign = TextAlign.Center,
             style = Typography.titleLarge
         )
@@ -111,7 +112,7 @@ private fun AddGoalContent(
                     start = 16.dp,
                     end = 16.dp
                 ),
-            text = "Create Goal",
+            text = "Создать цель",
             isLoading = isSavingGoal,
             enabled = isAddGoalButtonEnabled,
             onClick = { onIntent(OnCreateGoalClicked) }
@@ -119,7 +120,7 @@ private fun AddGoalContent(
 
         if(isGoalSaved) {
             LaunchedEffect("toast key") { //todo: move toast key to constant
-                Toast.makeText(context, "Goal saved successfully!", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, "Цель успешно создана!", Toast.LENGTH_SHORT).show()
                 onNavigate(NavigateToGoalsScreen)
             }
         }
@@ -140,7 +141,7 @@ private fun SelectBookContent(
     horizontalAlignment = Alignment.CenterHorizontally
 ) {
     Text(
-        text = "Select a book from your wishlist or search a new one to use for the new goal"
+        text = "Выберите книгу из вашего списка желаний либо воспользуйтесь поиском для выбора книги."
     )
 
     if(selectedBook != null) {
@@ -153,7 +154,7 @@ private fun SelectBookContent(
 
     BaseButton(
         modifier = Modifier.padding(top = 16.dp),
-        text = "Select a book",
+        text = "Выбрать книгу",
         onClick = { onNavigate(NavigateToSearchBooksScreen) }
     )
 }
@@ -174,7 +175,7 @@ private fun SelectPagerPerDayContent(
 ) {
     var sliderValue by remember { mutableFloatStateOf(20f) }
 
-    Text(text = "Select pages per day you think you will read")
+    Text(text = "Выберите желаемое количество страниц в день")
 
     BookPagesPerDaySlider(
         value = sliderValue,
@@ -189,7 +190,7 @@ private fun SelectPagerPerDayContent(
 
     Text(
         modifier = Modifier.padding(top = 16.dp),
-        text = "If you read ${sliderValue.toInt()} pages per day you will finish book for $daysToFinishGoal days.",
+        text = "Читая по ${sliderValue.toInt()} страниц в день Вы прочитаете книгу за $daysToFinishGoal дней.",
         textAlign = TextAlign.Center,
         style = Typography.bodyMedium
     )

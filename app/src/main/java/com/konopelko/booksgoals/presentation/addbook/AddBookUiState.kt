@@ -1,8 +1,8 @@
 package com.konopelko.booksgoals.presentation.addbook
 
 import com.konopelko.booksgoals.domain.model.book.Book
-import com.konopelko.booksgoals.domain.model.booksearch.SearchScreenOrigin
-import com.konopelko.booksgoals.domain.model.booksearch.SearchScreenOrigin.ADD_GOAL
+import com.konopelko.booksgoals.presentation.searchbooks.model.SearchScreenOrigin
+import com.konopelko.booksgoals.presentation.searchbooks.model.SearchScreenOrigin.ADD_GOAL
 
 //todo: refactor fields to be inside one data class model
 data class AddBookUiState(

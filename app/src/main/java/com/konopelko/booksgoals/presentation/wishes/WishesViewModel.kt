@@ -3,9 +3,9 @@ package com.konopelko.booksgoals.presentation.wishes
 import android.util.Log
 import androidx.lifecycle.viewModelScope
 import com.konopelko.booksgoals.domain.model.book.Book
-import com.konopelko.booksgoals.domain.model.book.WishBookMenuOption
-import com.konopelko.booksgoals.domain.model.book.WishBookMenuOption.DELETE
-import com.konopelko.booksgoals.domain.model.book.WishBookMenuOption.START
+import com.konopelko.booksgoals.presentation.wishes.model.WishBookMenuOption
+import com.konopelko.booksgoals.presentation.wishes.model.WishBookMenuOption.DELETE
+import com.konopelko.booksgoals.presentation.wishes.model.WishBookMenuOption.START
 import com.konopelko.booksgoals.domain.usecase.deletebook.DeleteBookUseCase
 import com.konopelko.booksgoals.domain.usecase.getwishesbooks.GetWishesBooksUseCase
 import com.konopelko.booksgoals.presentation.common.base.BaseViewModel
@@ -22,6 +22,7 @@ import com.konopelko.booksgoals.presentation.wishes.WishesUiState.WishesPartialS
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
+//todo: display books that are [isStarted = false] && [isFinished = false]
 class WishesViewModel(
     initialState: WishesUiState,
     private val getWishesBooksUseCase: GetWishesBooksUseCase,
@@ -95,8 +96,6 @@ class WishesViewModel(
     }
 
     private fun onStartGoalClicked(book: Book) {
-        //todo: add [isStarted] param and update to true?
-        //todo: or delete [Book] from db to update wishes?
         updateUiState(StartGoalClickedState(book))
     }
 

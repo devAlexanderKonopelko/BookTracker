@@ -2,12 +2,12 @@ package com.konopelko.booksgoals.presentation.goals
 
 import android.util.Log
 import androidx.lifecycle.viewModelScope
-import com.konopelko.booksgoals.domain.model.book.Book
 import com.konopelko.booksgoals.domain.model.goal.Goal
-import com.konopelko.booksgoals.domain.model.goal.GoalMenuOption
+import com.konopelko.booksgoals.presentation.goals.model.GoalMenuOption
 import com.konopelko.booksgoals.domain.usecase.addbook.AddBookUseCase
 import com.konopelko.booksgoals.domain.usecase.deletegoal.DeleteGoalUseCase
 import com.konopelko.booksgoals.domain.usecase.getgoals.GetGoalsUseCase
+import com.konopelko.booksgoals.domain.usecase.updatebookisfinished.UpdateBookIsFinishedUseCase
 import com.konopelko.booksgoals.presentation.common.base.BaseViewModel
 import com.konopelko.booksgoals.presentation.goals.GoalsIntent.HideGoalCompletedMessage
 import com.konopelko.booksgoals.presentation.goals.GoalsIntent.OnArgsReceived
@@ -25,6 +25,7 @@ class GoalsViewModel(
     private val getGoalsUseCase: GetGoalsUseCase,
     private val deleteGoalUseCase: DeleteGoalUseCase,
     private val addBookUseCase: AddBookUseCase,
+    private val updateBookIsFinishedUseCase: UpdateBookIsFinishedUseCase
 ) : BaseViewModel<GoalsIntent, GoalsUiState, PartialGoalsState>(
     initialState = initialState
 ) {
@@ -74,23 +75,22 @@ class GoalsViewModel(
         //TODO("Not yet implemented")
     }
 
+    //todo: при завершении цели подумать, как изменяется статистика
+    //todo: подумать, нужно ли удалять цель при завершении
     private fun onFinishGoalClicked(goal: Goal) {
-        //todo: move to usecase/repo
-        val book = Book(
-            title = goal.bookName,
-            authorName = goal.bookAuthor,
-            publishYear = goal.bookPublishYear.toString(), //todo: refactor to remove toString() call
-            pagesAmount = goal.bookPagesAmount.toString(),
-            isFinished = true
-        )
-
         viewModelScope.launch(Dispatchers.IO) {
             //todo: избавиться от вложенности, реализовать последовательное выполнение, что-то типа zip() из rx
+
             deleteGoalUseCase(goal.id).onSuccess {
-                addBookUseCase(book).onSuccess {
+
+                //todo: replace with update book [isFinished = true]
+                updateBookIsFinishedUseCase(
+                    isFinished = true,
+                    bookId = goal.bookId
+                ).onSuccess {
                     updateUiState(GoalCompletedSuccessfullyState(goal.id))
                 }.onError {
-                    Log.e("GoalsViewModel", "error occurred while saving a book: ${it.exception}")
+                    Log.e("GoalsViewModel", "error occurred while updating a book: ${it.exception}")
                 }
             }.onError {
                 Log.e("GoalsViewModel", "error occurred while deleting a goal: ${it.exception}")
@@ -98,10 +98,13 @@ class GoalsViewModel(
         }
     }
 
+    //todo: при удалении цели подумать, как изменяется статистика
+    //todo: подумать, нужно ли удалять книгу из бд
     private fun onDeleteGoalClicked(goalId: Int) {
         Log.e("GoalsViewModel", "delete goal clicked, id: $goalId")
         viewModelScope.launch(Dispatchers.IO) {
             deleteGoalUseCase(goalId).onSuccess {
+                //todo: add toast message
                 Log.e("GoalsViewModel", "goal deleted, id: $goalId")
             }.onError {
                 Log.e("GoalsViewModel", "failed to delete goal, id: $goalId")

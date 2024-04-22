@@ -1,12 +1,12 @@
 <resources>
     <string name="app_name">BooksGoals</string>
 
-    <string name="side_menu_wishes_title">My Wishes</string>
-    <string name="side_menu_goals_title">Current Goals</string>
-    <string name="side_menu_books_title">Finished Books</string>
-    <string name="side_menu_statistics_title">My Statistics</string>
-    <string name="side_menu_achievements_title">Achievements</string>
+    <string name="side_menu_wishes_title">Список Желаний</string>
+    <string name="side_menu_goals_title">Текущие цели</string>
+    <string name="side_menu_books_title">Прочитанные книги</string>
+    <string name="side_menu_statistics_title">Моя статистика</string>
+    <string name="side_menu_achievements_title">Достижения</string>
 
     <!-- Side Navigation Menu -->
-    <string name="side_menu_header_username_text">Username</string>
+    <string name="side_menu_header_username_text">Пользователь</string>
 </resources>

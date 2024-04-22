@@ -10,7 +10,7 @@ import androidx.compose.ui.text.style.TextAlign
 fun AchievementsScreen() {
     Text(
         modifier = Modifier.fillMaxSize(),
-        text = "Achievements Screen",
+        text = "Мои достижения",
         textAlign = TextAlign.Center
     )
 }

@@ -1,4 +1,4 @@
-package com.konopelko.booksgoals.domain.model.goal
+package com.konopelko.booksgoals.presentation.goals.model
 
 enum class GoalMenuOption {
     FREEZE,

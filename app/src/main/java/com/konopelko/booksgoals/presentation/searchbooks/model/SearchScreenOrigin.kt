@@ -1,4 +1,4 @@
-package com.konopelko.booksgoals.domain.model.booksearch
+package com.konopelko.booksgoals.presentation.searchbooks.model
 
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize

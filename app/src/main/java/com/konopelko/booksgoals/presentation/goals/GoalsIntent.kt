@@ -1,7 +1,7 @@
 package com.konopelko.booksgoals.presentation.goals
 
 import com.konopelko.booksgoals.domain.model.goal.Goal
-import com.konopelko.booksgoals.domain.model.goal.GoalMenuOption
+import com.konopelko.booksgoals.presentation.goals.model.GoalMenuOption
 
 sealed interface GoalsIntent {
 

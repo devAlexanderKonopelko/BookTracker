@@ -12,7 +12,7 @@ data class AddGoalUiState(
 
     sealed interface AddGoalPartialState {
 
-        data class BookSelected(val book: Book) : AddGoalPartialState
+        data class BookSelected(val selectedBook: Book) : AddGoalPartialState
         data class PagesPerDayChanged(val newPagesPerDay: Int) : AddGoalPartialState
 
         data class SavingGoalState(

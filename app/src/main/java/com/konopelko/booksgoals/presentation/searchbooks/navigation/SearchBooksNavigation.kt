@@ -3,9 +3,10 @@ package com.konopelko.booksgoals.presentation.searchbooks.navigation
 import android.util.Log
 import androidx.navigation.NavController
 import com.konopelko.booksgoals.domain.model.book.Book
-import com.konopelko.booksgoals.domain.model.booksearch.SearchScreenOrigin
+import com.konopelko.booksgoals.presentation.searchbooks.model.SearchScreenOrigin
 import com.konopelko.booksgoals.presentation.addbook.AddBookViewModel
 import com.konopelko.booksgoals.presentation.addgoal.AddGoalViewModel
+import com.konopelko.booksgoals.presentation.addgoal.model.AddGoalArgs
 import com.konopelko.booksgoals.presentation.navigation.MainNavOption
 import com.konopelko.booksgoals.presentation.searchbooks.SearchBooksIntent.SearchBooksNavigationIntent
 import com.konopelko.booksgoals.presentation.searchbooks.SearchBooksIntent.SearchBooksNavigationIntent.NavigateToAddGoalScreen
@@ -45,7 +46,7 @@ class SearchBooksNavigation(
 
     private fun navigateToAddGoalScreen(book: Book) {
         navController.previousBackStackEntry?.savedStateHandle?.apply {
-            set(AddGoalViewModel.ARGS_BOOK_KEY, book)
+            set(AddGoalViewModel.ARGS_ADD_GOAL_KEY, AddGoalArgs(selectedBook = book))
         }
         navController.navigate(MainNavOption.AddGoalScreen.name) {
 

@@ -19,7 +19,7 @@ import androidx.compose.ui.text.capitalize
 import androidx.compose.ui.text.intl.Locale
 import androidx.compose.ui.tooling.preview.Preview
 import com.konopelko.booksgoals.domain.model.book.Book
-import com.konopelko.booksgoals.domain.model.book.WishBookMenuOption
+import com.konopelko.booksgoals.presentation.wishes.model.WishBookMenuOption
 import com.konopelko.booksgoals.presentation.common.theme.BooksGoalsAppTheme
 import com.konopelko.booksgoals.presentation.wishes.WishesIntent
 import com.konopelko.booksgoals.presentation.wishes.WishesIntent.OnWishBookMenuOptionClicked

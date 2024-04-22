@@ -5,6 +5,7 @@ import com.konopelko.booksgoals.domain.model.goal.Goal
 
 fun GoalEntity.toDomainModel(): Goal = Goal(
     id = id,
+    bookId = bookId,
     bookName = bookName,
     bookAuthor = bookAuthorName,
     bookPublishYear = bookPublishYear.toInt(),
@@ -13,6 +14,16 @@ fun GoalEntity.toDomainModel(): Goal = Goal(
         bookPagesAmount,
         pagesCompletedAmount
     )
+)
+
+fun Goal.toDatabaseModel(): GoalEntity = GoalEntity(
+    bookId = bookId,
+    bookName = bookName,
+    bookAuthorName = bookAuthor,
+    bookPublishYear = bookPublishYear.toString(),
+    bookPagesAmount = bookPagesAmount,
+    expectedPagesPerDay = expectedPagesPerDay,
+    expectedFinishDaysAmount = expectedFinishDaysAmount
 )
 
 private fun getGoalProgress(

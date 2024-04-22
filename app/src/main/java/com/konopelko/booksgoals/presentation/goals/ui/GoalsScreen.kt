@@ -42,7 +42,7 @@ import com.konopelko.booksgoals.domain.model.goal.Goal
 import com.konopelko.booksgoals.presentation.common.theme.BooksGoalsAppTheme
 import com.konopelko.booksgoals.presentation.common.theme.Typography
 import com.konopelko.booksgoals.presentation.common.theme.backgroundCream
-import com.konopelko.booksgoals.presentation.common.utils.debounce.drawRightBorder
+import com.konopelko.booksgoals.presentation.common.utils.border.drawRightBorder
 import com.konopelko.booksgoals.presentation.goals.GoalsIntent
 import com.konopelko.booksgoals.presentation.goals.GoalsIntent.OnArgsReceived
 import com.konopelko.booksgoals.presentation.goals.GoalsIntent.GoalsNavigationIntent
@@ -104,7 +104,7 @@ fun GoalsScreen(
 
     if(uiState.showGoalCompletedMessage) {
         LaunchedEffect("toast key") {
-            Toast.makeText(context, "Goal completed successfully!", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, "Цель успешна завершена!", Toast.LENGTH_SHORT).show()
             viewModel.acceptIntent(HideGoalCompletedMessage)
         }
     }
@@ -126,7 +126,7 @@ private fun HomeScreenGoalsContent(
     ) {
         Text(
             modifier = Modifier.padding(top = 16.dp),
-            text = "My goals",
+            text = "Мои цели",
             style = Typography.headlineLarge,
         )
 
@@ -263,12 +263,12 @@ private fun HomeScreenContentNoGoals(
     horizontalAlignment = Alignment.CenterHorizontally
 ) {
     Text(
-        text = "No goals yet",
+        text = "У вас ещё нет целей. Добавьте новую цель прямо сейчас!",
         textAlign = TextAlign.Center
     )
 
     Button(onClick = { onNavigate(NavigateToAddGoalScreen) }) {
-        Text(text = "Add Goal")
+        Text(text = "Добавить цель")
     }
 }
 

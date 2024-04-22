@@ -19,9 +19,9 @@ import androidx.compose.ui.text.capitalize
 import androidx.compose.ui.text.intl.Locale
 import androidx.compose.ui.tooling.preview.Preview
 import com.konopelko.booksgoals.domain.model.goal.Goal
-import com.konopelko.booksgoals.domain.model.goal.GoalMenuOption
-import com.konopelko.booksgoals.domain.model.goal.GoalMenuOption.DELETE
-import com.konopelko.booksgoals.domain.model.goal.GoalMenuOption.FREEZE
+import com.konopelko.booksgoals.presentation.goals.model.GoalMenuOption
+import com.konopelko.booksgoals.presentation.goals.model.GoalMenuOption.DELETE
+import com.konopelko.booksgoals.presentation.goals.model.GoalMenuOption.FREEZE
 import com.konopelko.booksgoals.presentation.common.theme.BooksGoalsAppTheme
 import com.konopelko.booksgoals.presentation.goals.GoalsIntent
 import com.konopelko.booksgoals.presentation.goals.GoalsIntent.OnGoalOptionClicked

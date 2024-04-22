@@ -1,7 +1,7 @@
 package com.konopelko.booksgoals.presentation.wishes
 
 import com.konopelko.booksgoals.domain.model.book.Book
-import com.konopelko.booksgoals.domain.model.book.WishBookMenuOption
+import com.konopelko.booksgoals.presentation.wishes.model.WishBookMenuOption
 
 sealed interface WishesIntent {
 

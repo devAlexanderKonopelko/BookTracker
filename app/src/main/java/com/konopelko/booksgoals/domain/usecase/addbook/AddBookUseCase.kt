@@ -8,6 +8,6 @@ class AddBookUseCase(
     private val bookRepository: BookRepository
 ) {
 
-    suspend operator fun invoke(book: Book): Result<Unit> =
+    suspend operator fun invoke(book: Book): Result<Int> =
         bookRepository.addBook(book)
 }

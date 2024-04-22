@@ -21,7 +21,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.text.isDigitsOnly
-import com.konopelko.booksgoals.domain.model.booksearch.SearchScreenOrigin
+import com.konopelko.booksgoals.presentation.searchbooks.model.SearchScreenOrigin
 import com.konopelko.booksgoals.presentation.addbook.AddBookIntent
 import com.konopelko.booksgoals.presentation.addbook.AddBookIntent.AddBookNavigationIntent
 import com.konopelko.booksgoals.presentation.addbook.AddBookIntent.AddBookNavigationIntent.NavigateToAddGoalScreen
@@ -55,7 +55,7 @@ fun AddBookScreen(
 
     if(uiState.isBookAdded) {
         LaunchedEffect("toast key") {
-            Toast.makeText(context, "Book added successfully!", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, "Книга успешно добавлена!", Toast.LENGTH_SHORT).show()
 
             when(uiState.screenOrigin) {
                 SearchScreenOrigin.ADD_GOAL -> onNavigate(NavigateToAddGoalScreen(uiState.book))
@@ -79,7 +79,7 @@ private fun AddBookContent(
 ) {
     Text(
         modifier = Modifier.padding(top = 16.dp),
-        text = "Adding new book!",
+        text = "Добавляем новую книгу!",
         textAlign = TextAlign.Center,
         style = Typography.titleLarge
     )
@@ -95,7 +95,7 @@ private fun AddBookContent(
             onValueChange = {
                 onIntent(OnTitleChanged(bookTitle = it))
             },
-            placeholder = { Text(text = "Type book name") },
+            placeholder = { Text(text = "Введите название книги") },
             isError = isBookTitleError
         )
 
@@ -107,7 +107,7 @@ private fun AddBookContent(
             onValueChange = {
                 onIntent(OnAuthorNameChanged(authorName = it))
             },
-            placeholder = { Text(text = "Type author name") },
+            placeholder = { Text(text = "Введите автора книги") },
             isError = isAuthorNameError
         )
 
@@ -121,7 +121,7 @@ private fun AddBookContent(
                     onIntent(OnPublishYearChanged(publishYear = it))
                 }
             },
-            placeholder = { Text(text = "Type book publish year") },
+            placeholder = { Text(text = "Введите год написания") },
             isError = isPublishYearError,
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
         )
@@ -136,7 +136,7 @@ private fun AddBookContent(
                     onIntent(OnPagesAmountChanged(pagesAmount = it))
                 }
             },
-            placeholder = { Text(text = "Type book pages amount") },
+            placeholder = { Text(text = "Введите количество страниц") },
             isError = isPagesAmountError,
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
         )
@@ -144,7 +144,7 @@ private fun AddBookContent(
         Spacer(modifier = Modifier.weight(1f))
 
         BaseButton(
-            text = "Add a book",
+            text = "Добавить книгу",
             enabled = isSaveButtonEnabled,
             isLoading = isSaveButtonLoading,
             onClick = { onIntent(OnAddBookClicked) }

@@ -1,7 +1,7 @@
 package com.konopelko.booksgoals.presentation.searchbooks
 
 import com.konopelko.booksgoals.domain.model.book.Book
-import com.konopelko.booksgoals.domain.model.booksearch.SearchScreenOrigin
+import com.konopelko.booksgoals.presentation.searchbooks.model.SearchScreenOrigin
 
 sealed interface SearchBooksIntent {
 

@@ -27,7 +27,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.konopelko.booksgoals.domain.model.book.Book
-import com.konopelko.booksgoals.domain.model.booksearch.SearchScreenOrigin
+import com.konopelko.booksgoals.presentation.searchbooks.model.SearchScreenOrigin
 import com.konopelko.booksgoals.presentation.common.theme.BooksGoalsAppTheme
 import com.konopelko.booksgoals.presentation.common.utils.debounce.DebounceEffect
 import com.konopelko.booksgoals.presentation.searchbooks.SearchBooksIntent
@@ -73,7 +73,7 @@ fun SearchBooksScreen(
 
     if(uiState.shouldNavigateToWishesScreen) {
         LaunchedEffect("navigate_to_wishes_key") {
-            Toast.makeText(context, "Book added to wishes successfully!", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, "Книга успешно добавлена в список желаний!", Toast.LENGTH_SHORT).show()
             onNavigate(NavigateToWishesScreen)
         }
     }
@@ -99,7 +99,7 @@ fun SearchBooksScreenContent(
             onValueChange = {
                 onIntent(OnSearchTextChanged(text = it))
             },
-            placeholder = { Text(text = "Type book name") }
+            placeholder = { Text(text = "Введите название книги") }
         )
 
         when {
@@ -163,7 +163,7 @@ private fun NoBooksContent(
     verticalArrangement = Arrangement.Center
 ) {
     Text(
-        text = "No books are found yet",
+        text = "Ничего не найдено",
         textAlign = TextAlign.Center
     )
     Button(
@@ -172,7 +172,7 @@ private fun NoBooksContent(
             onNavigate(OnAddNewBookClicked(screenOrigin))
         }
     ) {
-        Text(text = "Add new book")
+        Text(text = "Добавить новую книгу")
     }
 }
 

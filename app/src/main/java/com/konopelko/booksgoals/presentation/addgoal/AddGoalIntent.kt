@@ -1,12 +1,12 @@
 package com.konopelko.booksgoals.presentation.addgoal
 
-import com.konopelko.booksgoals.domain.model.book.Book
+import com.konopelko.booksgoals.presentation.addgoal.model.AddGoalArgs
 
 sealed interface AddGoalIntent {
 
     object OnCreateGoalClicked : AddGoalIntent
 
-    data class OnArgsReceived(val args: Book?) : AddGoalIntent
+    data class OnArgsReceived(val args: AddGoalArgs?) : AddGoalIntent
     data class OnPagesPerDayChanged(val pagesPerDay: Int) : AddGoalIntent
 
     sealed interface AddGoalNavigationIntent {

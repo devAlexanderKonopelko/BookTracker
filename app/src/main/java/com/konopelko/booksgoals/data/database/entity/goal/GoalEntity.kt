@@ -11,6 +11,9 @@ data class GoalEntity(
     @PrimaryKey(autoGenerate = true)
     val id: Int = 0,
 
+    @ColumnInfo(name = "book_id")
+    val bookId: Int,
+
     @ColumnInfo(name = "book_name")
     val bookName: String,
 
@@ -36,5 +39,5 @@ data class GoalEntity(
     val expectedPagesPerDay: Int,
 
     @ColumnInfo(name = "expected_finish_days_amount")
-    val expectedFinishDaysAmount: Float
+    val expectedFinishDaysAmount: Int
 )

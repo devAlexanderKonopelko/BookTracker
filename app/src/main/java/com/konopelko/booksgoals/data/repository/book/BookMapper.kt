@@ -8,7 +8,8 @@ fun Book.toDatabaseModel(): BookEntity = BookEntity(
     bookAuthorName = authorName,
     bookPublishYear = publishYear,
     bookPagesAmount = pagesAmount.toInt(),
-    isFinished = isFinished
+    isFinished = isFinished,
+    isStarted = isStarted
 )
 
 fun BookEntity.toDomainModel(): Book = Book(
@@ -17,5 +18,6 @@ fun BookEntity.toDomainModel(): Book = Book(
     authorName = bookAuthorName,
     publishYear = bookPublishYear,
     pagesAmount = bookPagesAmount.toString(),
-    isFinished = isFinished
+    isFinished = isFinished,
+    isStarted = isStarted
 )

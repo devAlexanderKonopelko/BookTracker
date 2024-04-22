@@ -23,6 +23,9 @@ data class BookEntity(
     @ColumnInfo(name = "pages_amount")
     val bookPagesAmount: Int,
 
+    @ColumnInfo(name = "is_started")
+    val isStarted: Boolean,
+
     @ColumnInfo(name = "is_finished")
     val isFinished: Boolean
 )

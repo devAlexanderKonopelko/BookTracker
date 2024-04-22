@@ -1,4 +1,4 @@
-package com.konopelko.booksgoals.presentation.common.utils.debounce
+package com.konopelko.booksgoals.presentation.common.utils.border
 
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
