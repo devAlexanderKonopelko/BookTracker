@@ -2,6 +2,7 @@ package com.konopelko.booksgoals.presentation.goals.ui
 
 import android.widget.Toast
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -47,6 +48,7 @@ import com.konopelko.booksgoals.presentation.goals.GoalsIntent
 import com.konopelko.booksgoals.presentation.goals.GoalsIntent.OnArgsReceived
 import com.konopelko.booksgoals.presentation.goals.GoalsIntent.GoalsNavigationIntent
 import com.konopelko.booksgoals.presentation.goals.GoalsIntent.GoalsNavigationIntent.NavigateToAddGoalScreen
+import com.konopelko.booksgoals.presentation.goals.GoalsIntent.GoalsNavigationIntent.NavigateToGoalDetailsScreen
 import com.konopelko.booksgoals.presentation.goals.GoalsIntent.HideGoalCompletedMessage
 import com.konopelko.booksgoals.presentation.goals.GoalsViewModel
 import org.koin.androidx.compose.getViewModel
@@ -85,7 +87,6 @@ fun GoalsScreen(
         )
         else -> HomeScreenGoalsContent(
             goals = uiState.goals,
-            onIntent = viewModel::acceptIntent,
             onNavigate = onNavigate,
             onGoalMenuClicked = { goal ->
                 showGoalMenuOptions = true
@@ -113,7 +114,6 @@ fun GoalsScreen(
 @Composable
 private fun HomeScreenGoalsContent(
     goals: List<Goal>,
-    onIntent: (GoalsIntent) -> Unit,
     onNavigate: (GoalsNavigationIntent) -> Unit,
     onGoalMenuClicked: (Goal) -> Unit,
     modifier: Modifier = Modifier
@@ -132,7 +132,7 @@ private fun HomeScreenGoalsContent(
 
         GoalsListContent(
             goals = goals,
-            onIntent = onIntent,
+            onNavigate = onNavigate,
             onGoalMenuClicked = onGoalMenuClicked
         )
     }
@@ -153,7 +153,7 @@ private fun HomeScreenGoalsContent(
 @Composable
 private fun GoalsListContent(
     goals: List<Goal>,
-    onIntent: (GoalsIntent) -> Unit,
+    onNavigate: (GoalsNavigationIntent) -> Unit,
     onGoalMenuClicked: (Goal) -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -168,7 +168,8 @@ private fun GoalsListContent(
         items(goals) { goal ->
             GoalCard(
                 goal = goal,
-                onGoalMenuClicked = onGoalMenuClicked
+                onGoalMenuClicked = onGoalMenuClicked,
+                onNavigate = onNavigate
             )
         }
     }
@@ -177,11 +178,13 @@ private fun GoalsListContent(
 @Composable
 private fun GoalCard(
     goal: Goal,
-    onGoalMenuClicked: (Goal) -> Unit
+    onGoalMenuClicked: (Goal) -> Unit,
+    onNavigate: (GoalsNavigationIntent) -> Unit
 ) = Row(
     modifier = Modifier
         .fillMaxWidth()
         .padding(top = 16.dp)
+        .clickable { onNavigate(NavigateToGoalDetailsScreen(goal.id)) }
         .background(
             color = Color.LightGray,
             shape = RoundedCornerShape(12.dp)
@@ -301,7 +304,6 @@ private fun HomeScreenPreviewGoalsList() = BooksGoalsAppTheme {
                 progress = 100
             )
         ),
-        onIntent = {},
         onNavigate = {},
         onGoalMenuClicked = {}
     )

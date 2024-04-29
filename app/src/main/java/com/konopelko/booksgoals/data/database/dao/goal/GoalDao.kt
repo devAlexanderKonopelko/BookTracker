@@ -12,6 +12,9 @@ interface GoalDao {
     @Query("SELECT * FROM goals")
     fun getGoals(): Flow<List<GoalEntity>> //todo: refactor, remove [Flow]
 
+    @Query("SELECT * FROM goals WHERE id = :goalId")
+    fun getGoalById(goalId: Int): GoalEntity
+
     @Insert
     fun addGoal(goal: GoalEntity)
 

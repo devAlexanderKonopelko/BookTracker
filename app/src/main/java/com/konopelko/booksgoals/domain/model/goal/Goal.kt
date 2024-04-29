@@ -11,6 +11,9 @@ data class Goal(
     val bookAuthor: String = "",
     val bookPublishYear: Int = 0,
     val bookPagesAmount: Int = 0,
+    val completedPagesAmount: Int = 0,
+    val averageReadSpeed: Int = 0,
+    val daysInProgress: Int = 1,
     val expectedPagesPerDay: Int = 0,
     val expectedFinishDaysAmount: Int = 0,
     val progress: Int = 0

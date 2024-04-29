@@ -1,6 +1,5 @@
 package com.konopelko.booksgoals.data.api
 
-import com.konopelko.booksgoals.data.api.query.common.FIELD_PAGE
 import com.konopelko.booksgoals.data.api.query.common.FIELD_PAGE_LIMIT
 import com.konopelko.booksgoals.data.api.query.common.FIELD_PAGE_LIMIT_VALUE
 import com.konopelko.booksgoals.data.api.query.searchbooks.searchBooksQueryFields

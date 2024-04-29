@@ -126,4 +126,9 @@ class GoalsViewModel(
             }
         }
     }
+
+    companion object {
+
+        const val ARGS_GOAL_ADDED_KEY = "goal_added"
+    }
 }

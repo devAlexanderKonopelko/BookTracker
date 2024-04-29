@@ -1,46 +1,55 @@
 package com.konopelko.booksgoals.presentation.searchbooks.navigation
 
-import android.util.Log
+import androidx.compose.runtime.Composable
 import androidx.navigation.NavController
 import com.konopelko.booksgoals.domain.model.book.Book
 import com.konopelko.booksgoals.presentation.searchbooks.model.SearchScreenOrigin
-import com.konopelko.booksgoals.presentation.addbook.AddBookViewModel
 import com.konopelko.booksgoals.presentation.addgoal.AddGoalViewModel
 import com.konopelko.booksgoals.presentation.addgoal.model.AddGoalArgs
+import com.konopelko.booksgoals.presentation.common.base.navigation.BaseScreenNavigation
 import com.konopelko.booksgoals.presentation.navigation.MainNavOption
 import com.konopelko.booksgoals.presentation.searchbooks.SearchBooksIntent.SearchBooksNavigationIntent
 import com.konopelko.booksgoals.presentation.searchbooks.SearchBooksIntent.SearchBooksNavigationIntent.NavigateToAddGoalScreen
 import com.konopelko.booksgoals.presentation.searchbooks.SearchBooksIntent.SearchBooksNavigationIntent.NavigateToWishesScreen
 import com.konopelko.booksgoals.presentation.searchbooks.SearchBooksIntent.SearchBooksNavigationIntent.OnAddNewBookClicked
+import com.konopelko.booksgoals.presentation.searchbooks.SearchBooksViewModel
+import com.konopelko.booksgoals.presentation.searchbooks.model.SearchBooksArgs
+import com.konopelko.booksgoals.presentation.searchbooks.model.SearchBooksArgsType
+import com.konopelko.booksgoals.presentation.searchbooks.ui.SearchBooksScreen
 import com.konopelko.booksgoals.presentation.wishes.WishesViewModel
 
-//todo: create [BaseNavigationHandler]
 class SearchBooksNavigation(
     private val navController: NavController
+): BaseScreenNavigation<SearchBooksNavigationIntent, SearchBooksArgs>(
+    screenName = MainNavOption.SearchBooksScreen.name,
+    defaultOptionalArgs = SearchBooksArgs(),
+    optionalArgsKey = SearchBooksViewModel.ARGS_SCREEN_ORIGIN_KEY,
+    optionalArgsType = SearchBooksArgsType()
 ) {
 
-    fun onNavigate(intent: SearchBooksNavigationIntent) = when(intent) {
+    @Composable
+    override fun ScreenComposable(
+        onNavigate: (SearchBooksNavigationIntent) -> Unit,
+        args: SearchBooksArgs
+    ) = SearchBooksScreen(
+        onNavigate = onNavigate,
+        args = args
+    )
+
+    override fun onNavigate(intent: SearchBooksNavigationIntent) = when(intent) {
         NavigateToWishesScreen -> navigateToWishesScreen()
         is NavigateToAddGoalScreen -> navigateToAddGoalScreen(intent.book)
         is OnAddNewBookClicked -> navigateToAddBookScreen(intent.origin)
     }
 
     private fun navigateToAddBookScreen(origin: SearchScreenOrigin) {
-        with(navController) {
-            navigate(prepareAddBookScreenNameWithArgs(origin)) {
-                currentBackStackEntry?.apply {
-                    Log.e("WishesNavigation", "set search screen origin")
-                    savedStateHandle[AddBookViewModel.ARGS_SCREEN_ORIGIN_KEY] = origin
-                }
-            }
-        }
+        navController.navigate(prepareAddBookScreenNameWithArgs(origin))
     }
 
     private fun navigateToWishesScreen() {
         navController.previousBackStackEntry?.savedStateHandle?.apply {
             set(WishesViewModel.ARGS_WISH_BOOK_ADDED_KEY, true)
         }
-
         navController.popBackStack()
     }
 
@@ -57,7 +66,6 @@ class SearchBooksNavigation(
         }
     }
 
-    //todo: move to AddBookScreenNavigation
     private fun prepareAddBookScreenNameWithArgs(origin: SearchScreenOrigin): String =
-        "${MainNavOption.AddBookScreen.name}/{${origin}}"
+        "${MainNavOption.AddBookScreen.name}?screen_origin=$origin"
 }

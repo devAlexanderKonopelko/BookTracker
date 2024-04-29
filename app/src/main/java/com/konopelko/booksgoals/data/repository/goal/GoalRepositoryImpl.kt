@@ -25,4 +25,8 @@ class GoalRepositoryImpl(
     override suspend fun deleteGoal(goalId: Int): Result<Unit> = databaseCall {
         goalDao.deleteGoal(goalId = goalId)
     }
+
+    override suspend fun getGoalById(goalId: Int): Result<Goal> = databaseCall {
+        goalDao.getGoalById(goalId).toDomainModel()
+    }
 }

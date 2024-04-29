@@ -11,6 +11,7 @@ import androidx.compose.material.TopAppBar
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.res.painterResource
+import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
 import com.konopelko.booksgoals.R
@@ -19,6 +20,9 @@ import com.konopelko.booksgoals.presentation.common.component.navdrawer.ui.NavDr
 import com.konopelko.booksgoals.presentation.common.theme.BooksGoalsAppTheme
 import com.konopelko.booksgoals.presentation.common.theme.backgroundDark
 import com.konopelko.booksgoals.presentation.common.theme.backgroundWhite
+import com.konopelko.booksgoals.presentation.goals.navigation.GoalsScreenNavigation
+import com.konopelko.booksgoals.presentation.navigation.MainNavOption
+import com.konopelko.booksgoals.presentation.navigation.MainNavOption.GoalsScreen
 import com.konopelko.booksgoals.presentation.navigation.NavRoutes.MainRoute
 import com.konopelko.booksgoals.presentation.navigation.appStartScreen
 import com.konopelko.booksgoals.presentation.navigation.mainGraph
@@ -75,10 +79,7 @@ class HomeActivity : ComponentActivity() {
                             navController = navController,
                             startDestination = MainRoute.name
                         ) {
-                            mainGraph(
-                                navController = navController
-                            )
-                            //more can be added
+                            mainGraph(navController = navController)
                         }
                     }
                 )

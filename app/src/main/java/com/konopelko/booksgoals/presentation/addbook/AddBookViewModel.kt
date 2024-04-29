@@ -29,10 +29,6 @@ import com.konopelko.booksgoals.presentation.common.base.BaseViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-//todo: ----------------------------
-//todo: handle adding a wish book
-//todo: ----------------------------
-
 class AddBookViewModel(
     initialState: AddBookUiState,
     private val addBookUseCase: AddBookUseCase

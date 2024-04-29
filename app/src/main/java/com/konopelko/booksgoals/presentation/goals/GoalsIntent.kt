@@ -15,6 +15,8 @@ sealed interface GoalsIntent {
 
     sealed interface GoalsNavigationIntent {
 
-        object NavigateToAddGoalScreen : GoalsNavigationIntent
+        data object NavigateToAddGoalScreen : GoalsNavigationIntent
+
+        data class NavigateToGoalDetailsScreen(val goalId: Int) : GoalsNavigationIntent
     }
 }

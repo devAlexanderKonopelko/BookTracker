@@ -43,7 +43,7 @@ import org.koin.androidx.compose.getViewModel
 fun AddBookScreen(
     viewModel: AddBookViewModel = getViewModel(),
     onNavigate: (AddBookNavigationIntent) -> Unit,
-    args: SearchScreenOrigin?
+    args: SearchScreenOrigin
 ) {
     val context = LocalContext.current
     val uiState by viewModel.uiState.collectAsState()
@@ -65,7 +65,7 @@ fun AddBookScreen(
     }
 
     LaunchedEffect("args_key") {
-        args?.let { viewModel.acceptIntent(OnArgsReceived(it)) }
+        viewModel.acceptIntent(OnArgsReceived(args))
     }
 }
 

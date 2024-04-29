@@ -41,6 +41,7 @@ import com.konopelko.booksgoals.presentation.searchbooks.SearchBooksIntent.Searc
 import com.konopelko.booksgoals.presentation.searchbooks.SearchBooksIntent.SearchBooksNavigationIntent.OnAddNewBookClicked
 import com.konopelko.booksgoals.presentation.searchbooks.SearchBooksUiState
 import com.konopelko.booksgoals.presentation.searchbooks.SearchBooksViewModel
+import com.konopelko.booksgoals.presentation.searchbooks.model.SearchBooksArgs
 import org.koin.androidx.compose.getViewModel
 
 //todo: move onNavigate to viewModel
@@ -48,7 +49,7 @@ import org.koin.androidx.compose.getViewModel
 fun SearchBooksScreen(
     viewModel: SearchBooksViewModel = getViewModel(),
     onNavigate: (SearchBooksNavigationIntent) -> Unit,
-    args: SearchScreenOrigin?
+    args: SearchBooksArgs
 ) {
     val context = LocalContext.current
     val uiState by viewModel.uiState.collectAsState()
@@ -62,7 +63,7 @@ fun SearchBooksScreen(
     )
 
     LaunchedEffect("args_key") {
-        args?.let { viewModel.acceptIntent(OnArgsReceived(it)) }
+        viewModel.acceptIntent(OnArgsReceived(args))
     }
 
     if(uiState.shouldNavigateToAddGoalScreen) {

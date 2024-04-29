@@ -10,10 +10,15 @@ fun GoalEntity.toDomainModel(): Goal = Goal(
     bookAuthor = bookAuthorName,
     bookPublishYear = bookPublishYear.toInt(),
     bookPagesAmount = bookPagesAmount,
+    completedPagesAmount = pagesCompletedAmount,
+    daysInProgress = goalInProgressDaysAmount,
     progress = getGoalProgress(
         bookPagesAmount,
         pagesCompletedAmount
-    )
+    ),
+    averageReadSpeed = averageReadSpeed.toInt(),
+    expectedPagesPerDay = expectedPagesPerDay,
+    expectedFinishDaysAmount = expectedFinishDaysAmount
 )
 
 fun Goal.toDatabaseModel(): GoalEntity = GoalEntity(
@@ -22,6 +27,8 @@ fun Goal.toDatabaseModel(): GoalEntity = GoalEntity(
     bookAuthorName = bookAuthor,
     bookPublishYear = bookPublishYear.toString(),
     bookPagesAmount = bookPagesAmount,
+    pagesCompletedAmount = completedPagesAmount,
+    goalInProgressDaysAmount = daysInProgress,
     expectedPagesPerDay = expectedPagesPerDay,
     expectedFinishDaysAmount = expectedFinishDaysAmount
 )

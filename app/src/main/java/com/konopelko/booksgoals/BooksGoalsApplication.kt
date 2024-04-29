@@ -7,6 +7,7 @@ import com.konopelko.booksgoals.di.repository.repositoryModule
 import com.konopelko.booksgoals.di.ui.addbook.addBookModule
 import com.konopelko.booksgoals.di.ui.addgoal.addGoalModule
 import com.konopelko.booksgoals.di.ui.finishedbooks.finishedBooksModule
+import com.konopelko.booksgoals.di.ui.goaldetails.goalDetailsModule
 import com.konopelko.booksgoals.di.ui.home.homeModule
 import com.konopelko.booksgoals.di.ui.searchbooks.searchBooksModule
 import com.konopelko.booksgoals.di.ui.wishes.wishesModule
@@ -30,7 +31,7 @@ import org.koin.core.context.startKoin
  - Обновляем [isFinished] книги в true (книга переходит в [FinishedBooks]) +
 
  При удалении [Goal] через Goals:
- - Удаляем цель из бд
+ - Удаляем цель из бд +
  - Удаляем книгу из бд? //todo
 
  */
@@ -48,6 +49,22 @@ import org.koin.core.context.startKoin
  (в цикле): Statistics -> QUERY (SELECT IsBookFinished = 1 WHERE [Date] in [range of values])
  (в цикле): Statistics -> QUERY (SELECT PagesAmount WHERE [Date] in [range of values])
  [range of values] - неделя/месяц/год
+
+
+
+
+//todo
+ Добавить кнопку-ссылку на апи.
+
+ //todo
+ - Дефолтная картинка на книги без обложки
+ - Там, где нет автора - показывать что-то типа "Неизвестный автор"
+ - Увеличить page на SearchBooks до 100
+ - Обновить весь UI
+
+ //todo
+ Обновить бд с учётом нормализации.
+
  */
 //-------------------------------
 
@@ -71,7 +88,8 @@ class BooksGoalsApplication: Application() {
                 addGoalModule,
                 addBookModule,
                 finishedBooksModule,
-                wishesModule
+                wishesModule,
+                goalDetailsModule
             )
         }
     }

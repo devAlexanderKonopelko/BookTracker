@@ -19,6 +19,7 @@ import com.konopelko.booksgoals.presentation.searchbooks.SearchBooksUiState.Part
 import com.konopelko.booksgoals.presentation.searchbooks.SearchBooksUiState.PartialSearchBooksState.SearchInProgress
 import com.konopelko.booksgoals.presentation.searchbooks.SearchBooksUiState.PartialSearchBooksState.SearchResultsReceived
 import com.konopelko.booksgoals.presentation.searchbooks.SearchBooksUiState.PartialSearchBooksState.SearchTextChanged
+import com.konopelko.booksgoals.presentation.searchbooks.model.SearchBooksArgs
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
@@ -64,9 +65,9 @@ class SearchBooksViewModel(
         )
     }
 
-    private fun onArgsReceived(args: SearchScreenOrigin) {
+    private fun onArgsReceived(args: SearchBooksArgs) {
         Log.e("SearchBooksViewModel", "args received: $args")
-        screenOrigin = args
+        screenOrigin = args.screenOrigin
     }
 
     private fun onBookClicked(book: Book) {
