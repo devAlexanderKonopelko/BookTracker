@@ -26,14 +26,11 @@ data class GoalEntity(
     @ColumnInfo(name = "book_pages_amount")
     val bookPagesAmount: Int,
 
+    @ColumnInfo(name = "creation_date")
+    val goalCreationDate: String,
+
     @ColumnInfo(name = "pages_completed_amount")
     val pagesCompletedAmount: Int = 0,
-
-    @ColumnInfo(name = "goal_in_progress_days_amount")
-    val goalInProgressDaysAmount: Int = 1,
-
-    @ColumnInfo(name = "average_read_speed")
-    val averageReadSpeed: Float = 0f,
 
     @ColumnInfo(name = "expected_pages_per_day")
     val expectedPagesPerDay: Int,

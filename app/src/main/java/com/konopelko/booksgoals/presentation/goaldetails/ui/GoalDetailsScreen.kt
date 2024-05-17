@@ -1,5 +1,6 @@
 package com.konopelko.booksgoals.presentation.goaldetails.ui
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -12,7 +13,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LinearProgressIndicator
@@ -28,7 +31,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextDecoration
-import androidx.compose.ui.text.style.TextDecoration.Companion
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -39,11 +41,12 @@ import com.konopelko.booksgoals.presentation.goaldetails.GoalDetailsIntent.GoalD
 import com.konopelko.booksgoals.presentation.goaldetails.GoalDetailsIntent.OnAddProgressClicked
 import com.konopelko.booksgoals.presentation.goaldetails.GoalDetailsIntent.OnArgsReceived
 import com.konopelko.booksgoals.presentation.goaldetails.GoalDetailsIntent.OnBookStatisticsClicked
+import com.konopelko.booksgoals.presentation.goaldetails.GoalDetailsIntent.OnCloseProgressMarkDialog
 import com.konopelko.booksgoals.presentation.goaldetails.GoalDetailsIntent.OnEditGoalClicked
+import com.konopelko.booksgoals.presentation.goaldetails.GoalDetailsIntent.OnSaveProgressClicked
 import com.konopelko.booksgoals.presentation.goaldetails.GoalDetailsUiState
 import com.konopelko.booksgoals.presentation.goaldetails.GoalDetailsViewModel
 import org.koin.androidx.compose.getViewModel
-import kotlin.reflect.KFunction1
 
 @Composable
 fun GoalDetailsScreen(
@@ -65,6 +68,14 @@ fun GoalDetailsScreen(
             viewModel.acceptIntent(OnArgsReceived(goalId = it))
         }
     }
+
+    if(uiState.showMarkProgressDialog) {
+        ProgressMarkDialog(
+            pagesLeftAmount = uiState.goal.bookPagesAmount - uiState.goal.completedPagesAmount,
+            onDismissRequest = { viewModel.acceptIntent(OnCloseProgressMarkDialog) },
+            onSaveProgressClicked = { viewModel.acceptIntent(OnSaveProgressClicked(it)) }
+        )
+    }
 }
 
 @Composable
@@ -73,7 +84,9 @@ fun GoalDetailsContent(
     onIntent: (GoalDetailsIntent) -> Unit,
     onNavigate: (GoalDetailsNavigationIntent) -> Unit,
 ) = Column(
-    modifier = Modifier.fillMaxSize(),
+    modifier = Modifier
+        .fillMaxSize()
+        .verticalScroll(state = rememberScrollState()),
     horizontalAlignment = Alignment.CenterHorizontally
 ) {
     with(uiState.goal) {
@@ -97,7 +110,10 @@ fun GoalDetailsContent(
             expectedPagesPerDay = expectedPagesPerDay,
             expectedFinishDaysAmount = expectedFinishDaysAmount
         )
-        EditGoalContent(onIntent = onIntent)
+        EditGoalContent(
+            enabled = progress != 100,
+            onIntent = onIntent
+        )
 
         Spacer(modifier = Modifier.weight(1f))
 
@@ -113,6 +129,7 @@ fun GoalDetailsContent(
 
 @Composable
 private fun EditGoalContent(
+    enabled: Boolean,
     onIntent: (GoalDetailsIntent) -> Unit
 ) = Row(
     modifier = Modifier.padding(top = 16.dp),
@@ -121,14 +138,17 @@ private fun EditGoalContent(
     Icon(
         painter = painterResource(id = R.drawable.ic_edit_goal),
         contentDescription = "",
-        tint = Color(0xFF393939)
+        tint = if(enabled) Color(0xFF393939) else Color.Gray
     )
     Text(
         modifier = Modifier
             .padding(start = 4.dp)
-            .clickable { onIntent(OnEditGoalClicked) },
+            .clickable {
+                if(enabled) onIntent(OnEditGoalClicked)
+            },
         text = "Изменить цель",
-        textDecoration = TextDecoration.Underline
+        textDecoration = TextDecoration.Underline,
+        color = if(enabled) Color.Black else Color.Gray
     )
 }
 
@@ -216,7 +236,8 @@ private fun GoalProgressContent(
     Button(
         modifier = Modifier
             .padding(top = 16.dp),
-        onClick = { onIntent(OnAddProgressClicked) }
+        onClick = { onIntent(OnAddProgressClicked) },
+        enabled = progress != 100
     ) {
         Text(text = "Отметить выполнение")
     }
@@ -243,14 +264,17 @@ private fun GoalHeader(
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
-            modifier = Modifier.weight(0.6f),
+            modifier = Modifier.weight(1f),
             text = bookName,
             style = MaterialTheme.typography.titleLarge,
             overflow = TextOverflow.Ellipsis
         )
         Text(
+            modifier = Modifier
+                .weight(0.4f)
+                .padding(start = 8.dp),
             text = "$bookAuthor, $bookPublishYear",
-            overflow = TextOverflow.Ellipsis
+            overflow = TextOverflow.Ellipsis,
         )
     }
 
@@ -270,14 +294,14 @@ fun GoalDetailsPreview() {
     GoalDetailsContent(
         uiState = GoalDetailsUiState(
             goal = Goal(
-                bookName = "The Lord of the Rings",
-                bookAuthor = "Tolkien",
+                bookName = "The Lord of the Rings asdf asdf adf asdf asdf asdf asdf adsf",
+                bookAuthor = "Tolkien asdf asdf adf asdf asdf asdf asdf adsf",
                 daysInProgress = 10,
                 averageReadSpeed = 20,
                 bookPublishYear = 1960,
                 completedPagesAmount = 435,
                 bookPagesAmount = 870,
-                progress = 50,
+                progress = 100,
                 expectedPagesPerDay = 40,
                 expectedFinishDaysAmount = 8
             )

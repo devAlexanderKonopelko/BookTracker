@@ -18,6 +18,12 @@ interface GoalDao {
     @Insert
     fun addGoal(goal: GoalEntity)
 
+    @Query("UPDATE goals SET pages_completed_amount = :pagesCompletedAmount WHERE id = :goalId")
+    fun updateGoalProgress(
+        goalId: Int,
+        pagesCompletedAmount: Int
+    )
+
     @Query("DELETE FROM goals WHERE id = :goalId")
     fun deleteGoal(goalId: Int)
 }

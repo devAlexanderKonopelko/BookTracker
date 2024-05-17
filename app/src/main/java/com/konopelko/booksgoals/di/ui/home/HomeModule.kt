@@ -2,7 +2,7 @@ package com.konopelko.booksgoals.di.ui.home
 
 import com.konopelko.booksgoals.domain.usecase.addbook.AddBookUseCase
 import com.konopelko.booksgoals.domain.usecase.deletegoal.DeleteGoalUseCase
-import com.konopelko.booksgoals.domain.usecase.getgoals.GetGoalsUseCase
+import com.konopelko.booksgoals.domain.usecase.getgoalprogress.getgoals.GetGoalsUseCase
 import com.konopelko.booksgoals.domain.usecase.updatebookisfinished.UpdateBookIsFinishedUseCase
 import com.konopelko.booksgoals.presentation.goals.GoalsUiState
 import com.konopelko.booksgoals.presentation.goals.GoalsViewModel

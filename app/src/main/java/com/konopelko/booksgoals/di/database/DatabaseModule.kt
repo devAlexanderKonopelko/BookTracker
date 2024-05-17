@@ -24,4 +24,8 @@ val databaseModule = module {
     single {
         get<BooksGoalsDatabase>().bookDao()
     }
+
+    single {
+        get<BooksGoalsDatabase>().progressDao()
+    }
 }

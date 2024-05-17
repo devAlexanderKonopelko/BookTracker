@@ -29,4 +29,12 @@ class GoalRepositoryImpl(
     override suspend fun getGoalById(goalId: Int): Result<Goal> = databaseCall {
         goalDao.getGoalById(goalId).toDomainModel()
     }
+
+    override suspend fun updateGoalProgress(goalId: Int, pagesReadAmount: Int): Result<Unit> =
+        databaseCall {
+            goalDao.updateGoalProgress(
+                goalId = goalId,
+                pagesCompletedAmount = pagesReadAmount
+            )
+        }
 }

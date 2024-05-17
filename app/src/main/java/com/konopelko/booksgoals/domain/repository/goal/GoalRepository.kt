@@ -14,4 +14,9 @@ interface GoalRepository {
     suspend fun deleteGoal(goalId: Int): Result<Unit>
 
     suspend fun getGoalById(goalId: Int): Result<Goal>
+
+    suspend fun updateGoalProgress(
+        goalId: Int,
+        pagesReadAmount: Int
+    ): Result<Unit>
 }

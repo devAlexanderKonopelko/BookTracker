@@ -21,6 +21,10 @@ import com.konopelko.booksgoals.presentation.addgoal.model.AddGoalScreenOrigin.G
 import com.konopelko.booksgoals.presentation.common.base.BaseViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
+import java.time.Instant
+import java.util.Calendar
+import java.util.Locale
 import kotlin.math.ceil
 
 //todo: add screen_origin no check is should addBookUseCase be called (from wishes)
@@ -93,11 +97,16 @@ class AddGoalViewModel(
             with(uiState.value) {
 
                 selectedBook?.let {
+                    val currentDateTime = Calendar.getInstance().timeInMillis
+//                    val date = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+//                        .format(currentDateTime)
+
                     val goalToAdd = Goal(
                         bookName = selectedBook.title,
                         bookAuthor = prepareBookAuthorName(selectedBook),
                         bookPublishYear = selectedBook.publishYear.toInt(),
                         bookPagesAmount = preparePagesAmount(selectedBook),
+                        creationDate = currentDateTime.toString(),
                         expectedPagesPerDay = bookPagesPerDay,
                         expectedFinishDaysAmount = calculateExpectedFinishDaysAmount(
                             expectedPagesPerDay = bookPagesPerDay,

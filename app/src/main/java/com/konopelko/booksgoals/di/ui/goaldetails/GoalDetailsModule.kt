@@ -1,6 +1,9 @@
 package com.konopelko.booksgoals.di.ui.goaldetails
 
+import com.konopelko.booksgoals.domain.usecase.addprogressmark.AddProgressMarkUseCase
 import com.konopelko.booksgoals.domain.usecase.getgoal.GetGoalUseCase
+import com.konopelko.booksgoals.domain.usecase.getgoalprogress.GetGoalAverageReadSpeedUseCase
+import com.konopelko.booksgoals.domain.usecase.updategoalprogress.UpdateGoalProgressUseCase
 import com.konopelko.booksgoals.presentation.goaldetails.GoalDetailsUiState
 import com.konopelko.booksgoals.presentation.goaldetails.GoalDetailsViewModel
 import org.koin.androidx.viewmodel.dsl.viewModel
@@ -12,10 +15,25 @@ val goalDetailsModule = module {
         GetGoalUseCase(repository = get())
     }
 
+    factory {
+        GetGoalAverageReadSpeedUseCase(repository = get())
+    }
+
+    factory {
+        UpdateGoalProgressUseCase(repository = get())
+    }
+
+    factory {
+        AddProgressMarkUseCase(repository = get())
+    }
+
     viewModel {
         GoalDetailsViewModel(
             initialState = GoalDetailsUiState(),
-            getGoalUseCase = get()
+            getGoalUseCase = get(),
+            getGoalAverageReadSpeedUseCase = get(),
+            updateGoalProgressUseCase = get(),
+            addProgressMarkUseCase = get()
         )
     }
 }

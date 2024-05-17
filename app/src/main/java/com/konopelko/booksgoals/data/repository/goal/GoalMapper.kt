@@ -2,6 +2,8 @@ package com.konopelko.booksgoals.data.repository.goal
 
 import com.konopelko.booksgoals.data.database.entity.goal.GoalEntity
 import com.konopelko.booksgoals.domain.model.goal.Goal
+import java.util.Calendar
+import kotlin.math.roundToInt
 
 fun GoalEntity.toDomainModel(): Goal = Goal(
     id = id,
@@ -11,12 +13,12 @@ fun GoalEntity.toDomainModel(): Goal = Goal(
     bookPublishYear = bookPublishYear.toInt(),
     bookPagesAmount = bookPagesAmount,
     completedPagesAmount = pagesCompletedAmount,
-    daysInProgress = goalInProgressDaysAmount,
+    creationDate = goalCreationDate,
+    daysInProgress = getDaysInProgress(goalCreationDate),
     progress = getGoalProgress(
         bookPagesAmount,
         pagesCompletedAmount
     ),
-    averageReadSpeed = averageReadSpeed.toInt(),
     expectedPagesPerDay = expectedPagesPerDay,
     expectedFinishDaysAmount = expectedFinishDaysAmount
 )
@@ -28,12 +30,19 @@ fun Goal.toDatabaseModel(): GoalEntity = GoalEntity(
     bookPublishYear = bookPublishYear.toString(),
     bookPagesAmount = bookPagesAmount,
     pagesCompletedAmount = completedPagesAmount,
-    goalInProgressDaysAmount = daysInProgress,
     expectedPagesPerDay = expectedPagesPerDay,
-    expectedFinishDaysAmount = expectedFinishDaysAmount
+    expectedFinishDaysAmount = expectedFinishDaysAmount,
+    goalCreationDate = creationDate
 )
 
 private fun getGoalProgress(
     bookPagesAmount: Int,
     pagesCompletedAmount: Int
-): Int = ((pagesCompletedAmount / bookPagesAmount).toFloat() * 100).toInt()
+): Int = ((pagesCompletedAmount / bookPagesAmount.toFloat()) * 100).toInt()
+
+
+private fun getDaysInProgress(goalCreationDate: String): Int {
+    val dateTimeDifference = Calendar.getInstance().timeInMillis - goalCreationDate.toLong()
+    val daysAmount = (dateTimeDifference.toFloat() / (1000 * 60 * 60 * 24)).roundToInt()
+    return if(daysAmount < 1) 1 else daysAmount
+}
