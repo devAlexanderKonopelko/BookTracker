@@ -13,5 +13,6 @@ sealed interface AddGoalIntent {
 
         object NavigateToSearchBooksScreen : AddGoalNavigationIntent
         object NavigateToGoalsScreen : AddGoalNavigationIntent
+        object NavigateToGoalDetailsScreen : AddGoalNavigationIntent
     }
 }

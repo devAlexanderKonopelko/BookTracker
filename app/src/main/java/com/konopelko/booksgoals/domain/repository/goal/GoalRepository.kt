@@ -19,4 +19,10 @@ interface GoalRepository {
         goalId: Int,
         pagesReadAmount: Int
     ): Result<Unit>
+
+    suspend fun updateGoalPagesPerDay(
+        goalId: Int,
+        pagesPerDay: Int,
+        daysToFinish: Int
+    ): Result<Unit>
 }

@@ -12,7 +12,6 @@ import com.konopelko.booksgoals.presentation.goaldetails.GoalDetailsIntent.OnAdd
 import com.konopelko.booksgoals.presentation.goaldetails.GoalDetailsIntent.OnArgsReceived
 import com.konopelko.booksgoals.presentation.goaldetails.GoalDetailsIntent.OnBookStatisticsClicked
 import com.konopelko.booksgoals.presentation.goaldetails.GoalDetailsIntent.OnCloseProgressMarkDialog
-import com.konopelko.booksgoals.presentation.goaldetails.GoalDetailsIntent.OnEditGoalClicked
 import com.konopelko.booksgoals.presentation.goaldetails.GoalDetailsIntent.OnSaveProgressClicked
 import com.konopelko.booksgoals.presentation.goaldetails.GoalDetailsUiState.GoalDetailsPartialState
 import com.konopelko.booksgoals.presentation.goaldetails.GoalDetailsUiState.GoalDetailsPartialState.AverageReadSpeedChanged
@@ -35,7 +34,6 @@ class GoalDetailsViewModel(
 
     override fun acceptIntent(intent: GoalDetailsIntent) = when (intent) {
         OnAddProgressClicked -> onAddProgressClicked()
-        OnEditGoalClicked -> onEditGoalClicked()
         OnBookStatisticsClicked -> onBookStatisticsClicked()
         OnCloseProgressMarkDialog -> onCloseProgressMarkDialog()
         is OnArgsReceived -> onArgsReceived(intent.goalId)
@@ -69,10 +67,6 @@ class GoalDetailsViewModel(
     }
 
     private fun onBookStatisticsClicked() {
-        //TODO("Not yet implemented")
-    }
-
-    private fun onEditGoalClicked() {
         //TODO("Not yet implemented")
     }
 

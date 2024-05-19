@@ -7,38 +7,40 @@ import com.konopelko.booksgoals.domain.model.goal.Goal
 import com.konopelko.booksgoals.domain.usecase.addbook.AddBookUseCase
 import com.konopelko.booksgoals.domain.usecase.addgoal.AddGoalUseCase
 import com.konopelko.booksgoals.domain.usecase.updatebookisstarted.UpdateBookIsStartedUseCase
+import com.konopelko.booksgoals.domain.usecase.updategoalpagesperday.UpdateGoalExpectedParamsUseCase
 import com.konopelko.booksgoals.presentation.addgoal.AddGoalIntent.OnArgsReceived
 import com.konopelko.booksgoals.presentation.addgoal.AddGoalIntent.OnCreateGoalClicked
 import com.konopelko.booksgoals.presentation.addgoal.AddGoalIntent.OnPagesPerDayChanged
 import com.konopelko.booksgoals.presentation.addgoal.AddGoalUiState.AddGoalPartialState
 import com.konopelko.booksgoals.presentation.addgoal.AddGoalUiState.AddGoalPartialState.BookSelected
+import com.konopelko.booksgoals.presentation.addgoal.AddGoalUiState.AddGoalPartialState.EditGoalState
 import com.konopelko.booksgoals.presentation.addgoal.AddGoalUiState.AddGoalPartialState.PagesPerDayChanged
 import com.konopelko.booksgoals.presentation.addgoal.AddGoalUiState.AddGoalPartialState.SavingGoalState
+import com.konopelko.booksgoals.presentation.addgoal.AddGoalUiState.AddGoalPartialState.ShouldNavigateToGoalDetailsState
 import com.konopelko.booksgoals.presentation.addgoal.model.AddGoalArgs
 import com.konopelko.booksgoals.presentation.addgoal.model.AddGoalScreenOrigin
 import com.konopelko.booksgoals.presentation.addgoal.model.AddGoalScreenOrigin.ADD_WISH_BOOK
 import com.konopelko.booksgoals.presentation.addgoal.model.AddGoalScreenOrigin.GOALS
+import com.konopelko.booksgoals.presentation.addgoal.model.AddGoalScreenOrigin.GOAL_DETAILS
 import com.konopelko.booksgoals.presentation.common.base.BaseViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import java.text.SimpleDateFormat
-import java.time.Instant
 import java.util.Calendar
-import java.util.Locale
 import kotlin.math.ceil
 
-//todo: add screen_origin no check is should addBookUseCase be called (from wishes)
 class AddGoalViewModel(
     initialState: AddGoalUiState,
     private val addGoalUseCase: AddGoalUseCase,
     private val addBookUseCase: AddBookUseCase,
-    private val updateBookIsStartedUseCase: UpdateBookIsStartedUseCase
+    private val updateBookIsStartedUseCase: UpdateBookIsStartedUseCase,
+    private val updateGoalExpectedParamsUseCase: UpdateGoalExpectedParamsUseCase
 ) : BaseViewModel<AddGoalIntent, AddGoalUiState, AddGoalPartialState>(
     initialState = initialState
 ) {
 
     private var screenOrigin: AddGoalScreenOrigin = GOALS
     private var bookPagesPerDay: Int = 20 // move to uiState
+    private var goalId: Int = -1
 
     override fun acceptIntent(intent: AddGoalIntent) = when(intent) {
         is OnArgsReceived -> onArgsReceived(intent.args)
@@ -50,14 +52,21 @@ class AddGoalViewModel(
         previousState: AddGoalUiState,
         partialState: AddGoalPartialState
     ): AddGoalUiState =  when(partialState) {
+        ShouldNavigateToGoalDetailsState -> previousState.copy(shouldNavigateToGoalDetailsScreen = true)
         is BookSelected -> previousState.copy(
             selectedBook = partialState.selectedBook,
-            daysToFinishGoal = calculatePagesPerDay(pagesAmount = partialState.selectedBook.pagesAmount.toInt()),
+            daysToFinishGoal = calculateExpectedFinishDaysAmount(
+                pagesAmount = partialState.selectedBook.pagesAmount.toInt()
+            ),
             isAddGoalButtonEnabled = true
         )
+        is EditGoalState -> previousState.copy(
+            isSelectBookButtonEnabled = false,
+            selectedPagesPerDay = partialState.selectedPagesPerDay
+        )
         is PagesPerDayChanged -> previousState.copy(
-            daysToFinishGoal = calculatePagesPerDay(
-                pagesAmount = previousState.selectedBook?.pagesAmount?.toInt() ?: 0
+            daysToFinishGoal = calculateExpectedFinishDaysAmount(
+                pagesAmount = previousState.selectedBook.pagesAmount.toInt()
             ),
         )
         is SavingGoalState -> previousState.copy(
@@ -66,10 +75,6 @@ class AddGoalViewModel(
         )
     }
 
-    private fun calculatePagesPerDay(pagesAmount: Int): Int =
-        ceil(pagesAmount / bookPagesPerDay.toDouble()).toInt()
-
-    //todo: refactor to receive [Book] domain model
     private fun onArgsReceived(args: AddGoalArgs?) {
         Log.e("AddGoalViewModel", "onArgsReceived")
         Log.e("AddGoalViewModel", "args = $args")
@@ -78,6 +83,15 @@ class AddGoalViewModel(
             if(args.selectedBook != null) {
                 updateUiState(BookSelected(selectedBook = args.selectedBook))
             }
+            if(args.selectedPagesPerDay != null) {
+                updateUiState(PagesPerDayChanged(newPagesPerDay = args.selectedPagesPerDay))
+            }
+
+            if(args.screenOrigin == GOAL_DETAILS && args.selectedPagesPerDay != null) {
+                updateUiState(EditGoalState(selectedPagesPerDay = args.selectedPagesPerDay))
+            }
+
+            args.goalId?.let { goalId = it }
             screenOrigin = args.screenOrigin
         }
     }
@@ -88,44 +102,40 @@ class AddGoalViewModel(
     }
 
     private fun onCreateGoalClicked() {
-        if(uiState.value.selectedBook != null) {
-            updateUiState(SavingGoalState(isLoading = true))
+        updateUiState(SavingGoalState(isLoading = true))
 
-            Log.e("AddGoalViewModel", "pagesPerDay = $bookPagesPerDay")
-            Log.e("AddGoalViewModel", "selectedBook = ${uiState.value.selectedBook}")
+        Log.e("AddGoalViewModel", "pagesPerDay = $bookPagesPerDay")
+        Log.e("AddGoalViewModel", "selectedBook = ${uiState.value.selectedBook}")
 
-            with(uiState.value) {
+        with(uiState.value) {
 
-                selectedBook?.let {
-                    val currentDateTime = Calendar.getInstance().timeInMillis
+            val currentDateTime = Calendar.getInstance().timeInMillis
 //                    val date = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
 //                        .format(currentDateTime)
 
-                    val goalToAdd = Goal(
-                        bookName = selectedBook.title,
-                        bookAuthor = prepareBookAuthorName(selectedBook),
-                        bookPublishYear = selectedBook.publishYear.toInt(),
-                        bookPagesAmount = preparePagesAmount(selectedBook),
-                        creationDate = currentDateTime.toString(),
-                        expectedPagesPerDay = bookPagesPerDay,
-                        expectedFinishDaysAmount = calculateExpectedFinishDaysAmount(
-                            expectedPagesPerDay = bookPagesPerDay,
-                            booksPagesAmount = selectedBook.pagesAmount.toInt()
-                        )
+            val goalToAdd = Goal(
+                bookName = selectedBook.title,
+                bookAuthor = prepareBookAuthorName(selectedBook),
+                bookPublishYear = selectedBook.publishYear.toInt(),
+                bookPagesAmount = preparePagesAmount(selectedBook),
+                creationDate = currentDateTime.toString(),
+                expectedPagesPerDay = bookPagesPerDay,
+                expectedFinishDaysAmount = daysToFinishGoal
+            )
+
+            viewModelScope.launch(Dispatchers.IO) {
+                when (screenOrigin) {
+                    GOALS -> createGoalWithNewBook(
+                        goalToAdd = goalToAdd,
+                        selectedBook = selectedBook
                     )
 
-                    viewModelScope.launch(Dispatchers.IO) {
-                        when(screenOrigin) {
-                            GOALS -> createGoalWithNewBook(
-                                goalToAdd = goalToAdd,
-                                selectedBook = selectedBook
-                            )
-                            ADD_WISH_BOOK -> createGoalFromWishBook(
-                                goalToAdd = goalToAdd,
-                                selectedBook = selectedBook
-                            )
-                        }
-                    }
+                    ADD_WISH_BOOK -> createGoalFromWishBook(
+                        goalToAdd = goalToAdd,
+                        selectedBook = selectedBook
+                    )
+
+                    GOAL_DETAILS -> updateGoalPagesPerDay()
                 }
             }
         }
@@ -171,17 +181,30 @@ class AddGoalViewModel(
         }
     }
 
+    private fun updateGoalPagesPerDay() {
+        viewModelScope.launch(Dispatchers.IO) {
+            updateGoalExpectedParamsUseCase(
+                goalId = goalId,
+                pagesPerDay = bookPagesPerDay,
+                daysToFinish = uiState.value.daysToFinishGoal
+            ).onSuccess {
+                updateUiState(ShouldNavigateToGoalDetailsState)
+                Log.e("AddGoalViewModel", "goal pages per day updated to $bookPagesPerDay. Navigating to GoalDetailsScreen")
+            }.onError {
+                Log.e("AddGoalViewModel", "error occurred when updating goal pages per day: ${it.exception}")
+            }
+        }
+    }
+
     private fun preparePagesAmount(selectedBook: Book?): Int = selectedBook?.let {
         if(it.pagesAmount.toInt() > 0) it.pagesAmount.toInt() else 1
     } ?: 1
 
+    private fun calculateExpectedFinishDaysAmount(pagesAmount: Int): Int =
+        ceil(pagesAmount / bookPagesPerDay.toDouble()).toInt()
+
     private fun prepareBookAuthorName(newGoalSelectedBook: Book): String =
         newGoalSelectedBook.authorName
-
-    private fun calculateExpectedFinishDaysAmount(
-        expectedPagesPerDay: Int,
-        booksPagesAmount: Int
-    ): Int = booksPagesAmount / expectedPagesPerDay
 
     companion object {
         const val ARGS_ADD_GOAL_KEY = "add_goal_args"

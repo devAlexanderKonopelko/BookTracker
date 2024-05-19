@@ -24,6 +24,18 @@ interface GoalDao {
         pagesCompletedAmount: Int
     )
 
+    @Query(
+        "UPDATE goals " +
+        "SET expected_pages_per_day = :pagesPerDay, " +
+        "expected_finish_days_amount = :daysToFinish " +
+        "WHERE id = :goalId"
+    )
+    fun updateGoalExpectedParams(
+        goalId: Int,
+        pagesPerDay: Int,
+        daysToFinish: Int
+    )
+
     @Query("DELETE FROM goals WHERE id = :goalId")
     fun deleteGoal(goalId: Int)
 }

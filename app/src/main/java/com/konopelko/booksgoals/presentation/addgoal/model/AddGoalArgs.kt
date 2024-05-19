@@ -10,7 +10,9 @@ import kotlinx.parcelize.Parcelize
 @Parcelize
 data class AddGoalArgs(
     val screenOrigin: AddGoalScreenOrigin = AddGoalScreenOrigin.GOALS,
-    val selectedBook: Book? = null
+    val selectedBook: Book? = null,
+    val selectedPagesPerDay: Int? = null,
+    val goalId: Int? = null
 ): Parcelable
 
 class AddGoalArgsType : NavType<AddGoalArgs>(isNullableAllowed = true) {

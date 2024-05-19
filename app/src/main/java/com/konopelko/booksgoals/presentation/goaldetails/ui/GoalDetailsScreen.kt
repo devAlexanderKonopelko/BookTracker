@@ -1,6 +1,5 @@
 package com.konopelko.booksgoals.presentation.goaldetails.ui
 
-import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -38,11 +37,11 @@ import com.konopelko.booksgoals.R
 import com.konopelko.booksgoals.domain.model.goal.Goal
 import com.konopelko.booksgoals.presentation.goaldetails.GoalDetailsIntent
 import com.konopelko.booksgoals.presentation.goaldetails.GoalDetailsIntent.GoalDetailsNavigationIntent
+import com.konopelko.booksgoals.presentation.goaldetails.GoalDetailsIntent.GoalDetailsNavigationIntent.NavigateToEditGoal
 import com.konopelko.booksgoals.presentation.goaldetails.GoalDetailsIntent.OnAddProgressClicked
 import com.konopelko.booksgoals.presentation.goaldetails.GoalDetailsIntent.OnArgsReceived
 import com.konopelko.booksgoals.presentation.goaldetails.GoalDetailsIntent.OnBookStatisticsClicked
 import com.konopelko.booksgoals.presentation.goaldetails.GoalDetailsIntent.OnCloseProgressMarkDialog
-import com.konopelko.booksgoals.presentation.goaldetails.GoalDetailsIntent.OnEditGoalClicked
 import com.konopelko.booksgoals.presentation.goaldetails.GoalDetailsIntent.OnSaveProgressClicked
 import com.konopelko.booksgoals.presentation.goaldetails.GoalDetailsUiState
 import com.konopelko.booksgoals.presentation.goaldetails.GoalDetailsViewModel
@@ -111,8 +110,9 @@ fun GoalDetailsContent(
             expectedFinishDaysAmount = expectedFinishDaysAmount
         )
         EditGoalContent(
+            goal = this,
             enabled = progress != 100,
-            onIntent = onIntent
+            onNavigate = onNavigate
         )
 
         Spacer(modifier = Modifier.weight(1f))
@@ -129,8 +129,9 @@ fun GoalDetailsContent(
 
 @Composable
 private fun EditGoalContent(
+    goal: Goal,
     enabled: Boolean,
-    onIntent: (GoalDetailsIntent) -> Unit
+    onNavigate: (GoalDetailsNavigationIntent) -> Unit
 ) = Row(
     modifier = Modifier.padding(top = 16.dp),
     horizontalArrangement = Arrangement.Center
@@ -144,7 +145,7 @@ private fun EditGoalContent(
         modifier = Modifier
             .padding(start = 4.dp)
             .clickable {
-                if(enabled) onIntent(OnEditGoalClicked)
+                if(enabled) onNavigate(NavigateToEditGoal(goal))
             },
         text = "Изменить цель",
         textDecoration = TextDecoration.Underline,

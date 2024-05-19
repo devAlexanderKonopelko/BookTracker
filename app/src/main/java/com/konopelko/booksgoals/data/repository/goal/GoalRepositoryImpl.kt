@@ -37,4 +37,17 @@ class GoalRepositoryImpl(
                 pagesCompletedAmount = pagesReadAmount
             )
         }
+
+    override suspend fun updateGoalPagesPerDay(
+        goalId: Int,
+        pagesPerDay: Int,
+        daysToFinish: Int
+    ): Result<Unit> =
+        databaseCall {
+            goalDao.updateGoalExpectedParams(
+                goalId = goalId,
+                pagesPerDay = pagesPerDay,
+                daysToFinish = daysToFinish
+            )
+        }
 }

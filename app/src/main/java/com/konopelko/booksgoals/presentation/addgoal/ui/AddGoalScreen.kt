@@ -26,6 +26,7 @@ import androidx.compose.ui.unit.dp
 import com.konopelko.booksgoals.domain.model.book.Book
 import com.konopelko.booksgoals.presentation.addgoal.AddGoalIntent
 import com.konopelko.booksgoals.presentation.addgoal.AddGoalIntent.AddGoalNavigationIntent
+import com.konopelko.booksgoals.presentation.addgoal.AddGoalIntent.AddGoalNavigationIntent.NavigateToGoalDetailsScreen
 import com.konopelko.booksgoals.presentation.addgoal.AddGoalIntent.AddGoalNavigationIntent.NavigateToGoalsScreen
 import com.konopelko.booksgoals.presentation.addgoal.AddGoalIntent.AddGoalNavigationIntent.NavigateToSearchBooksScreen
 import com.konopelko.booksgoals.presentation.addgoal.AddGoalIntent.OnArgsReceived
@@ -68,6 +69,21 @@ fun AddGoalScreen(
         onIntent = viewModel::acceptIntent,
         onNavigate = onNavigate
     )
+
+    handleNavigationActions(
+        onNavigate = onNavigate,
+        uiState = uiState
+    )
+}
+
+@Composable
+private fun handleNavigationActions(
+    onNavigate: (AddGoalNavigationIntent) -> Unit,
+    uiState: AddGoalUiState
+) = LaunchedEffect(uiState.shouldNavigateToGoalDetailsScreen){
+    if(uiState.shouldNavigateToGoalDetailsScreen) {
+        onNavigate(NavigateToGoalDetailsScreen)
+    }
 }
 
 @Composable
@@ -92,12 +108,14 @@ private fun AddGoalContent(
 
         SelectBookContent(
             selectedBook = selectedBook,
+            isSelectBookButtonEnabled = uiState.isSelectBookButtonEnabled,
             onNavigate = onNavigate
         )
 
-        AnimatedVisibility(visible = selectedBook != null) {
+        AnimatedVisibility(visible = selectedBook.id > 0) {
             SelectPagerPerDayContent(
                 daysToFinishGoal = daysToFinishGoal,
+                selectedPagesPerDay = selectedPagesPerDay,
                 onIntent = onIntent
             )
         }
@@ -130,6 +148,7 @@ private fun AddGoalContent(
 @Composable
 private fun SelectBookContent(
     selectedBook: Book?,
+    isSelectBookButtonEnabled: Boolean,
     modifier: Modifier = Modifier,
     onNavigate: (AddGoalNavigationIntent) -> Unit = {}
 ) = Column(
@@ -155,7 +174,8 @@ private fun SelectBookContent(
     BaseButton(
         modifier = Modifier.padding(top = 16.dp),
         text = "Выбрать книгу",
-        onClick = { onNavigate(NavigateToSearchBooksScreen) }
+        onClick = { onNavigate(NavigateToSearchBooksScreen) },
+        enabled = isSelectBookButtonEnabled
     )
 }
 
@@ -163,6 +183,7 @@ private fun SelectBookContent(
 @Composable
 private fun SelectPagerPerDayContent(
     daysToFinishGoal: Int,
+    selectedPagesPerDay: Int,
     onIntent: (AddGoalIntent) -> Unit,
     modifier: Modifier = Modifier
 ) = Column(
@@ -173,7 +194,7 @@ private fun SelectPagerPerDayContent(
     ),
     horizontalAlignment = Alignment.CenterHorizontally
 ) {
-    var sliderValue by remember { mutableFloatStateOf(20f) }
+    var sliderValue by remember { mutableFloatStateOf(selectedPagesPerDay.toFloat()) }
 
     Text(text = "Выберите желаемое количество страниц в день")
 

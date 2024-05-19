@@ -3,6 +3,7 @@ package com.konopelko.booksgoals.di.ui.addgoal
 import com.konopelko.booksgoals.domain.usecase.addbook.AddBookUseCase
 import com.konopelko.booksgoals.domain.usecase.addgoal.AddGoalUseCase
 import com.konopelko.booksgoals.domain.usecase.updatebookisstarted.UpdateBookIsStartedUseCase
+import com.konopelko.booksgoals.domain.usecase.updategoalpagesperday.UpdateGoalExpectedParamsUseCase
 import com.konopelko.booksgoals.presentation.addgoal.AddGoalUiState
 import com.konopelko.booksgoals.presentation.addgoal.AddGoalViewModel
 import org.koin.androidx.viewmodel.dsl.viewModel
@@ -22,12 +23,17 @@ val addGoalModule = module {
         AddBookUseCase(bookRepository = get())
     }
 
+    factory {
+        UpdateGoalExpectedParamsUseCase(repository = get())
+    }
+
     viewModel {
         AddGoalViewModel(
             initialState = AddGoalUiState(),
             addGoalUseCase = get(),
             addBookUseCase = get(),
-            updateBookIsStartedUseCase = get()
+            updateBookIsStartedUseCase = get(),
+            updateGoalExpectedParamsUseCase = get()
         )
     }
 }

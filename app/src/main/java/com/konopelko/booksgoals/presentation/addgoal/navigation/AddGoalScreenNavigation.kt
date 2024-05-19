@@ -3,6 +3,7 @@ package com.konopelko.booksgoals.presentation.addgoal.navigation
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavController
 import com.konopelko.booksgoals.presentation.addgoal.AddGoalIntent.AddGoalNavigationIntent
+import com.konopelko.booksgoals.presentation.addgoal.AddGoalIntent.AddGoalNavigationIntent.NavigateToGoalDetailsScreen
 import com.konopelko.booksgoals.presentation.addgoal.AddGoalIntent.AddGoalNavigationIntent.NavigateToGoalsScreen
 import com.konopelko.booksgoals.presentation.addgoal.AddGoalIntent.AddGoalNavigationIntent.NavigateToSearchBooksScreen
 import com.konopelko.booksgoals.presentation.addgoal.AddGoalViewModel
@@ -33,6 +34,11 @@ class AddGoalScreenNavigation(
     override fun onNavigate(intent: AddGoalNavigationIntent) = when(intent) {
         NavigateToSearchBooksScreen -> navigateToSearchBooksScreen()
         NavigateToGoalsScreen -> navigateToGoalsScreen()
+        NavigateToGoalDetailsScreen -> navigateToGoalDetailsScreen()
+    }
+
+    private fun navigateToGoalDetailsScreen() {
+        navController.popBackStack()
     }
 
     //todo: pass [SearchScreenOrigin.ADD_GOAL]

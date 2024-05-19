@@ -1,9 +1,10 @@
 package com.konopelko.booksgoals.presentation.goaldetails
 
+import com.konopelko.booksgoals.domain.model.goal.Goal
+
 sealed interface GoalDetailsIntent {
 
     data object OnAddProgressClicked : GoalDetailsIntent
-    data object OnEditGoalClicked : GoalDetailsIntent
     data object OnBookStatisticsClicked : GoalDetailsIntent
     data object OnCloseProgressMarkDialog : GoalDetailsIntent
 
@@ -12,5 +13,6 @@ sealed interface GoalDetailsIntent {
 
     sealed interface GoalDetailsNavigationIntent {
 
+        data class NavigateToEditGoal(val goal: Goal) : GoalDetailsNavigationIntent
     }
 }
