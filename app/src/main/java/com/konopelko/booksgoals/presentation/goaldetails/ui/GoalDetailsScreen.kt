@@ -38,6 +38,7 @@ import com.konopelko.booksgoals.domain.model.goal.Goal
 import com.konopelko.booksgoals.presentation.goaldetails.GoalDetailsIntent
 import com.konopelko.booksgoals.presentation.goaldetails.GoalDetailsIntent.GoalDetailsNavigationIntent
 import com.konopelko.booksgoals.presentation.goaldetails.GoalDetailsIntent.GoalDetailsNavigationIntent.NavigateToEditGoal
+import com.konopelko.booksgoals.presentation.goaldetails.GoalDetailsIntent.GoalDetailsNavigationIntent.NavigateToGoalStatistics
 import com.konopelko.booksgoals.presentation.goaldetails.GoalDetailsIntent.OnAddProgressClicked
 import com.konopelko.booksgoals.presentation.goaldetails.GoalDetailsIntent.OnArgsReceived
 import com.konopelko.booksgoals.presentation.goaldetails.GoalDetailsIntent.OnBookStatisticsClicked
@@ -120,7 +121,7 @@ fun GoalDetailsContent(
         Button(
             modifier = Modifier
                 .padding(top = 16.dp),
-            onClick = { onIntent(OnBookStatisticsClicked) }
+            onClick = { onNavigate(NavigateToGoalStatistics) }
         ) {
             Text(text = "Статистика книги")
         }

@@ -13,6 +13,7 @@ sealed interface GoalDetailsIntent {
 
     sealed interface GoalDetailsNavigationIntent {
 
+        data object NavigateToGoalStatistics : GoalDetailsNavigationIntent
         data class NavigateToEditGoal(val goal: Goal) : GoalDetailsNavigationIntent
     }
 }

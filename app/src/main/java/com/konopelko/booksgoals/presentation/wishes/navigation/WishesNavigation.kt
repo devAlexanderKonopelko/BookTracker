@@ -10,8 +10,10 @@ import com.konopelko.booksgoals.presentation.addbook.AddBookViewModel
 import com.konopelko.booksgoals.presentation.addgoal.AddGoalViewModel
 import com.konopelko.booksgoals.presentation.addgoal.model.AddGoalArgs
 import com.konopelko.booksgoals.presentation.addgoal.model.AddGoalScreenOrigin
+import com.konopelko.booksgoals.presentation.common.utils.uri.serializeNavParam
 import com.konopelko.booksgoals.presentation.navigation.MainNavOption
 import com.konopelko.booksgoals.presentation.searchbooks.SearchBooksViewModel
+import com.konopelko.booksgoals.presentation.searchbooks.model.SearchBooksArgs
 import com.konopelko.booksgoals.presentation.wishes.WishesIntent.WishesNavigationIntent
 import com.konopelko.booksgoals.presentation.wishes.WishesIntent.WishesNavigationIntent.NavigateToAddGoalScreen
 import com.konopelko.booksgoals.presentation.wishes.WishesIntent.WishesNavigationIntent.NavigateToSearchBooksScreen
@@ -44,7 +46,8 @@ class WishesNavigation(
 
     //todo: move to SearchScreenNavigation
     private fun prepareSearchScreenNameWithArgs(screenOrigin: SearchScreenOrigin): String =
-        "${MainNavOption.SearchBooksScreen.name}?screen_origin=$screenOrigin"
+        "${MainNavOption.SearchBooksScreen.name}?" +
+                "${SearchBooksViewModel.ARGS_SCREEN_ORIGIN_KEY}=${serializeNavParam(SearchBooksArgs(screenOrigin))}"
 
     //todo: move to AddGoalScreenNavigation
     private fun prepareAddGoalScreenNameWithArgs(book: Book): String =

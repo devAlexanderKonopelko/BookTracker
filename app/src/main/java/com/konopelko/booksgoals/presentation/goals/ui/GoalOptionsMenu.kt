@@ -86,7 +86,7 @@ private fun GoalOptionsList(
             }
         ) {
             Text(
-                text = option.name.lowercase().capitalize(Locale.current),
+                text = option.text,
                 color = if (option == DELETE) Color.Red else Color.Black
             )
         }

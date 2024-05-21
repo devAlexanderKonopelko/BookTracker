@@ -55,7 +55,7 @@ fun AddGoalScreen(
     onNavigate: (AddGoalNavigationIntent) -> Unit,
     args: AddGoalArgs?
 ) {
-    Log.e("HomeScreen", "args = $args")
+    Log.e("AddGoalScreen", "args = $args")
 
     //todo: add key constant
     LaunchedEffect("args_key") {
@@ -112,7 +112,7 @@ private fun AddGoalContent(
             onNavigate = onNavigate
         )
 
-        AnimatedVisibility(visible = selectedBook.id > 0) {
+        AnimatedVisibility(visible = selectedBook.title.isNotEmpty()) {
             SelectPagerPerDayContent(
                 daysToFinishGoal = daysToFinishGoal,
                 selectedPagesPerDay = selectedPagesPerDay,

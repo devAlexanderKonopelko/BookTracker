@@ -1,6 +1,5 @@
 package com.konopelko.booksgoals.presentation.common.component.navdrawer.ui
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -21,7 +20,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -50,12 +48,16 @@ fun <T : Enum<T>> NavDrawerContent(
             .background(color = backgroundDark),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        ProfileHeader(
+        MenuHeader(
             modifier = Modifier.padding(top = 16.dp)
         )
 
         LazyColumn(
-            modifier = Modifier.padding(horizontal = 8.dp)
+            modifier = Modifier.padding(
+                top = 32.dp,
+                start = 8.dp,
+                end = 8.dp
+            )
         ) {
             itemsIndexed(menuItems) { index, item ->
                 Divider(
@@ -93,18 +95,14 @@ fun <T : Enum<T>> NavDrawerContent(
 }
 
 @Composable
-private fun ProfileHeader(
+private fun MenuHeader(
     modifier: Modifier = Modifier
 ) = Column(
     modifier = modifier,
     horizontalAlignment = Alignment.CenterHorizontally
 ) {
-    Image(
-        painter = painterResource(id = R.drawable.ic_profile),
-        contentDescription = ""
-    )
     Text(
-        text = stringResource(id = R.string.side_menu_header_username_text),
+        text = stringResource(id = R.string.side_menu_header_text),
         style = MaterialTheme.typography.headlineMedium,
         color = textWhite
     )

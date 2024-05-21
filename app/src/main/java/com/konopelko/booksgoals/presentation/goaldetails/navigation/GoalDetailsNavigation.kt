@@ -9,6 +9,7 @@ import com.konopelko.booksgoals.presentation.addgoal.model.AddGoalScreenOrigin
 import com.konopelko.booksgoals.presentation.common.utils.uri.serializeNavParam
 import com.konopelko.booksgoals.presentation.goaldetails.GoalDetailsIntent.GoalDetailsNavigationIntent
 import com.konopelko.booksgoals.presentation.goaldetails.GoalDetailsIntent.GoalDetailsNavigationIntent.NavigateToEditGoal
+import com.konopelko.booksgoals.presentation.goaldetails.GoalDetailsIntent.GoalDetailsNavigationIntent.NavigateToGoalStatistics
 import com.konopelko.booksgoals.presentation.navigation.MainNavOption
 
 class GoalDetailsNavigation(
@@ -16,7 +17,12 @@ class GoalDetailsNavigation(
 ) {
 
     fun onNavigate(intent: GoalDetailsNavigationIntent) = when(intent) {
+        NavigateToGoalStatistics -> navigateToGoalStatistics()
         is NavigateToEditGoal -> navigateToEditGoal(intent.goal)
+    }
+
+    private fun navigateToGoalStatistics() {
+        navController.navigate(MainNavOption.GoalStatisticsScreen.name)
     }
 
     private fun navigateToEditGoal(goal: Goal) {

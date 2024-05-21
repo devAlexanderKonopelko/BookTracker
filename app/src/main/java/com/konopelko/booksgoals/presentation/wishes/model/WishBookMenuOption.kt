@@ -1,6 +1,7 @@
 package com.konopelko.booksgoals.presentation.wishes.model
 
-enum class WishBookMenuOption {
-    START,
-    DELETE
+//todo: use @StringRes param
+enum class WishBookMenuOption(val text: String) {
+    START("Начать"),
+    DELETE("Удалить")
 }

@@ -8,5 +8,5 @@
     <string name="side_menu_achievements_title">Достижения</string>
 
     <!-- Side Navigation Menu -->
-    <string name="side_menu_header_username_text">Пользователь</string>
+    <string name="side_menu_header_text">Book Tracker</string>
 </resources>

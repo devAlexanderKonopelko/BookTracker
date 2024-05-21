@@ -1,7 +1,8 @@
 package com.konopelko.booksgoals.presentation.goals.model
 
-enum class GoalMenuOption {
-    FREEZE,
-    FINISH,
-    DELETE
+//todo: use @StringRes param
+enum class GoalMenuOption(val text: String) {
+    FREEZE("Заморозить"),
+    FINISH("Завершить"),
+    DELETE("Удалить")
 }
