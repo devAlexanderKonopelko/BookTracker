@@ -1,15 +1,20 @@
 package com.konopelko.booksgoals.data.repository.goal
 
+import com.konopelko.booksgoals.data.database.dao.book.BookDao
 import com.konopelko.booksgoals.data.database.dao.goal.GoalDao
 import com.konopelko.booksgoals.data.utils.Result
 import com.konopelko.booksgoals.data.utils.databaseCall
 import com.konopelko.booksgoals.domain.model.goal.Goal
 import com.konopelko.booksgoals.domain.repository.goal.GoalRepository
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flatMapConcat
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.zip
 
 class GoalRepositoryImpl(
-    private val goalDao: GoalDao
+    private val goalDao: GoalDao,
+    private val bookDao: BookDao
 ): GoalRepository {
 
     //todo: refactor, remove [Flow] and use databaseCall()

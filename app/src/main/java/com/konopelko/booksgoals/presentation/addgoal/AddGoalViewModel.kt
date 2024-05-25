@@ -118,6 +118,7 @@ class AddGoalViewModel(
                 bookAuthor = prepareBookAuthorName(selectedBook),
                 bookPublishYear = selectedBook.publishYear.toInt(),
                 bookPagesAmount = preparePagesAmount(selectedBook),
+                bookCoverUrl = selectedBook.coverUrl,
                 creationDate = currentDateTime.toString(),
                 expectedPagesPerDay = bookPagesPerDay,
                 expectedFinishDaysAmount = daysToFinishGoal

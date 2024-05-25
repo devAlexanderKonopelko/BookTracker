@@ -26,6 +26,9 @@ data class GoalEntity(
     @ColumnInfo(name = "book_pages_amount")
     val bookPagesAmount: Int,
 
+    @ColumnInfo(name = "book_cover_url")
+    val bookCoverUrl: String,
+
     @ColumnInfo(name = "creation_date")
     val goalCreationDate: String,
 

@@ -4,9 +4,13 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
 import com.konopelko.booksgoals.data.database.entity.book.BookEntity
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface BookDao {
+
+    @Query("SELECT * FROM books WHERE id = :bookId")
+    fun getBookById(bookId: Int): Flow<BookEntity>
 
     @Query("SELECT * FROM books WHERE is_finished = 1")
     fun getFinishedBooks(): List<BookEntity>

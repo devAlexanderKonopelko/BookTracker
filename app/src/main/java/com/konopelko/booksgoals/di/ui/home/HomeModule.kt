@@ -38,7 +38,6 @@ val homeModule = module {
             initialState = GoalsUiState(),
             getGoalsUseCase = get(),
             deleteGoalUseCase = get(),
-            addBookUseCase = get(),
             updateBookIsFinishedUseCase = get()
         )
     }

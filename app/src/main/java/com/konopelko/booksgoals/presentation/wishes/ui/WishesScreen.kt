@@ -1,11 +1,13 @@
 package com.konopelko.booksgoals.presentation.wishes.ui
 
 import android.widget.Toast
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -35,6 +37,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
+import com.bumptech.glide.integration.compose.GlideImage
+import com.bumptech.glide.integration.compose.placeholder
 import com.konopelko.booksgoals.R.drawable
 import com.konopelko.booksgoals.domain.model.book.Book
 import com.konopelko.booksgoals.presentation.common.theme.BooksGoalsAppTheme
@@ -160,6 +165,7 @@ private fun WishesBooksListContent(
     }
 }
 
+@OptIn(ExperimentalGlideComposeApi::class)
 @Composable
 private fun WishBookCard(
     book: Book,
@@ -169,29 +175,43 @@ private fun WishBookCard(
         .fillMaxWidth()
         .padding(top = 16.dp)
         .background(
-            color = Color.LightGray,
-            shape = RoundedCornerShape(12.dp)
+            color = Color(0xFFE7E7E7),
+            shape = RoundedCornerShape(4.dp)
         )
         .drawRightBorder(
             strokeWidth = 20.dp,
-            color = Color.Blue,
-            shape = RoundedCornerShape(12.dp)
+            color = Color(0xFF5185D6),
+            shape = RoundedCornerShape(4.dp)
         ),
     verticalAlignment = Alignment.CenterVertically
 ) {
-    Box(
-        modifier = Modifier
-            .size(50.dp)
-            .padding(
-                top = 4.dp,
-                bottom = 4.dp,
-                start = 8.dp
-            )
-            .background(
-                color = Color.Gray,
-                shape = RoundedCornerShape(4.dp)
-            )
-    )
+    if(book.coverUrl.isNotEmpty()) {
+        GlideImage(
+            modifier = Modifier
+                .size(50.dp)
+                .padding(
+                    top = 4.dp,
+                    bottom = 4.dp,
+                    start = 8.dp
+                ),
+            model = book.coverUrl,
+            contentDescription = "Book image",
+            loading = placeholder(drawable.ic_default_book),
+            failure = placeholder(drawable.ic_default_book)
+        )
+    } else {
+        Image(
+            modifier = Modifier
+                .size(50.dp)
+                .padding(
+                    top = 4.dp,
+                    bottom = 4.dp,
+                    start = 8.dp
+                ),
+            painter = painterResource(id = drawable.ic_default_book),
+            contentDescription = ""
+        )
+    }
 
     Column(
         modifier = Modifier.padding(start = 8.dp),

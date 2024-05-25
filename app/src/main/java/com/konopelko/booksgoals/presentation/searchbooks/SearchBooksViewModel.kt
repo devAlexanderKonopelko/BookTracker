@@ -106,7 +106,8 @@ class SearchBooksViewModel(
                 Log.e("SearchBooksViewModel", "updateUiState called")
                 updateUiState(SearchResultsReceived(searchResultBooks = books))
             }.onError {
-                Log.e("SearchBooksViewModel", "error occurred when searching books: ${it.exception}")
+                Log.e("SearchBooksViewModel", "error occurred when searching books")
+                it.exception.printStackTrace()
             }
         }
     }

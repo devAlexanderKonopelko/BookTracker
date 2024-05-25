@@ -1,6 +1,7 @@
 package com.konopelko.booksgoals.data.repository.goal
 
 import com.konopelko.booksgoals.data.database.entity.goal.GoalEntity
+import com.konopelko.booksgoals.domain.model.book.Book
 import com.konopelko.booksgoals.domain.model.goal.Goal
 import java.util.Calendar
 import kotlin.math.roundToInt
@@ -12,6 +13,7 @@ fun GoalEntity.toDomainModel(): Goal = Goal(
     bookAuthor = bookAuthorName,
     bookPublishYear = bookPublishYear.toInt(),
     bookPagesAmount = bookPagesAmount,
+    bookCoverUrl = bookCoverUrl,
     completedPagesAmount = pagesCompletedAmount,
     creationDate = goalCreationDate,
     daysInProgress = getDaysInProgress(goalCreationDate),
@@ -32,7 +34,8 @@ fun Goal.toDatabaseModel(): GoalEntity = GoalEntity(
     pagesCompletedAmount = completedPagesAmount,
     expectedPagesPerDay = expectedPagesPerDay,
     expectedFinishDaysAmount = expectedFinishDaysAmount,
-    goalCreationDate = creationDate
+    goalCreationDate = creationDate,
+    bookCoverUrl = bookCoverUrl
 )
 
 private fun getGoalProgress(

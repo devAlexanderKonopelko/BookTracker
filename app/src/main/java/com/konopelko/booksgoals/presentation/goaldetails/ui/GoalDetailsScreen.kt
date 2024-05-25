@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -33,6 +34,9 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
+import com.bumptech.glide.integration.compose.GlideImage
+import com.bumptech.glide.integration.compose.placeholder
 import com.konopelko.booksgoals.R
 import com.konopelko.booksgoals.domain.model.goal.Goal
 import com.konopelko.booksgoals.presentation.goaldetails.GoalDetailsIntent
@@ -91,7 +95,8 @@ fun GoalDetailsContent(
         GoalHeader(
             bookName = bookName,
             bookAuthor = bookAuthor,
-            bookPublishYear = bookPublishYear
+            bookPublishYear = bookPublishYear,
+            bookCoverUrl = bookCoverUrl
         )
         GoalProgressContent(
             completedPagesAmount = completedPagesAmount,
@@ -263,23 +268,40 @@ private fun GoalProgressContent(
     }
 }
 
+@OptIn(ExperimentalGlideComposeApi::class)
 @Composable
 private fun GoalHeader(
     bookName: String,
     bookAuthor: String,
-    bookPublishYear: Int
+    bookPublishYear: Int,
+    bookCoverUrl: String
 ) = Column(
     modifier = Modifier.fillMaxWidth(),
     horizontalAlignment = Alignment.CenterHorizontally
 ) {
-    Image(
-        modifier = Modifier
-            .fillMaxWidth(0.4f)
-            .fillMaxHeight(0.3f)
-            .padding(top = 16.dp),
-        painter = painterResource(id = R.drawable.ic_default_book),
-        contentDescription = ""
-    )
+
+    if(bookCoverUrl.isNotEmpty()) {
+        GlideImage(
+            modifier = Modifier
+                .fillMaxWidth(0.4f)
+                .fillMaxHeight(0.3f)
+                .padding(top = 32.dp),
+            model = bookCoverUrl,
+            contentDescription = "Book image",
+            loading = placeholder(R.drawable.ic_default_book),
+            failure = placeholder(R.drawable.ic_default_book)
+        )
+    } else {
+        Image(
+            modifier = Modifier
+                .fillMaxWidth(0.4f)
+                .fillMaxHeight(0.3f)
+                .padding(top = 32.dp),
+            painter = painterResource(id = R.drawable.ic_default_book),
+            contentDescription = ""
+        )
+    }
+
 
     Text(
         modifier = Modifier.padding(top = 16.dp),

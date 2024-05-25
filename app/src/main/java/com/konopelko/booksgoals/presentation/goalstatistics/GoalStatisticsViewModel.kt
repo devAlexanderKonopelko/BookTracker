@@ -67,7 +67,8 @@ class GoalStatisticsViewModel(
                         Book(
                             title = it.bookName,
                             authorName = it.bookAuthor,
-                            publishYear = it.bookPublishYear.toString()
+                            publishYear = it.bookPublishYear.toString(),
+                            coverUrl = it.bookCoverUrl
                         )
                     )
                 )

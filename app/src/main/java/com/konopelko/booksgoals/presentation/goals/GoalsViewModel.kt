@@ -24,7 +24,6 @@ class GoalsViewModel(
     initialState: GoalsUiState,
     private val getGoalsUseCase: GetGoalsUseCase,
     private val deleteGoalUseCase: DeleteGoalUseCase,
-    private val addBookUseCase: AddBookUseCase,
     private val updateBookIsFinishedUseCase: UpdateBookIsFinishedUseCase
 ) : BaseViewModel<GoalsIntent, GoalsUiState, PartialGoalsState>(
     initialState = initialState
@@ -75,7 +74,6 @@ class GoalsViewModel(
         //TODO("Not yet implemented")
     }
 
-    //todo: при завершении цели подумать, как изменяется статистика
     //todo: подумать, нужно ли удалять цель при завершении
     private fun onFinishGoalClicked(goal: Goal) {
         viewModelScope.launch(Dispatchers.IO) {

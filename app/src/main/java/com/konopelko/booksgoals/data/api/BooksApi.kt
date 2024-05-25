@@ -8,6 +8,8 @@ import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Query
 
+const val API_HOST_COVERS = "https://covers.openlibrary.org/b/"
+
 interface BooksApi {
 
     @GET("search.json?")

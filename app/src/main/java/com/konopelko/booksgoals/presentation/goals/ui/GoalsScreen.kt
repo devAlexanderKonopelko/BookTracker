@@ -1,6 +1,7 @@
 package com.konopelko.booksgoals.presentation.goals.ui
 
 import android.widget.Toast
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -38,6 +39,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
+import com.bumptech.glide.integration.compose.GlideImage
+import com.bumptech.glide.integration.compose.placeholder
 import com.konopelko.booksgoals.R
 import com.konopelko.booksgoals.domain.model.goal.Goal
 import com.konopelko.booksgoals.presentation.common.theme.BooksGoalsAppTheme
@@ -85,6 +89,7 @@ fun GoalsScreen(
         uiState.goals.isEmpty() -> HomeScreenContentNoGoals(
             onNavigate = onNavigate
         )
+
         else -> HomeScreenGoalsContent(
             goals = uiState.goals,
             onNavigate = onNavigate,
@@ -95,7 +100,7 @@ fun GoalsScreen(
         )
     }
 
-    if(showGoalMenuOptions) {
+    if (showGoalMenuOptions) {
         GoalOptionsMenu(
             goal = menuOptionGoal,
             onOptionClicked = viewModel::acceptIntent,
@@ -103,7 +108,7 @@ fun GoalsScreen(
         )
     }
 
-    if(uiState.showGoalCompletedMessage) {
+    if (uiState.showGoalCompletedMessage) {
         LaunchedEffect("toast key") {
             Toast.makeText(context, "Цель успешна завершена!", Toast.LENGTH_SHORT).show()
             viewModel.acceptIntent(HideGoalCompletedMessage)
@@ -146,7 +151,7 @@ private fun HomeScreenGoalsContent(
             .align(Alignment.BottomEnd),
         onClick = { onNavigate(NavigateToAddGoalScreen) }
     ) {
-        Icon(Icons.Filled.Add,"")
+        Icon(Icons.Filled.Add, "")
     }
 }
 
@@ -175,6 +180,7 @@ private fun GoalsListContent(
     }
 }
 
+@OptIn(ExperimentalGlideComposeApi::class)
 @Composable
 private fun GoalCard(
     goal: Goal,
@@ -186,28 +192,42 @@ private fun GoalCard(
         .padding(top = 16.dp)
         .clickable { onNavigate(NavigateToGoalDetailsScreen(goal.id)) }
         .background(
-            color = Color.LightGray,
-            shape = RoundedCornerShape(12.dp)
+            color = Color(0xFFE7E7E7),
+            shape = RoundedCornerShape(4.dp)
         )
         .drawRightBorder(
             strokeWidth = 20.dp,
             color = getProgressColor(goal.progress),
-            shape = RoundedCornerShape(12.dp)
+            shape = RoundedCornerShape(4.dp)
         ),
     verticalAlignment = Alignment.CenterVertically
 ) {
-    Box(
-        modifier = Modifier
-            .size(50.dp)
-            .padding(start = 8.dp)
-            .background(
-                color = Color.Gray,
-                shape = RoundedCornerShape(4.dp)
-            )
-    )
+
+    if(goal.bookCoverUrl.isNotEmpty()) {
+        GlideImage(
+            modifier = Modifier
+                .size(60.dp)
+                .padding(start = 8.dp),
+            model = goal.bookCoverUrl,
+            contentDescription = "Book image",
+            loading = placeholder(R.drawable.ic_default_book),
+            failure = placeholder(R.drawable.ic_default_book)
+        )
+    } else {
+        Image(
+            modifier = Modifier
+                .size(60.dp)
+                .padding(start = 8.dp),
+            painter = painterResource(id = R.drawable.ic_default_book),
+            contentDescription = ""
+        )
+    }
 
     Column(
-        modifier = Modifier.padding(start = 8.dp),
+        modifier = Modifier.padding(
+            top = 8.dp,
+            start = 12.dp
+        ),
         verticalArrangement = Arrangement.Center
     ) {
 
@@ -232,20 +252,27 @@ private fun GoalCard(
             }
         }
         Row {
-            Text(text = goal.bookAuthor)
+            Text(
+                text = goal.bookAuthor,
+                color = Color.Gray
+            )
 
             Text(
-                modifier = Modifier.padding(start = 16.dp),
-                text = goal.bookPublishYear.toString()
+                modifier = Modifier.padding(start = 8.dp),
+                text = goal.bookPublishYear.toString(),
+                color = Color.Gray
             )
         }
 
         Row(
+            modifier = Modifier.padding(bottom = 8.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             LinearProgressIndicator(
+                modifier = Modifier.fillMaxWidth(0.7f),
                 progress = { (goal.progress.toFloat() / 100) },
-                trackColor = Color.Gray
+                trackColor = Color.LightGray,
+                color = if(goal.progress == 100) Color(0xFF00A45F) else Color.DarkGray
             )
 
             Text(
@@ -275,7 +302,8 @@ private fun HomeScreenContentNoGoals(
     }
 }
 
-private fun getProgressColor(progress: Int): Color = if(progress == 100) Color.Green else Color.Blue
+private fun getProgressColor(progress: Int): Color =
+    if (progress == 100) Color(0xFF00A45F) else Color(0xFF5185D6)
 
 @Preview(showBackground = true)
 @Composable

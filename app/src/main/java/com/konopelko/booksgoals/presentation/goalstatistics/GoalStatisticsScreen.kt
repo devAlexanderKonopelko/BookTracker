@@ -26,6 +26,9 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
+import com.bumptech.glide.integration.compose.GlideImage
+import com.bumptech.glide.integration.compose.placeholder
 import com.konopelko.booksgoals.R
 import com.konopelko.booksgoals.domain.model.book.Book
 import com.konopelko.booksgoals.presentation.common.theme.BooksGoalsAppTheme
@@ -127,18 +130,31 @@ private fun StatisticsHeader() = Text(
     fontSize = 24.sp
 )
 
+@OptIn(ExperimentalGlideComposeApi::class)
 @Composable
 private fun BookInfoContent(book: Book) = Column(
     modifier = Modifier.padding(top = 16.dp),
     horizontalAlignment = Alignment.CenterHorizontally
 ) {
-    Image(
-        modifier = Modifier
-            .fillMaxWidth(0.4f)
-            .fillMaxHeight(0.25f),
-        painter = painterResource(id = R.drawable.ic_default_book),
-        contentDescription = ""
-    )
+    if(book.coverUrl.isNotEmpty()) {
+        GlideImage(
+            modifier = Modifier
+                .fillMaxWidth(0.4f)
+                .fillMaxHeight(0.25f),
+            model = book.coverUrl,
+            contentDescription = "Book image",
+            loading = placeholder(R.drawable.ic_default_book),
+            failure = placeholder(R.drawable.ic_default_book)
+        )
+    } else {
+        Image(
+            modifier = Modifier
+                .fillMaxWidth(0.4f)
+                .fillMaxHeight(0.25f),
+            painter = painterResource(id = R.drawable.ic_default_book),
+            contentDescription = ""
+        )
+    }
 
     Text(
         modifier = Modifier.padding(top = 8.dp),
