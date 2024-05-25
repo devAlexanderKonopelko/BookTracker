@@ -1,8 +1,7 @@
-package com.konopelko.booksgoals.presentation.goalstatistics
+package com.konopelko.booksgoals.presentation.totalstatistics.ui
 
 import android.annotation.SuppressLint
 import android.graphics.Typeface
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -11,11 +10,13 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Tab
+import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -27,16 +28,20 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.konopelko.booksgoals.R
-import com.konopelko.booksgoals.domain.model.book.Book
 import com.konopelko.booksgoals.presentation.common.theme.BooksGoalsAppTheme
-import com.konopelko.booksgoals.presentation.goalstatistics.GoalStatisticsIntent.ArgsReceived
-import com.konopelko.booksgoals.presentation.goalstatistics.GoalStatisticsIntent.GoalStatisticsNavigationIntent
-import com.konopelko.booksgoals.presentation.goalstatistics.GoalStatisticsIntent.SelectedScaleChanged
 import com.konopelko.booksgoals.presentation.goalstatistics.model.ProgressMarkUiModel
 import com.konopelko.booksgoals.presentation.goalstatistics.model.StatisticsScale
 import com.konopelko.booksgoals.presentation.goalstatistics.model.StatisticsScale.MONTH
 import com.konopelko.booksgoals.presentation.goalstatistics.model.StatisticsScale.WEEK
 import com.konopelko.booksgoals.presentation.goalstatistics.model.StatisticsScale.YEAR
+import com.konopelko.booksgoals.presentation.totalstatistics.TotalStatisticsIntent
+import com.konopelko.booksgoals.presentation.totalstatistics.TotalStatisticsIntent.SelectedScaleChanged
+import com.konopelko.booksgoals.presentation.totalstatistics.TotalStatisticsIntent.StatisticsTabChanged
+import com.konopelko.booksgoals.presentation.totalstatistics.TotalStatisticsIntent.TotalStatisticsNavigationIntent
+import com.konopelko.booksgoals.presentation.totalstatistics.TotalStatisticsUiState
+import com.konopelko.booksgoals.presentation.totalstatistics.TotalStatisticsViewModel
+import com.konopelko.booksgoals.presentation.totalstatistics.model.TotalStatisticsData
+import com.konopelko.booksgoals.presentation.totalstatistics.model.TotalStatisticsTab
 import com.patrykandpatrick.vico.compose.cartesian.CartesianChartHost
 import com.patrykandpatrick.vico.compose.cartesian.axis.rememberBottomAxis
 import com.patrykandpatrick.vico.compose.cartesian.axis.rememberStartAxis
@@ -48,7 +53,7 @@ import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModel
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianValueFormatter
 import com.patrykandpatrick.vico.core.cartesian.data.ColumnCartesianLayerModel
 import com.patrykandpatrick.vico.core.cartesian.layer.ColumnCartesianLayer.ColumnProvider
-import com.patrykandpatrick.vico.core.cartesian.marker.DefaultCartesianMarker.LabelPosition
+import com.patrykandpatrick.vico.core.cartesian.marker.DefaultCartesianMarker.LabelPosition.AbovePoint
 import com.patrykandpatrick.vico.core.cartesian.marker.DefaultCartesianMarkerValueFormatter
 import com.patrykandpatrick.vico.core.common.Dimensions
 import com.patrykandpatrick.vico.core.common.component.LineComponent
@@ -64,13 +69,10 @@ private val currentMonth = Calendar.getInstance().get(Calendar.MONTH) + 1
 private val monthDays = Calendar.getInstance().getActualMaximum(Calendar.DAY_OF_MONTH)
 private val weekDays = listOf("Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Вс")
 
-private const val ARGS_KEY = "args_key"
-
 @Composable
-fun GoalStatisticsScreen(
-    viewModel: GoalStatisticsViewModel = getViewModel(),
-    onNavigate: (GoalStatisticsNavigationIntent) -> Unit,
-    args: Int?
+fun TotalStatisticsScreen(
+    viewModel: TotalStatisticsViewModel = getViewModel(),
+    onNavigate: (TotalStatisticsNavigationIntent) -> Unit
 ) = Column(
     modifier = Modifier.fillMaxSize(),
     verticalArrangement = Arrangement.Center,
@@ -78,74 +80,110 @@ fun GoalStatisticsScreen(
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
-    args?.let {
-        LaunchedEffect(ARGS_KEY) {
-            viewModel.acceptIntent(ArgsReceived(it))
-        }
-    }
-
-    GoalStatisticsContent(
+    TotalStatisticsContent(
         uiState = uiState,
         onIntent = viewModel::acceptIntent
     )
 }
 
 @Composable
-private fun GoalStatisticsContent(
-    uiState: GoalStatisticsUiState,
-    onIntent: (GoalStatisticsIntent) -> Unit
+private fun TotalStatisticsContent(
+    uiState: TotalStatisticsUiState,
+    onIntent: (TotalStatisticsIntent) -> Unit
 ) = Column(
     verticalArrangement = Arrangement.Center,
     horizontalAlignment = Alignment.CenterHorizontally
-){
-    StatisticsHeader()
+) {
+    TotalStatisticsHeader()
 
-    BookInfoContent(uiState.book)
+    StatisticsTabsBar(
+        selectedTab = uiState.selectedTab,
+        onIntent = onIntent
+    )
 
-    Spacer(modifier = Modifier.height(32.dp))
+    Spacer(modifier = Modifier.weight(1f))
 
     StatisticsScaleMenu(
-        selectedStatisticsScale = uiState.selectedStatisticsScale,
+        selectedStatisticsScale = uiState.selectedScale,
         onIntent = onIntent
     )
 
     ColumnChartContent(
-        scale = uiState.selectedStatisticsScale,
+        scale = uiState.selectedScale,
         visibleMarks = uiState.visibleProgressMarks
     )
 
-    Spacer(modifier = Modifier.height(32.dp))
+    StatisticsInfoContent(uiState = uiState)
+
+    Spacer(modifier = Modifier.weight(1f))
 }
 
 @Composable
-private fun StatisticsHeader() = Text(
-    modifier = Modifier.padding(
-        top = 16.dp,
-        start = 16.dp
-    ),
-    text = "Статистика книги",
+private fun TotalStatisticsHeader() = Text(
+    modifier = Modifier.padding(top = 16.dp),
+    text = "Моя статистика",
     fontSize = 24.sp
 )
 
 @Composable
-private fun BookInfoContent(book: Book) = Column(
-    modifier = Modifier.padding(top = 16.dp),
-    horizontalAlignment = Alignment.CenterHorizontally
+private fun StatisticsTabsBar(
+    selectedTab: TotalStatisticsTab,
+    onIntent: (TotalStatisticsIntent) -> Unit
 ) {
-    Image(
-        modifier = Modifier
-            .fillMaxWidth(0.4f)
-            .fillMaxHeight(0.25f),
-        painter = painterResource(id = R.drawable.ic_default_book),
-        contentDescription = ""
-    )
+    val tabs = TotalStatisticsTab.entries
 
+    TabRow(
+        modifier = Modifier.padding(
+            top = 24.dp,
+            start = 16.dp,
+            end = 16.dp
+        ),
+        selectedTabIndex = tabs.indexOf(selectedTab)
+    ) {
+        tabs.forEach {
+            Tab(
+                text = { Text(text = it.text) },
+                selected = it == selectedTab,
+                onClick = { onIntent(StatisticsTabChanged(it)) }
+            )
+        }
+    }
+}
+
+@Composable
+private fun StatisticsScaleMenu(
+    selectedStatisticsScale: StatisticsScale,
+    onIntent: (TotalStatisticsIntent) -> Unit
+) = Row(
+    modifier = Modifier
+        .fillMaxWidth()
+        .padding(horizontal = 16.dp),
+    horizontalArrangement = Arrangement.SpaceEvenly
+) {
     Text(
-        modifier = Modifier.padding(top = 8.dp),
-        text = book.title,
-        fontSize = 24.sp
+        modifier = Modifier.clickable { onIntent(SelectedScaleChanged(WEEK)) },
+        text = "Неделя",
+        color = if (selectedStatisticsScale == WEEK) Color(0xFF4B6CA1)
+        else Color.Black,
+        textDecoration = if (selectedStatisticsScale == WEEK) TextDecoration.Underline
+        else TextDecoration.None
     )
-    Text(text = "${book.authorName} - ${book.publishYear}")
+    Text(
+        modifier = Modifier.clickable { onIntent(SelectedScaleChanged(MONTH)) },
+        text = "Месяц",
+        color = if (selectedStatisticsScale == MONTH) Color(0xFF4B6CA1)
+        else Color.Black,
+        textDecoration = if (selectedStatisticsScale == MONTH) TextDecoration.Underline
+        else TextDecoration.None
+    )
+    Text(
+        modifier = Modifier.clickable { onIntent(SelectedScaleChanged(YEAR)) },
+        text = "Год",
+        color = if (selectedStatisticsScale == YEAR) Color(0xFF4B6CA1)
+        else Color.Black,
+        textDecoration = if (selectedStatisticsScale == YEAR) TextDecoration.Underline
+        else TextDecoration.None
+    )
 }
 
 @Composable
@@ -154,9 +192,8 @@ private fun ColumnChartContent(
     visibleMarks: List<ProgressMarkUiModel>
 ) = CartesianChartHost(
     modifier = Modifier
-        .fillMaxHeight()
+        .fillMaxHeight(0.5f)
         .padding(
-            top = 16.dp,
             start = 16.dp,
             end = 16.dp,
             bottom = 32.dp
@@ -196,51 +233,101 @@ private fun ColumnChartContent(
             typeface = Typeface.MONOSPACE,
             padding = Dimensions(0f, 0f, 0f, 8f)
         ),
-        labelPosition = LabelPosition.AbovePoint
+        labelPosition = AbovePoint
     )
 )
 
 @Composable
-private fun StatisticsScaleMenu(
-    selectedStatisticsScale: StatisticsScale,
-    onIntent: (GoalStatisticsIntent) -> Unit
-) = Row(
-    modifier = Modifier
-        .fillMaxWidth()
-        .padding(horizontal = 16.dp),
-    horizontalArrangement = Arrangement.SpaceEvenly
+private fun StatisticsInfoContent(
+    uiState: TotalStatisticsUiState
+) = Column(
+    modifier = Modifier.fillMaxWidth()
 ) {
-    Text(
-        modifier = Modifier.clickable {
-            onIntent(SelectedScaleChanged(WEEK))
-        },
-        text = "Неделя",
-        color = if (selectedStatisticsScale == WEEK) Color(0xFF4B6CA1)
-        else Color.Black,
-        textDecoration = if (selectedStatisticsScale == WEEK) TextDecoration.Underline
-        else TextDecoration.None
-    )
-    Text(
-        modifier = Modifier.clickable {
-            onIntent(SelectedScaleChanged(MONTH))
-        },
-        text = "Месяц",
-        color = if (selectedStatisticsScale == MONTH) Color(0xFF4B6CA1)
-        else Color.Black,
-        textDecoration = if (selectedStatisticsScale == MONTH) TextDecoration.Underline
-        else TextDecoration.None
-    )
-    Text(
-        modifier = Modifier.clickable {
-            onIntent(SelectedScaleChanged(YEAR))
-        },
-        text = "Год",
-        color = if (selectedStatisticsScale == YEAR) Color(0xFF4B6CA1)
-        else Color.Black,
-        textDecoration = if (selectedStatisticsScale == YEAR) TextDecoration.Underline
-        else TextDecoration.None
-    )
+    with(uiState.totalStatisticsData) {
+        TotalStatisticsSection(
+            statisticsTab = statisticsTab,
+            statisticsScale = statisticsScale,
+            totalPagesRead = totalUnitsRead,
+            averageReadSpeed = averageReadSpeed,
+            goalsAchieved = goalsAchieved
+        )
+    }
 }
+
+@Composable
+private fun TotalStatisticsSection(
+    statisticsTab: TotalStatisticsTab,
+    statisticsScale: StatisticsScale,
+    totalPagesRead: Int,
+    averageReadSpeed: Int,
+    goalsAchieved: Int
+) = Column(
+    modifier = Modifier.padding(
+        top = 32.dp,
+        start = 8.dp,
+        end = 8.dp
+    ),
+) {
+    Row(
+        modifier = Modifier.padding(start = 8.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Icon(
+            painter = painterResource(id = R.drawable.ic_pages),
+            contentDescription = "",
+            tint = Color(0xFF4B6CA1)
+        )
+        Text(
+            modifier = Modifier.padding(start = 4.dp),
+            text = "Обзор ${getStatisticsInfoHeaderText(statisticsTab)}",
+            style = MaterialTheme.typography.titleMedium
+        )
+    }
+
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(top = 12.dp),
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            Text(
+                text = "$totalPagesRead",
+                style = MaterialTheme.typography.titleMedium
+            )
+            Text(text = "Всего ${getStatisticsInfoHeaderText(statisticsTab)}")
+        }
+        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            Text(
+                text = "$averageReadSpeed/${getAverageSpeedTextUnitPerScale(statisticsScale)}",
+                style = MaterialTheme.typography.titleMedium
+            )
+            Text(text = "Среднее")
+        }
+        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            Text(
+                text = "$goalsAchieved",
+                style = MaterialTheme.typography.titleMedium
+            )
+            Text(
+                text = "Целей достигнуто"
+            )
+        }
+    }
+}
+
+private fun getAverageSpeedTextUnitPerScale(statisticsScale: StatisticsScale): String =
+    when (statisticsScale) {
+        WEEK -> "день"
+        MONTH -> "день"
+        YEAR -> "месяц"
+}
+
+private fun getStatisticsInfoHeaderText(statisticsTab: TotalStatisticsTab): String =
+    when (statisticsTab) {
+        TotalStatisticsTab.PAGES -> "страниц"
+        TotalStatisticsTab.BOOKS -> "книг"
+    }
 
 @Suppress("FunctionName")
 private fun ChartColumn() = LineComponent(
@@ -300,20 +387,22 @@ private fun setupBottomAxisValueFormatter(statisticsScale: StatisticsScale): Car
 
 @Preview(showBackground = true)
 @Composable
-private fun GoalStatisticsPreview() = BooksGoalsAppTheme {
-    GoalStatisticsContent(
-        uiState = GoalStatisticsUiState(
-            book = Book(
-                title = "Война и мир",
-                authorName = "Лев Николаевич Толстой",
-                publishYear = "1869"
-            ),
+private fun TotalStatisticsScreenPreview() = BooksGoalsAppTheme {
+    TotalStatisticsContent(
+        uiState = TotalStatisticsUiState(
             visibleProgressMarks = listOf(
                 ProgressMarkUiModel(progress = 50, dateMark = 3),
                 ProgressMarkUiModel(progress = 30, dateMark = 4),
                 ProgressMarkUiModel(progress = 40, dateMark = 5),
                 ProgressMarkUiModel(progress = 57, dateMark = 6),
                 ProgressMarkUiModel(progress = 20, dateMark = 7),
+            ),
+            totalStatisticsData = TotalStatisticsData(
+                statisticsTab = TotalStatisticsTab.PAGES,
+                statisticsScale = WEEK,
+                totalUnitsRead = 305,
+                averageReadSpeed = 34,
+                goalsAchieved = 3
             )
         ),
         onIntent = {}

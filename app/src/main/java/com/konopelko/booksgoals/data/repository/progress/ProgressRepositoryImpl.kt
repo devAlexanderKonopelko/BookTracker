@@ -17,4 +17,8 @@ class ProgressRepositoryImpl(
     override suspend fun addGoalProgress(progressMark: ProgressMark): Result<Unit> = databaseCall {
         progressDao.addProgress(progress = progressMark.toDatabaseModel())
     }
+
+    override suspend fun getTotalStatistics(): Result<List<ProgressMark>> = databaseCall {
+        progressDao.getTotalStatistics().map { it.toDomainModel() }
+    }
 }

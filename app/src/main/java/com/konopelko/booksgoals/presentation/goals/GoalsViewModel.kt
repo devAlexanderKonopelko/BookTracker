@@ -98,7 +98,6 @@ class GoalsViewModel(
         }
     }
 
-    //todo: при удалении цели подумать, как изменяется статистика
     //todo: подумать, нужно ли удалять книгу из бд
     private fun onDeleteGoalClicked(goalId: Int) {
         Log.e("GoalsViewModel", "delete goal clicked, id: $goalId")

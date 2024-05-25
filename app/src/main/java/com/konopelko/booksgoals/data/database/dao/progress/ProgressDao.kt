@@ -13,4 +13,7 @@ interface ProgressDao {
 
     @Query("SELECT * FROM progress WHERE goal_id = :goalId")
     fun getProgressByGoalId(goalId: Int): List<ProgressEntity>
+
+    @Query("SELECT * FROM progress")
+    fun getTotalStatistics(): List<ProgressEntity>
 }

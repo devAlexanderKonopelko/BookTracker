@@ -96,7 +96,11 @@ class GoalDetailsViewModel(
                 goalId = uiState.value.goal.id,
                 pagesReadAmount = uiState.value.goal.completedPagesAmount + pagesReadAmount
             ).onSuccess {
-                updateUiState(PagesCompletedChanged(pagesCompleted = uiState.value.goal.completedPagesAmount + pagesReadAmount))
+                updateUiState(
+                    PagesCompletedChanged(
+                        pagesCompleted = uiState.value.goal.completedPagesAmount + pagesReadAmount
+                    )
+                )
             }.onError {
                 Log.e("GoalDetailsViewModel", "error occurred when updating goal progress, ${it.exception}")
             }

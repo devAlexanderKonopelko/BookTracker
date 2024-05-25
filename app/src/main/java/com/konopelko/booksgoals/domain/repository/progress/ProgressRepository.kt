@@ -8,4 +8,6 @@ interface ProgressRepository {
     suspend fun getGoalProgress(goalId: Int): Result<List<ProgressMark>>
 
     suspend fun addGoalProgress(progressMark: ProgressMark): Result<Unit>
+
+    suspend fun getTotalStatistics(): Result<List<ProgressMark>>
 }

@@ -17,7 +17,8 @@ import com.konopelko.booksgoals.presentation.goalstatistics.GoalStatisticsScreen
 import com.konopelko.booksgoals.presentation.goalstatistics.GoalStatisticsViewModel
 import com.konopelko.booksgoals.presentation.goalstatistics.navigation.GoalStatisticsNavigation
 import com.konopelko.booksgoals.presentation.searchbooks.navigation.SearchBooksNavigation
-import com.konopelko.booksgoals.presentation.statistics.ui.StatisticsScreen
+import com.konopelko.booksgoals.presentation.totalstatistics.navigation.TotalStatisticsNavigation
+import com.konopelko.booksgoals.presentation.totalstatistics.ui.TotalStatisticsScreen
 import com.konopelko.booksgoals.presentation.wishes.WishesViewModel
 import com.konopelko.booksgoals.presentation.wishes.navigation.WishesNavigation
 import com.konopelko.booksgoals.presentation.wishes.ui.WishesScreen
@@ -58,8 +59,10 @@ fun NavGraphBuilder.mainGraph(
         composable(MainNavOption.FinishedBooksScreen.name) {
             FinishedBooksScreen()
         }
-        composable(MainNavOption.StatisticsScreen.name) {
-            StatisticsScreen()
+        composable(MainNavOption.TotalStatisticsScreen.name) {
+            TotalStatisticsScreen(
+                onNavigate = TotalStatisticsNavigation(navController)::onNavigate
+            )
         }
         composable(MainNavOption.AchievementsScreen.name) {
             AchievementsScreen()
@@ -89,7 +92,7 @@ enum class MainNavOption {
     WishesScreen,
     GoalsScreen,
     FinishedBooksScreen,
-    StatisticsScreen,
+    TotalStatisticsScreen,
     AchievementsScreen,
 
     AddGoalScreen,

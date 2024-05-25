@@ -5,7 +5,7 @@ import com.konopelko.booksgoals.presentation.common.component.navdrawer.model.Ap
 import com.konopelko.booksgoals.presentation.navigation.MainNavOption.AchievementsScreen
 import com.konopelko.booksgoals.presentation.navigation.MainNavOption.FinishedBooksScreen
 import com.konopelko.booksgoals.presentation.navigation.MainNavOption.GoalsScreen
-import com.konopelko.booksgoals.presentation.navigation.MainNavOption.StatisticsScreen
+import com.konopelko.booksgoals.presentation.navigation.MainNavOption.TotalStatisticsScreen
 import com.konopelko.booksgoals.presentation.navigation.MainNavOption.WishesScreen
 
 object NavDrawerItems {
@@ -23,7 +23,7 @@ object NavDrawerItems {
             string.side_menu_books_title
         ),
         AppDrawerItemInfo(
-            StatisticsScreen,
+            TotalStatisticsScreen,
             string.side_menu_statistics_title
         ),
         AppDrawerItemInfo(
