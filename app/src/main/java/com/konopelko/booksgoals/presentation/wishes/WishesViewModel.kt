@@ -16,9 +16,11 @@ import com.konopelko.booksgoals.presentation.wishes.WishesIntent.ResetNavigateTo
 import com.konopelko.booksgoals.presentation.wishes.WishesUiState.WishesPartialState
 import com.konopelko.booksgoals.presentation.wishes.WishesUiState.WishesPartialState.HideWishBookDeletedMessageState
 import com.konopelko.booksgoals.presentation.wishes.WishesUiState.WishesPartialState.ResetNavigateToAddGoalState
+import com.konopelko.booksgoals.presentation.wishes.WishesUiState.WishesPartialState.SelectBookForGoalState
 import com.konopelko.booksgoals.presentation.wishes.WishesUiState.WishesPartialState.StartGoalClickedState
 import com.konopelko.booksgoals.presentation.wishes.WishesUiState.WishesPartialState.WishBookDeletedSuccessfully
 import com.konopelko.booksgoals.presentation.wishes.WishesUiState.WishesPartialState.WishesBooksLoaded
+import com.konopelko.booksgoals.presentation.wishes.model.WishesArgs
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
@@ -30,6 +32,7 @@ class WishesViewModel(
 ): BaseViewModel<WishesIntent, WishesUiState, WishesPartialState>(
     initialState = initialState
 ) {
+    private var isSelectBookForGoal = false
 
     init {
         Log.e("WishesViewModel", "init")
@@ -39,7 +42,7 @@ class WishesViewModel(
     override fun acceptIntent(intent: WishesIntent) = when(intent) {
         ResetNavigateToAddGoalScreen -> resetNavigateToAddGoalScreen()
         HideWishBookDeletedMessage -> hideWishBookDeletedMessage()
-        is OnArgsReceived -> onArgsReceived(isBookAdded = intent.args)
+        is OnArgsReceived -> onArgsReceived(intent.args)
         is OnWishBookMenuOptionClicked -> onWishBookMenuOptionClicked(
             book = intent.book,
             menuOption = intent.wishBookMenuOption
@@ -52,6 +55,7 @@ class WishesViewModel(
     ): WishesUiState = when(partialState) {
         ResetNavigateToAddGoalState -> previousState.copy(shouldNavigateToAddGoalScreen = false)
         HideWishBookDeletedMessageState -> previousState.copy(showWishBookDeletedMessage = false)
+        SelectBookForGoalState -> previousState.copy(isSelectBookForGoal = true)
         is WishBookDeletedSuccessfully -> previousState.copy(
             wishesBooks = partialState.books,
             showWishBookDeletedMessage = true
@@ -63,9 +67,12 @@ class WishesViewModel(
         is WishesBooksLoaded -> previousState.copy(wishesBooks = partialState.books)
     }
 
-    private fun onArgsReceived(isBookAdded: Boolean) {
-        if(isBookAdded) {
+    private fun onArgsReceived(args: WishesArgs) {
+        if(args.isWishBookAdded) {
             loadWishesBooks()
+        }
+        if(args.isSelectBookForGoal) {
+            updateUiState(SelectBookForGoalState)
         }
     }
 
@@ -114,6 +121,6 @@ class WishesViewModel(
     }
 
     companion object {
-        const val ARGS_WISH_BOOK_ADDED_KEY = "wish_book_added"
+        const val ARGS_KEY = "wishes_args"
     }
 }

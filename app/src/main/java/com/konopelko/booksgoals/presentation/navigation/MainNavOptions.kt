@@ -20,7 +20,8 @@ import com.konopelko.booksgoals.presentation.searchbooks.navigation.SearchBooksN
 import com.konopelko.booksgoals.presentation.totalstatistics.navigation.TotalStatisticsNavigation
 import com.konopelko.booksgoals.presentation.totalstatistics.ui.TotalStatisticsScreen
 import com.konopelko.booksgoals.presentation.wishes.WishesViewModel
-import com.konopelko.booksgoals.presentation.wishes.navigation.WishesNavigation
+import com.konopelko.booksgoals.presentation.wishes.model.WishesArgs
+import com.konopelko.booksgoals.presentation.wishes.navigation.WishesScreenNavigation
 import com.konopelko.booksgoals.presentation.wishes.ui.WishesScreen
 
 internal val appStartScreen = MainNavOption.GoalsScreen
@@ -37,6 +38,7 @@ fun NavGraphBuilder.mainGraph(
         AddGoalScreenNavigation(navController).navComposable(this)
         SearchBooksNavigation(navController).navComposable(this)
         AddBookNavigation(navController).navComposable(this)
+        WishesScreenNavigation(navController).navComposable(this)
 
         composable(MainNavOption.GoalsScreen.name) {
             val args = it.savedStateHandle.get<Boolean>("goal_added")
@@ -66,15 +68,6 @@ fun NavGraphBuilder.mainGraph(
         }
         composable(MainNavOption.AchievementsScreen.name) {
             AchievementsScreen()
-        }
-
-        composable(MainNavOption.WishesScreen.name) {
-            val args = it.savedStateHandle.get<Boolean>(WishesViewModel.ARGS_WISH_BOOK_ADDED_KEY)
-
-            WishesScreen(
-                onNavigate = WishesNavigation(navController)::onNavigate,
-                args = args
-            )
         }
 
         composable(MainNavOption.GoalStatisticsScreen.name) {

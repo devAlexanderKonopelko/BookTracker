@@ -3,11 +3,11 @@ package com.konopelko.booksgoals.presentation.wishes.ui
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -46,6 +46,7 @@ import com.konopelko.booksgoals.presentation.common.theme.BooksGoalsAppTheme
 import com.konopelko.booksgoals.presentation.common.theme.Typography
 import com.konopelko.booksgoals.presentation.common.theme.backgroundCream
 import com.konopelko.booksgoals.presentation.common.utils.border.drawRightBorder
+import com.konopelko.booksgoals.presentation.wishes.WishesIntent
 import com.konopelko.booksgoals.presentation.wishes.WishesIntent.HideWishBookDeletedMessage
 import com.konopelko.booksgoals.presentation.wishes.WishesIntent.OnArgsReceived
 import com.konopelko.booksgoals.presentation.wishes.WishesIntent.ResetNavigateToAddGoalScreen
@@ -53,13 +54,14 @@ import com.konopelko.booksgoals.presentation.wishes.WishesIntent.WishesNavigatio
 import com.konopelko.booksgoals.presentation.wishes.WishesIntent.WishesNavigationIntent.NavigateToSearchBooksScreen
 import com.konopelko.booksgoals.presentation.wishes.WishesIntent.WishesNavigationIntent.NavigateToAddGoalScreen
 import com.konopelko.booksgoals.presentation.wishes.WishesViewModel
+import com.konopelko.booksgoals.presentation.wishes.model.WishesArgs
 import org.koin.androidx.compose.getViewModel
 
 @Composable
 fun WishesScreen(
     viewModel: WishesViewModel = getViewModel(),
     onNavigate: (WishesNavigationIntent) -> Unit,
-    args: Boolean?
+    args: WishesArgs
 ) {
     val context = LocalContext.current
     val uiState by viewModel.uiState.collectAsState()
@@ -70,22 +72,22 @@ fun WishesScreen(
     when {
         uiState.wishesBooks.isNotEmpty() -> WishesContent(
             wishesBooks = uiState.wishesBooks,
+            isSelectBookForGoal = uiState.isSelectBookForGoal,
             onNavigate = onNavigate,
             onWishBookMenuClicked = { book ->
                 showWishBookMenuOptions = true
                 menuOptionBook = book
             }
         )
+
         else -> NoWishesContent(onNavigate)
     }
-    
-    args?.let {
-        LaunchedEffect("args_key") {
-            viewModel.acceptIntent(OnArgsReceived(it))
-        }
+
+    LaunchedEffect("args_key") {
+        viewModel.acceptIntent(OnArgsReceived(args))
     }
 
-    if(showWishBookMenuOptions) {
+    if (showWishBookMenuOptions) {
         WishBookOptionsMenu(
             book = menuOptionBook,
             onOptionClicked = viewModel::acceptIntent,
@@ -93,14 +95,14 @@ fun WishesScreen(
         )
     }
 
-    if(uiState.shouldNavigateToAddGoalScreen) {
+    if (uiState.shouldNavigateToAddGoalScreen) {
         LaunchedEffect("navigate_key") {
             onNavigate(NavigateToAddGoalScreen(uiState.bookToStartGoalWith))
             viewModel.acceptIntent(ResetNavigateToAddGoalScreen)
         }
     }
 
-    if(uiState.showWishBookDeletedMessage) {
+    if (uiState.showWishBookDeletedMessage) {
         LaunchedEffect("toast_key") {
             Toast.makeText(context, "Книга успешно удалена!", Toast.LENGTH_SHORT).show()
             viewModel.acceptIntent(HideWishBookDeletedMessage)
@@ -111,6 +113,7 @@ fun WishesScreen(
 @Composable
 private fun WishesContent(
     wishesBooks: List<Book>,
+    isSelectBookForGoal: Boolean,
     onNavigate: (WishesNavigationIntent) -> Unit,
     onWishBookMenuClicked: (Book) -> Unit
 ) = Box(
@@ -126,7 +129,9 @@ private fun WishesContent(
 
         WishesBooksListContent(
             wishesBooks = wishesBooks,
-            onWishBookMenuClicked = onWishBookMenuClicked
+            isSelectBookForGoal = isSelectBookForGoal,
+            onWishBookMenuClicked = onWishBookMenuClicked,
+            onNavigate = onNavigate
         )
     }
 
@@ -139,14 +144,16 @@ private fun WishesContent(
             .align(Alignment.BottomEnd),
         onClick = { onNavigate(NavigateToSearchBooksScreen) }
     ) {
-        Icon(Filled.Add,"")
+        Icon(Filled.Add, "")
     }
 }
 
 @Composable
 private fun WishesBooksListContent(
     wishesBooks: List<Book>,
-    onWishBookMenuClicked: (Book) -> Unit
+    isSelectBookForGoal: Boolean,
+    onWishBookMenuClicked: (Book) -> Unit,
+    onNavigate: (WishesNavigationIntent) -> Unit
 ) {
     LazyColumn(
         modifier = Modifier
@@ -159,7 +166,9 @@ private fun WishesBooksListContent(
         items(wishesBooks) { book ->
             WishBookCard(
                 book = book,
-                onWishBookMenuClicked = onWishBookMenuClicked
+                isSelectBookForGoal = isSelectBookForGoal,
+                onWishBookMenuClicked = onWishBookMenuClicked,
+                onNavigate = onNavigate
             )
         }
     }
@@ -169,7 +178,9 @@ private fun WishesBooksListContent(
 @Composable
 private fun WishBookCard(
     book: Book,
-    onWishBookMenuClicked: (Book) -> Unit
+    isSelectBookForGoal: Boolean,
+    onWishBookMenuClicked: (Book) -> Unit,
+    onNavigate: (WishesNavigationIntent) -> Unit
 ) = Row(
     modifier = Modifier
         .fillMaxWidth()
@@ -182,10 +193,15 @@ private fun WishBookCard(
             strokeWidth = 20.dp,
             color = Color(0xFF5185D6),
             shape = RoundedCornerShape(4.dp)
-        ),
+        )
+        .clickable {
+            if (isSelectBookForGoal) {
+                onNavigate(NavigateToAddGoalScreen(book))
+            }
+        },
     verticalAlignment = Alignment.CenterVertically
 ) {
-    if(book.coverUrl.isNotEmpty()) {
+    if (book.coverUrl.isNotEmpty()) {
         GlideImage(
             modifier = Modifier
                 .size(50.dp)
@@ -229,13 +245,15 @@ private fun WishBookCard(
                 overflow = TextOverflow.Ellipsis
             )
 
-            IconButton(
-                onClick = { onWishBookMenuClicked(book) }
-            ) {
-                Icon(
-                    painter = painterResource(id = drawable.ic_options_menu),
-                    contentDescription = ""
-                )
+            if(isSelectBookForGoal.not()) {
+                IconButton(
+                    onClick = { onWishBookMenuClicked(book) }
+                ) {
+                    Icon(
+                        painter = painterResource(id = drawable.ic_options_menu),
+                        contentDescription = ""
+                    )
+                }
             }
         }
 
@@ -283,7 +301,7 @@ private fun NoWishesContent(
             .align(Alignment.BottomEnd),
         onClick = { onNavigate(NavigateToSearchBooksScreen) }
     ) {
-        Icon(Filled.Add,"")
+        Icon(Filled.Add, "")
     }
 }
 
@@ -292,22 +310,26 @@ private fun NoWishesContent(
 private fun WishesPreview() = BooksGoalsAppTheme {
     WishesContent(
         wishesBooks = listOf(
-            Book(
-                title = "Book A",
-                authorName = "Author A",
-                publishYear = "2007"
-            ),
-            Book(
-                title = "Book B",
-                authorName = "Author B",
-                publishYear = "2008"
-            ),
-            Book(
-                title = "Book C",
-                authorName = "Author C",
-                publishYear = "2009"
-            ),
+            Book(title = "Book A", authorName = "Author A", publishYear = "2007"),
+            Book(title = "Book B", authorName = "Author B", publishYear = "2008"),
+            Book(title = "Book C", authorName = "Author C", publishYear = "2009"),
         ),
+        isSelectBookForGoal = false,
+        onNavigate = {},
+        onWishBookMenuClicked = {}
+    )
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun WishesSelectBookForGoalPreview() = BooksGoalsAppTheme {
+    WishesContent(
+        wishesBooks = listOf(
+            Book(title = "Book A", authorName = "Author A", publishYear = "2007"),
+            Book(title = "Book B", authorName = "Author B", publishYear = "2008"),
+            Book(title = "Book C", authorName = "Author C", publishYear = "2009"),
+        ),
+        isSelectBookForGoal = true,
         onNavigate = {},
         onWishBookMenuClicked = {}
     )

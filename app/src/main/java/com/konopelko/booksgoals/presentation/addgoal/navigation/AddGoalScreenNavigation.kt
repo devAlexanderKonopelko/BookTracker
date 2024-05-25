@@ -6,12 +6,15 @@ import com.konopelko.booksgoals.presentation.addgoal.AddGoalIntent.AddGoalNaviga
 import com.konopelko.booksgoals.presentation.addgoal.AddGoalIntent.AddGoalNavigationIntent.NavigateToGoalDetailsScreen
 import com.konopelko.booksgoals.presentation.addgoal.AddGoalIntent.AddGoalNavigationIntent.NavigateToGoalsScreen
 import com.konopelko.booksgoals.presentation.addgoal.AddGoalIntent.AddGoalNavigationIntent.NavigateToSearchBooksScreen
+import com.konopelko.booksgoals.presentation.addgoal.AddGoalIntent.AddGoalNavigationIntent.NavigateToWishesScreen
 import com.konopelko.booksgoals.presentation.addgoal.AddGoalViewModel
 import com.konopelko.booksgoals.presentation.addgoal.model.AddGoalArgs
 import com.konopelko.booksgoals.presentation.addgoal.ui.AddGoalScreen
 import com.konopelko.booksgoals.presentation.common.base.navigation.BaseScreenNavigation
 import com.konopelko.booksgoals.presentation.navigation.MainNavOption
 import com.konopelko.booksgoals.presentation.addgoal.model.AddGoalArgsType
+import com.konopelko.booksgoals.presentation.wishes.WishesViewModel
+import com.konopelko.booksgoals.presentation.wishes.navigation.WishesScreenNavigation
 
 class AddGoalScreenNavigation(
     private val navController: NavController,
@@ -33,6 +36,7 @@ class AddGoalScreenNavigation(
 
     override fun onNavigate(intent: AddGoalNavigationIntent) = when(intent) {
         NavigateToSearchBooksScreen -> navigateToSearchBooksScreen()
+        NavigateToWishesScreen -> navigateToWishesScreen()
         NavigateToGoalsScreen -> navigateToGoalsScreen()
         NavigateToGoalDetailsScreen -> navigateToGoalDetailsScreen()
     }
@@ -46,6 +50,15 @@ class AddGoalScreenNavigation(
         navController.navigate(MainNavOption.SearchBooksScreen.name) {
             launchSingleTop = true
         }
+    }
+
+    private fun navigateToWishesScreen() {
+        navController.navigate(
+            WishesScreenNavigation.prepareWishesScreenNameWithArgs(
+                isBookAdded = false,
+                isSelectBookForGoal = true
+            )
+        )
     }
 
     private fun navigateToGoalsScreen() {

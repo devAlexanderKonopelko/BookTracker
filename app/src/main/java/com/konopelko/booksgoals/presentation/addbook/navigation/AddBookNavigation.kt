@@ -16,7 +16,7 @@ import com.konopelko.booksgoals.presentation.common.base.navigation.BaseScreenNa
 import com.konopelko.booksgoals.presentation.navigation.MainNavOption
 import com.konopelko.booksgoals.presentation.searchbooks.model.SearchScreenOrigin
 import com.konopelko.booksgoals.presentation.searchbooks.model.SearchScreenOrigin.ADD_GOAL
-import com.konopelko.booksgoals.presentation.wishes.WishesViewModel
+import com.konopelko.booksgoals.presentation.wishes.navigation.WishesScreenNavigation
 
 class AddBookNavigation(
     private val navController: NavController
@@ -36,19 +36,20 @@ class AddBookNavigation(
         args = args
     )
 
-    override fun onNavigate(intent: AddBookNavigationIntent) = when(intent) {
+    override fun onNavigate(intent: AddBookNavigationIntent) = when (intent) {
         NavigateToWishesScreen -> navigateToWishesScreen()
         is NavigateToAddGoalScreen -> navigateToAddGoalScreen(intent.book)
     }
 
     private fun navigateToWishesScreen() {
         navController.apply {
-            navigate(MainNavOption.WishesScreen.name) {
+            navigate(
+                WishesScreenNavigation.prepareWishesScreenNameWithArgs(
+                    isBookAdded = true,
+                    isSelectBookForGoal = false
+                )
+            ) {
                 popUpTo(navController.graph.startDestinationId)
-            }
-
-            currentBackStackEntry?.apply {
-                savedStateHandle[WishesViewModel.ARGS_WISH_BOOK_ADDED_KEY] = true
             }
         }
     }
@@ -62,7 +63,8 @@ class AddBookNavigation(
             }
 
             currentBackStackEntry?.apply {
-                savedStateHandle[AddGoalViewModel.ARGS_ADD_GOAL_KEY] = AddGoalArgs(selectedBook = book)
+                savedStateHandle[AddGoalViewModel.ARGS_ADD_GOAL_KEY] =
+                    AddGoalArgs(selectedBook = book)
             }
         }
     }

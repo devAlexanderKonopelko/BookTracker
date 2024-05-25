@@ -42,7 +42,7 @@ class AddGoalViewModel(
     private var bookPagesPerDay: Int = 20 // move to uiState
     private var goalId: Int = -1
 
-    override fun acceptIntent(intent: AddGoalIntent) = when(intent) {
+    override fun acceptIntent(intent: AddGoalIntent) = when (intent) {
         is OnArgsReceived -> onArgsReceived(intent.args)
         is OnPagesPerDayChanged -> onPagesPerDayChanged(intent.pagesPerDay)
         OnCreateGoalClicked -> onCreateGoalClicked()
@@ -51,24 +51,37 @@ class AddGoalViewModel(
     override fun mapUiState(
         previousState: AddGoalUiState,
         partialState: AddGoalPartialState
-    ): AddGoalUiState =  when(partialState) {
+    ): AddGoalUiState = when (partialState) {
         ShouldNavigateToGoalDetailsState -> previousState.copy(shouldNavigateToGoalDetailsScreen = true)
         is BookSelected -> previousState.copy(
             selectedBook = partialState.selectedBook,
             daysToFinishGoal = calculateExpectedFinishDaysAmount(
-                pagesAmount = partialState.selectedBook.pagesAmount.toInt()
+                pagesAmount = partialState.selectedBook.pagesAmount.toInt(),
+                pagesPerDay = bookPagesPerDay
             ),
-            isAddGoalButtonEnabled = true
+            isAddGoalButtonEnabled = true,
+            screenOrigin = partialState.screenOrigin,
+            isSelectBookButtonEnabled = partialState.isSelectBookButtonEnabled
         )
+
         is EditGoalState -> previousState.copy(
             isSelectBookButtonEnabled = false,
-            selectedPagesPerDay = partialState.selectedPagesPerDay
+            selectedPagesPerDay = partialState.selectedPagesPerDay,
+            selectedBook = partialState.selectedBook,
+            daysToFinishGoal = calculateExpectedFinishDaysAmount(
+                pagesAmount = partialState.selectedBook.pagesAmount.toInt(),
+                pagesPerDay = partialState.selectedPagesPerDay
+            ),
+            screenOrigin = partialState.screenOrigin
         )
+
         is PagesPerDayChanged -> previousState.copy(
             daysToFinishGoal = calculateExpectedFinishDaysAmount(
-                pagesAmount = previousState.selectedBook.pagesAmount.toInt()
-            ),
+                pagesAmount = previousState.selectedBook.pagesAmount.toInt(),
+                pagesPerDay = partialState.newPagesPerDay
+            )
         )
+
         is SavingGoalState -> previousState.copy(
             isSavingGoal = partialState.isLoading,
             isGoalSaved = partialState.isGoalSaved,
@@ -79,16 +92,32 @@ class AddGoalViewModel(
         Log.e("AddGoalViewModel", "onArgsReceived")
         Log.e("AddGoalViewModel", "args = $args")
 
-        if(args != null) {
-            if(args.selectedBook != null) {
-                updateUiState(BookSelected(selectedBook = args.selectedBook))
-            }
-            if(args.selectedPagesPerDay != null) {
-                updateUiState(PagesPerDayChanged(newPagesPerDay = args.selectedPagesPerDay))
-            }
-
-            if(args.screenOrigin == GOAL_DETAILS && args.selectedPagesPerDay != null) {
-                updateUiState(EditGoalState(selectedPagesPerDay = args.selectedPagesPerDay))
+        if (args != null) {
+            when (args.screenOrigin) {
+                GOALS, ADD_WISH_BOOK -> {
+                    if (args.selectedBook != null) {
+                        updateUiState(
+                            BookSelected(
+                                selectedBook = args.selectedBook,
+                                screenOrigin = args.screenOrigin,
+                                isSelectBookButtonEnabled = args.screenOrigin == GOALS
+                            )
+                        )
+                    }
+                }
+                GOAL_DETAILS -> {
+                    if (args.selectedPagesPerDay != null &&
+                        args.selectedBook != null
+                    ) {
+                        updateUiState(
+                            EditGoalState(
+                                selectedPagesPerDay = args.selectedPagesPerDay,
+                                screenOrigin = args.screenOrigin,
+                                selectedBook = args.selectedBook
+                            )
+                        )
+                    }
+                }
             }
 
             args.goalId?.let { goalId = it }
@@ -98,7 +127,12 @@ class AddGoalViewModel(
 
     private fun onPagesPerDayChanged(newPagesPerDay: Int) {
         bookPagesPerDay = newPagesPerDay
-        updateUiState(PagesPerDayChanged(newPagesPerDay = newPagesPerDay))
+        updateUiState(
+            PagesPerDayChanged(
+                newPagesPerDay = newPagesPerDay,
+                screenOrigin = screenOrigin
+            )
+        )
     }
 
     private fun onCreateGoalClicked() {
@@ -190,19 +224,27 @@ class AddGoalViewModel(
                 daysToFinish = uiState.value.daysToFinishGoal
             ).onSuccess {
                 updateUiState(ShouldNavigateToGoalDetailsState)
-                Log.e("AddGoalViewModel", "goal pages per day updated to $bookPagesPerDay. Navigating to GoalDetailsScreen")
+                Log.e(
+                    "AddGoalViewModel",
+                    "goal pages per day updated to $bookPagesPerDay. Navigating to GoalDetailsScreen"
+                )
             }.onError {
-                Log.e("AddGoalViewModel", "error occurred when updating goal pages per day: ${it.exception}")
+                Log.e(
+                    "AddGoalViewModel",
+                    "error occurred when updating goal pages per day: ${it.exception}"
+                )
             }
         }
     }
 
     private fun preparePagesAmount(selectedBook: Book?): Int = selectedBook?.let {
-        if(it.pagesAmount.toInt() > 0) it.pagesAmount.toInt() else 1
+        if (it.pagesAmount.toInt() > 0) it.pagesAmount.toInt() else 1
     } ?: 1
 
-    private fun calculateExpectedFinishDaysAmount(pagesAmount: Int): Int =
-        ceil(pagesAmount / bookPagesPerDay.toDouble()).toInt()
+    private fun calculateExpectedFinishDaysAmount(
+        pagesAmount: Int,
+        pagesPerDay: Int
+    ): Int = ceil(pagesAmount / pagesPerDay.toDouble()).toInt()
 
     private fun prepareBookAuthorName(newGoalSelectedBook: Book): String =
         newGoalSelectedBook.authorName

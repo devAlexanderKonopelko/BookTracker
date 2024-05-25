@@ -12,9 +12,11 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -29,12 +31,17 @@ import com.konopelko.booksgoals.presentation.addgoal.AddGoalIntent.AddGoalNaviga
 import com.konopelko.booksgoals.presentation.addgoal.AddGoalIntent.AddGoalNavigationIntent.NavigateToGoalDetailsScreen
 import com.konopelko.booksgoals.presentation.addgoal.AddGoalIntent.AddGoalNavigationIntent.NavigateToGoalsScreen
 import com.konopelko.booksgoals.presentation.addgoal.AddGoalIntent.AddGoalNavigationIntent.NavigateToSearchBooksScreen
+import com.konopelko.booksgoals.presentation.addgoal.AddGoalIntent.AddGoalNavigationIntent.NavigateToWishesScreen
 import com.konopelko.booksgoals.presentation.addgoal.AddGoalIntent.OnArgsReceived
 import com.konopelko.booksgoals.presentation.addgoal.AddGoalIntent.OnCreateGoalClicked
 import com.konopelko.booksgoals.presentation.addgoal.AddGoalIntent.OnPagesPerDayChanged
 import com.konopelko.booksgoals.presentation.addgoal.AddGoalUiState
 import com.konopelko.booksgoals.presentation.addgoal.AddGoalViewModel
 import com.konopelko.booksgoals.presentation.addgoal.model.AddGoalArgs
+import com.konopelko.booksgoals.presentation.addgoal.model.AddGoalScreenOrigin
+import com.konopelko.booksgoals.presentation.addgoal.model.AddGoalScreenOrigin.ADD_WISH_BOOK
+import com.konopelko.booksgoals.presentation.addgoal.model.SelectBookOption.SEARCH_BOOK
+import com.konopelko.booksgoals.presentation.addgoal.model.SelectBookOption.WISHLIST
 import com.konopelko.booksgoals.presentation.common.component.button.BaseButton
 import com.konopelko.booksgoals.presentation.common.component.slider.BookPagesPerDaySlider
 import com.konopelko.booksgoals.presentation.common.theme.BooksGoalsAppTheme
@@ -55,20 +62,40 @@ fun AddGoalScreen(
     onNavigate: (AddGoalNavigationIntent) -> Unit,
     args: AddGoalArgs?
 ) {
-    Log.e("AddGoalScreen", "args = $args")
+    val showSelectBookOptions = remember { mutableStateOf(false) }
 
-    //todo: add key constant
-    LaunchedEffect("args_key") {
-        viewModel.acceptIntent(OnArgsReceived(args))
+    args?.let {
+        Log.e("AddGoalScreen", "args = $args")
+
+        //todo: add key constant
+        LaunchedEffect("args_key") {
+            viewModel.acceptIntent(OnArgsReceived(args))
+        }
     }
+
 
     val uiState by viewModel.uiState.collectAsState()
 
     AddGoalContent(
         uiState = uiState,
         onIntent = viewModel::acceptIntent,
-        onNavigate = onNavigate
+        onNavigate = onNavigate,
+        onSelectBookClicked = {
+            showSelectBookOptions.value = true
+        }
     )
+
+    if (showSelectBookOptions.value) {
+        SelectBookOptionsMenu(
+            onOptionClicked = { selectBookOption ->
+                when (selectBookOption) {
+                    SEARCH_BOOK -> onNavigate(NavigateToSearchBooksScreen)
+                    WISHLIST -> onNavigate(NavigateToWishesScreen)
+                }
+            },
+            onDismiss = { showSelectBookOptions.value = false }
+        )
+    }
 
     handleNavigationActions(
         onNavigate = onNavigate,
@@ -80,8 +107,8 @@ fun AddGoalScreen(
 private fun handleNavigationActions(
     onNavigate: (AddGoalNavigationIntent) -> Unit,
     uiState: AddGoalUiState
-) = LaunchedEffect(uiState.shouldNavigateToGoalDetailsScreen){
-    if(uiState.shouldNavigateToGoalDetailsScreen) {
+) = LaunchedEffect(uiState.shouldNavigateToGoalDetailsScreen) {
+    if (uiState.shouldNavigateToGoalDetailsScreen) {
         onNavigate(NavigateToGoalDetailsScreen)
     }
 }
@@ -91,7 +118,8 @@ private fun AddGoalContent(
     uiState: AddGoalUiState,
     modifier: Modifier = Modifier,
     onIntent: (AddGoalIntent) -> Unit = {},
-    onNavigate: (AddGoalNavigationIntent) -> Unit = {}
+    onNavigate: (AddGoalNavigationIntent) -> Unit = {},
+    onSelectBookClicked: () -> Unit
 ) = Column(
     modifier = modifier.fillMaxSize(),
     horizontalAlignment = Alignment.CenterHorizontally
@@ -109,7 +137,7 @@ private fun AddGoalContent(
         SelectBookContent(
             selectedBook = selectedBook,
             isSelectBookButtonEnabled = uiState.isSelectBookButtonEnabled,
-            onNavigate = onNavigate
+            onSelectBookClicked = onSelectBookClicked
         )
 
         AnimatedVisibility(visible = selectedBook.title.isNotEmpty()) {
@@ -136,7 +164,7 @@ private fun AddGoalContent(
             onClick = { onIntent(OnCreateGoalClicked) }
         )
 
-        if(isGoalSaved) {
+        if (isGoalSaved) {
             LaunchedEffect("toast key") { //todo: move toast key to constant
                 Toast.makeText(context, "Цель успешно создана!", Toast.LENGTH_SHORT).show()
                 onNavigate(NavigateToGoalsScreen)
@@ -149,8 +177,8 @@ private fun AddGoalContent(
 private fun SelectBookContent(
     selectedBook: Book?,
     isSelectBookButtonEnabled: Boolean,
+    onSelectBookClicked: () -> Unit,
     modifier: Modifier = Modifier,
-    onNavigate: (AddGoalNavigationIntent) -> Unit = {}
 ) = Column(
     modifier = modifier.padding(
         top = 48.dp,
@@ -159,11 +187,12 @@ private fun SelectBookContent(
     ),
     horizontalAlignment = Alignment.CenterHorizontally
 ) {
+
     Text(
         text = "Выберите книгу из вашего списка желаний либо воспользуйтесь поиском для выбора книги."
     )
 
-    if(selectedBook != null) {
+    if (selectedBook != null) {
         Text(
             modifier = Modifier.padding(vertical = 16.dp),
             text = selectedBook.title,
@@ -174,7 +203,7 @@ private fun SelectBookContent(
     BaseButton(
         modifier = Modifier.padding(top = 16.dp),
         text = "Выбрать книгу",
-        onClick = { onNavigate(NavigateToSearchBooksScreen) },
+        onClick = { onSelectBookClicked() },
         enabled = isSelectBookButtonEnabled
     )
 }
@@ -221,7 +250,9 @@ private fun SelectPagerPerDayContent(
 @Composable
 private fun AddGoalScreenNoSelectedBookPreview() = BooksGoalsAppTheme {
     AddGoalContent(
-        uiState = AddGoalUiState()
+        uiState = AddGoalUiState(),
+        onSelectBookClicked = {}
+
     )
 }
 
@@ -236,6 +267,7 @@ private fun AddGoalScreenBookSelectedPreview() = BooksGoalsAppTheme {
                 publishYear = "1999",
                 pagesAmount = "496"
             )
-        )
+        ),
+        onSelectBookClicked = {}
     )
 }
