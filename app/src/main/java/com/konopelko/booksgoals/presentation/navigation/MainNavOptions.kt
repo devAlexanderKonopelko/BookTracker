@@ -14,6 +14,8 @@ import com.konopelko.booksgoals.presentation.goaldetails.ui.GoalDetailsScreen
 import com.konopelko.booksgoals.presentation.goals.navigation.GoalsScreenNavigation
 import com.konopelko.booksgoals.presentation.goals.ui.GoalsScreen
 import com.konopelko.booksgoals.presentation.goalstatistics.GoalStatisticsScreen
+import com.konopelko.booksgoals.presentation.goalstatistics.GoalStatisticsViewModel
+import com.konopelko.booksgoals.presentation.goalstatistics.navigation.GoalStatisticsNavigation
 import com.konopelko.booksgoals.presentation.searchbooks.navigation.SearchBooksNavigation
 import com.konopelko.booksgoals.presentation.statistics.ui.StatisticsScreen
 import com.konopelko.booksgoals.presentation.wishes.WishesViewModel
@@ -73,7 +75,12 @@ fun NavGraphBuilder.mainGraph(
         }
 
         composable(MainNavOption.GoalStatisticsScreen.name) {
-            GoalStatisticsScreen()
+            val args = it.savedStateHandle.get<Int>(GoalStatisticsViewModel.ARGS_GOAL_ID)
+
+            GoalStatisticsScreen(
+                onNavigate = GoalStatisticsNavigation(navController)::onNavigate,
+                args = args
+            )
         }
     }
 }

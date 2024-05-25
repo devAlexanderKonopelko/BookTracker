@@ -2,7 +2,7 @@ package com.konopelko.booksgoals.di.ui.goaldetails
 
 import com.konopelko.booksgoals.domain.usecase.addprogressmark.AddProgressMarkUseCase
 import com.konopelko.booksgoals.domain.usecase.getgoal.GetGoalUseCase
-import com.konopelko.booksgoals.domain.usecase.getgoalprogress.GetGoalAverageReadSpeedUseCase
+import com.konopelko.booksgoals.domain.usecase.getgoalaveragereadspeed.GetGoalAverageReadSpeedUseCase
 import com.konopelko.booksgoals.domain.usecase.updategoalprogress.UpdateGoalProgressUseCase
 import com.konopelko.booksgoals.presentation.goaldetails.GoalDetailsUiState
 import com.konopelko.booksgoals.presentation.goaldetails.GoalDetailsViewModel

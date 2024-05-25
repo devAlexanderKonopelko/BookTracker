@@ -5,12 +5,11 @@ import androidx.lifecycle.viewModelScope
 import com.konopelko.booksgoals.domain.model.progress.ProgressMark
 import com.konopelko.booksgoals.domain.usecase.addprogressmark.AddProgressMarkUseCase
 import com.konopelko.booksgoals.domain.usecase.getgoal.GetGoalUseCase
-import com.konopelko.booksgoals.domain.usecase.getgoalprogress.GetGoalAverageReadSpeedUseCase
+import com.konopelko.booksgoals.domain.usecase.getgoalaveragereadspeed.GetGoalAverageReadSpeedUseCase
 import com.konopelko.booksgoals.domain.usecase.updategoalprogress.UpdateGoalProgressUseCase
 import com.konopelko.booksgoals.presentation.common.base.BaseViewModel
 import com.konopelko.booksgoals.presentation.goaldetails.GoalDetailsIntent.OnAddProgressClicked
 import com.konopelko.booksgoals.presentation.goaldetails.GoalDetailsIntent.OnArgsReceived
-import com.konopelko.booksgoals.presentation.goaldetails.GoalDetailsIntent.OnBookStatisticsClicked
 import com.konopelko.booksgoals.presentation.goaldetails.GoalDetailsIntent.OnCloseProgressMarkDialog
 import com.konopelko.booksgoals.presentation.goaldetails.GoalDetailsIntent.OnSaveProgressClicked
 import com.konopelko.booksgoals.presentation.goaldetails.GoalDetailsUiState.GoalDetailsPartialState
@@ -20,7 +19,9 @@ import com.konopelko.booksgoals.presentation.goaldetails.GoalDetailsUiState.Goal
 import com.konopelko.booksgoals.presentation.goaldetails.GoalDetailsUiState.GoalDetailsPartialState.ProgressMarkDialogVisibilityChanged
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
 import java.util.Calendar
+import java.util.Locale
 
 class GoalDetailsViewModel(
     initialState: GoalDetailsUiState,
@@ -34,7 +35,6 @@ class GoalDetailsViewModel(
 
     override fun acceptIntent(intent: GoalDetailsIntent) = when (intent) {
         OnAddProgressClicked -> onAddProgressClicked()
-        OnBookStatisticsClicked -> onBookStatisticsClicked()
         OnCloseProgressMarkDialog -> onCloseProgressMarkDialog()
         is OnArgsReceived -> onArgsReceived(intent.goalId)
         is OnSaveProgressClicked -> onSaveProgressClicked(intent.pagesAmount)
@@ -66,10 +66,6 @@ class GoalDetailsViewModel(
         }
     }
 
-    private fun onBookStatisticsClicked() {
-        //TODO("Not yet implemented")
-    }
-
     private fun onAddProgressClicked() {
         updateUiState(ProgressMarkDialogVisibilityChanged(isVisible = true))
     }
@@ -79,10 +75,17 @@ class GoalDetailsViewModel(
     }
 
     private fun onSaveProgressClicked(pagesReadAmount: Int) {
+        val dateString = SimpleDateFormat(
+            "yyyy/MM/dd HH:mm:ss",
+            Locale.getDefault()
+        ).format(Calendar.getInstance().time)
+
+        Log.e("GoalDetailsViewModel", "saving progress mark. date: $dateString")
+
         val progressMark = with(uiState.value.goal) {
             ProgressMark(
                 goalId = id,
-                date = Calendar.getInstance().timeInMillis.toString(),
+                date = dateString,
                 isBookFinished = completedPagesAmount + pagesReadAmount == bookPagesAmount,
                 pagesAmount = pagesReadAmount
             )

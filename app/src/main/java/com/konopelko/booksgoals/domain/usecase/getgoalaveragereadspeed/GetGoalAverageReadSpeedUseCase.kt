@@ -1,10 +1,10 @@
-package com.konopelko.booksgoals.domain.usecase.getgoalprogress
+package com.konopelko.booksgoals.domain.usecase.getgoalaveragereadspeed
 
 import android.util.Log
 import com.konopelko.booksgoals.data.utils.Result
 import com.konopelko.booksgoals.domain.repository.progress.ProgressRepository
 
-class   GetGoalAverageReadSpeedUseCase(
+class GetGoalAverageReadSpeedUseCase(
     private val repository: ProgressRepository
 ) {
 

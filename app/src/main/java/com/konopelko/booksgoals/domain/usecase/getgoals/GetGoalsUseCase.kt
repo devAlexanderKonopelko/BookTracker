@@ -1,4 +1,4 @@
-package com.konopelko.booksgoals.domain.usecase.getgoalprogress.getgoals
+package com.konopelko.booksgoals.domain.usecase.getgoals
 
 import com.konopelko.booksgoals.domain.model.goal.Goal
 import com.konopelko.booksgoals.domain.repository.goal.GoalRepository

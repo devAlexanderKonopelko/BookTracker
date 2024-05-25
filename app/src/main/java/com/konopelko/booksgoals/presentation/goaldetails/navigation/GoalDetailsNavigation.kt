@@ -10,6 +10,8 @@ import com.konopelko.booksgoals.presentation.common.utils.uri.serializeNavParam
 import com.konopelko.booksgoals.presentation.goaldetails.GoalDetailsIntent.GoalDetailsNavigationIntent
 import com.konopelko.booksgoals.presentation.goaldetails.GoalDetailsIntent.GoalDetailsNavigationIntent.NavigateToEditGoal
 import com.konopelko.booksgoals.presentation.goaldetails.GoalDetailsIntent.GoalDetailsNavigationIntent.NavigateToGoalStatistics
+import com.konopelko.booksgoals.presentation.goaldetails.GoalDetailsViewModel
+import com.konopelko.booksgoals.presentation.goalstatistics.GoalStatisticsViewModel
 import com.konopelko.booksgoals.presentation.navigation.MainNavOption
 
 class GoalDetailsNavigation(
@@ -17,12 +19,16 @@ class GoalDetailsNavigation(
 ) {
 
     fun onNavigate(intent: GoalDetailsNavigationIntent) = when(intent) {
-        NavigateToGoalStatistics -> navigateToGoalStatistics()
+        is NavigateToGoalStatistics -> navigateToGoalStatistics(intent.goalId)
         is NavigateToEditGoal -> navigateToEditGoal(intent.goal)
     }
 
-    private fun navigateToGoalStatistics() {
+    private fun navigateToGoalStatistics(goalId: Int) {
         navController.navigate(MainNavOption.GoalStatisticsScreen.name)
+
+        navController.currentBackStackEntry?.apply {
+            savedStateHandle[GoalStatisticsViewModel.ARGS_GOAL_ID] = goalId
+        }
     }
 
     private fun navigateToEditGoal(goal: Goal) {

@@ -8,6 +8,7 @@ import com.konopelko.booksgoals.di.ui.addbook.addBookModule
 import com.konopelko.booksgoals.di.ui.addgoal.addGoalModule
 import com.konopelko.booksgoals.di.ui.finishedbooks.finishedBooksModule
 import com.konopelko.booksgoals.di.ui.goaldetails.goalDetailsModule
+import com.konopelko.booksgoals.di.ui.goalstatistics.goalStatisticsModule
 import com.konopelko.booksgoals.di.ui.home.homeModule
 import com.konopelko.booksgoals.di.ui.searchbooks.searchBooksModule
 import com.konopelko.booksgoals.di.ui.wishes.wishesModule
@@ -89,7 +90,8 @@ class BooksGoalsApplication: Application() {
                 addBookModule,
                 finishedBooksModule,
                 wishesModule,
-                goalDetailsModule
+                goalDetailsModule,
+                goalStatisticsModule
             )
         }
     }

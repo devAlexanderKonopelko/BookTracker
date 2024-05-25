@@ -27,8 +27,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -41,7 +41,6 @@ import com.konopelko.booksgoals.presentation.goaldetails.GoalDetailsIntent.GoalD
 import com.konopelko.booksgoals.presentation.goaldetails.GoalDetailsIntent.GoalDetailsNavigationIntent.NavigateToGoalStatistics
 import com.konopelko.booksgoals.presentation.goaldetails.GoalDetailsIntent.OnAddProgressClicked
 import com.konopelko.booksgoals.presentation.goaldetails.GoalDetailsIntent.OnArgsReceived
-import com.konopelko.booksgoals.presentation.goaldetails.GoalDetailsIntent.OnBookStatisticsClicked
 import com.konopelko.booksgoals.presentation.goaldetails.GoalDetailsIntent.OnCloseProgressMarkDialog
 import com.konopelko.booksgoals.presentation.goaldetails.GoalDetailsIntent.OnSaveProgressClicked
 import com.konopelko.booksgoals.presentation.goaldetails.GoalDetailsUiState
@@ -54,7 +53,6 @@ fun GoalDetailsScreen(
     onNavigate: (GoalDetailsNavigationIntent) -> Unit,
     args: Int?
 ) {
-    val context = LocalContext.current
     val uiState by viewModel.uiState.collectAsState()
 
     GoalDetailsContent(
@@ -102,6 +100,8 @@ fun GoalDetailsContent(
             onIntent = onIntent
         )
 
+        Spacer(modifier = Modifier.height(32.dp))
+
         GoalInfoContent(
             daysInProgress = daysInProgress,
             averageReadSpeed = averageReadSpeed
@@ -110,47 +110,55 @@ fun GoalDetailsContent(
             expectedPagesPerDay = expectedPagesPerDay,
             expectedFinishDaysAmount = expectedFinishDaysAmount
         )
-        EditGoalContent(
-            goal = this,
-            enabled = progress != 100,
-            onNavigate = onNavigate
-        )
 
         Spacer(modifier = Modifier.weight(1f))
 
-        Button(
+        Row(
             modifier = Modifier
-                .padding(top = 16.dp),
-            onClick = { onNavigate(NavigateToGoalStatistics) }
+                .fillMaxWidth()
+                .padding(bottom = 16.dp),
+            horizontalArrangement = Arrangement.SpaceAround
         ) {
-            Text(text = "Статистика книги")
+            EditGoalButton(
+                goal = this@with,
+                enabled = progress != 100,
+                onNavigate = onNavigate
+            )
+
+            Button(
+                modifier = Modifier.padding(top = 16.dp),
+                onClick = { onNavigate(NavigateToGoalStatistics(uiState.goal.id)) }
+            ) {
+                Text(text = "Статистика книги")
+            }
         }
     }
 }
 
 @Composable
-private fun EditGoalContent(
+private fun EditGoalButton(
     goal: Goal,
     enabled: Boolean,
     onNavigate: (GoalDetailsNavigationIntent) -> Unit
-) = Row(
+) = Button(
     modifier = Modifier.padding(top = 16.dp),
-    horizontalArrangement = Arrangement.Center
+    onClick = { if (enabled) onNavigate(NavigateToEditGoal(goal)) },
+    enabled = enabled
 ) {
     Icon(
         painter = painterResource(id = R.drawable.ic_edit_goal),
         contentDescription = "",
-        tint = if(enabled) Color(0xFF393939) else Color.Gray
+        tint = if (enabled) Color.White else Color.Gray
     )
     Text(
         modifier = Modifier
             .padding(start = 4.dp)
             .clickable {
-                if(enabled) onNavigate(NavigateToEditGoal(goal))
+                if (enabled) onNavigate(NavigateToEditGoal(goal))
             },
         text = "Изменить цель",
         textDecoration = TextDecoration.Underline,
-        color = if(enabled) Color.Black else Color.Gray
+        color = if (enabled) Color.White else Color.Gray,
     )
 }
 
@@ -162,15 +170,16 @@ private fun GoalInfoContent(
 ) = Column(
     modifier = modifier
         .fillMaxWidth()
-        .padding(
-            top = 32.dp,
-            start = 32.dp
-        )
+        .padding(start = 32.dp)
 ) {
-    Text(text = "Вы читаете книгу уже $daysInProgress дней")
+    Text(
+        text = "Вы читаете книгу уже $daysInProgress дней",
+        style = MaterialTheme.typography.bodyLarge
+    )
     Text(
         modifier = Modifier.padding(top = 4.dp),
-        text = "Средняя скорость чтения $averageReadSpeed стр./день"
+        text = "Средняя скорость чтения $averageReadSpeed стр./день",
+        style = MaterialTheme.typography.bodyLarge
     )
 }
 
@@ -184,7 +193,8 @@ private fun ExpectedInfoContent(
         .padding(start = 32.dp)
 ) {
     Row(
-        modifier = Modifier.padding(top = 32.dp)
+        modifier = Modifier.padding(top = 32.dp),
+        verticalAlignment = Alignment.CenterVertically
     ) {
         Icon(
             painter = painterResource(id = R.drawable.ic_goal_flag),
@@ -193,13 +203,19 @@ private fun ExpectedInfoContent(
         )
         Text(
             modifier = Modifier.padding(start = 4.dp),
-            text = "Цель"
+            text = "Цель",
+            style = MaterialTheme.typography.titleMedium
         )
     }
-    Text(text = "Страниц в день: $expectedPagesPerDay")
+    Text(
+        modifier = Modifier.padding(top = 8.dp),
+        text = "Страниц в день: $expectedPagesPerDay",
+        style = MaterialTheme.typography.bodyLarge
+    )
     Text(
         modifier = Modifier.padding(top = 4.dp),
-        text = "Ожидаемое время прочтения: $expectedFinishDaysAmount дней"
+        text = "Ожидаемое время прочтения: $expectedFinishDaysAmount дней",
+        style = MaterialTheme.typography.bodyLarge
     )
 }
 
@@ -210,7 +226,9 @@ private fun GoalProgressContent(
     progress: Int,
     onIntent: (GoalDetailsIntent) -> Unit
 ) = Column(
-    modifier = Modifier.fillMaxWidth(),
+    modifier = Modifier
+        .fillMaxWidth()
+        .padding(top = 32.dp),
     horizontalAlignment = Alignment.CenterHorizontally
 ) {
     Text(
@@ -254,32 +272,6 @@ private fun GoalHeader(
     modifier = Modifier.fillMaxWidth(),
     horizontalAlignment = Alignment.CenterHorizontally
 ) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(
-                top = 24.dp,
-                start = 16.dp,
-                end = 16.dp
-            ),
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Text(
-            modifier = Modifier.weight(1f),
-            text = bookName,
-            style = MaterialTheme.typography.titleLarge,
-            overflow = TextOverflow.Ellipsis
-        )
-        Text(
-            modifier = Modifier
-                .weight(0.4f)
-                .padding(start = 8.dp),
-            text = "$bookAuthor, $bookPublishYear",
-            overflow = TextOverflow.Ellipsis,
-        )
-    }
-
     Image(
         modifier = Modifier
             .fillMaxWidth(0.4f)
@@ -287,6 +279,21 @@ private fun GoalHeader(
             .padding(top = 16.dp),
         painter = painterResource(id = R.drawable.ic_default_book),
         contentDescription = ""
+    )
+
+    Text(
+        modifier = Modifier.padding(top = 16.dp),
+        text = bookName,
+        style = MaterialTheme.typography.titleLarge,
+        textAlign = TextAlign.Center,
+        overflow = TextOverflow.Ellipsis
+    )
+    Text(
+        modifier = Modifier,
+        text = "$bookAuthor, $bookPublishYear",
+        style = MaterialTheme.typography.titleSmall,
+        textAlign = TextAlign.Center,
+        overflow = TextOverflow.Ellipsis,
     )
 }
 
@@ -296,14 +303,14 @@ fun GoalDetailsPreview() {
     GoalDetailsContent(
         uiState = GoalDetailsUiState(
             goal = Goal(
-                bookName = "The Lord of the Rings asdf asdf adf asdf asdf asdf asdf adsf",
-                bookAuthor = "Tolkien asdf asdf adf asdf asdf asdf asdf adsf",
+                bookName = "The Lord of the Rings",
+                bookAuthor = "J.R.R.Tolkien",
                 daysInProgress = 10,
                 averageReadSpeed = 20,
                 bookPublishYear = 1960,
                 completedPagesAmount = 435,
                 bookPagesAmount = 870,
-                progress = 100,
+                progress = 78,
                 expectedPagesPerDay = 40,
                 expectedFinishDaysAmount = 8
             )
