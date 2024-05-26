@@ -35,6 +35,8 @@ interface GoalDao {
         pagesPerDay: Int,
         daysToFinish: Int
     )
+    @Query("UPDATE goals SET is_frozen = :isFrozen WHERE id = :goalId")
+    fun updateGoalFrozen(goalId: Int, isFrozen: Boolean)
 
     @Query("DELETE FROM goals WHERE id = :goalId")
     fun deleteGoal(goalId: Int)

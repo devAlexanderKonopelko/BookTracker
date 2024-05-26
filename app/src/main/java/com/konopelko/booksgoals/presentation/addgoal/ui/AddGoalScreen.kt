@@ -49,9 +49,7 @@ import com.konopelko.booksgoals.presentation.common.theme.Purple40
 import com.konopelko.booksgoals.presentation.common.theme.Typography
 import org.koin.androidx.compose.getViewModel
 
-private const val PAGES_PER_DAY_GAP = 20
-
-private val pagesPerDayRange = 20f..200f
+private val pagesPerDayRange = 1f..100f
 
 //todo
 // - add string res
@@ -72,7 +70,6 @@ fun AddGoalScreen(
             viewModel.acceptIntent(OnArgsReceived(args))
         }
     }
-
 
     val uiState by viewModel.uiState.collectAsState()
 
@@ -234,7 +231,6 @@ private fun SelectPagerPerDayContent(
             onIntent(OnPagesPerDayChanged(newSliderValue.toInt()))
         },
         valueRange = pagesPerDayRange,
-        gap = PAGES_PER_DAY_GAP,
         showIndicator = true,
     )
 
@@ -266,7 +262,8 @@ private fun AddGoalScreenBookSelectedPreview() = BooksGoalsAppTheme {
                 authorName = "Sashka",
                 publishYear = "1999",
                 pagesAmount = "496"
-            )
+            ),
+            selectedPagesPerDay = 1
         ),
         onSelectBookClicked = {}
     )

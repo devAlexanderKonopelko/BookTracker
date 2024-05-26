@@ -48,7 +48,6 @@ import com.konopelko.booksgoals.presentation.common.theme.BooksGoalsAppTheme
 import com.konopelko.booksgoals.presentation.common.theme.Typography
 import com.konopelko.booksgoals.presentation.common.theme.backgroundCream
 import com.konopelko.booksgoals.presentation.common.utils.border.drawRightBorder
-import com.konopelko.booksgoals.presentation.goals.GoalsIntent
 import com.konopelko.booksgoals.presentation.goals.GoalsIntent.OnArgsReceived
 import com.konopelko.booksgoals.presentation.goals.GoalsIntent.GoalsNavigationIntent
 import com.konopelko.booksgoals.presentation.goals.GoalsIntent.GoalsNavigationIntent.NavigateToAddGoalScreen
@@ -67,9 +66,7 @@ fun GoalsScreen(
     onNavigate: (GoalsNavigationIntent) -> Unit,
     args: Boolean?
 ) = Column(
-    modifier = modifier
-        .fillMaxSize()
-        .background(color = backgroundCream),
+    modifier = modifier.fillMaxSize(),
     horizontalAlignment = Alignment.CenterHorizontally
 ) {
     val context = LocalContext.current
@@ -190,14 +187,19 @@ private fun GoalCard(
     modifier = Modifier
         .fillMaxWidth()
         .padding(top = 16.dp)
-        .clickable { onNavigate(NavigateToGoalDetailsScreen(goal.id)) }
+        .let {
+            if(goal.isFrozen.not()) {
+                it.clickable { onNavigate(NavigateToGoalDetailsScreen(goal.id)) }
+            } else it
+        }
+
         .background(
-            color = Color(0xFFE7E7E7),
+            color = getGoalCardBackgroundColor(goal),
             shape = RoundedCornerShape(4.dp)
         )
         .drawRightBorder(
             strokeWidth = 20.dp,
-            color = getProgressColor(goal.progress),
+            color = getGoalCardRightBorderColor(goal),
             shape = RoundedCornerShape(4.dp)
         ),
     verticalAlignment = Alignment.CenterVertically
@@ -251,15 +253,21 @@ private fun GoalCard(
                 )
             }
         }
-        Row {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(end = 16.dp)
+        ) {
             Text(
+                modifier = Modifier.weight(1f, fill = false),
                 text = goal.bookAuthor,
-                color = Color.Gray
+                color = Color.Gray,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
             )
 
             Text(
-                modifier = Modifier.padding(start = 8.dp),
-                text = goal.bookPublishYear.toString(),
+                text = ", ${goal.bookPublishYear}",
                 color = Color.Gray
             )
         }
@@ -272,16 +280,34 @@ private fun GoalCard(
                 modifier = Modifier.fillMaxWidth(0.7f),
                 progress = { (goal.progress.toFloat() / 100) },
                 trackColor = Color.LightGray,
-                color = if(goal.progress == 100) Color(0xFF00A45F) else Color.DarkGray
+                color = getGoalProgressIndicatorColor(goal)
             )
 
             Text(
                 modifier = Modifier.padding(start = 8.dp),
                 text = "${goal.progress}%" // todo: make res with param
             )
+
+            if(goal.isFrozen) {
+                Icon(
+                    modifier = Modifier
+                        .size(28.dp)
+                        .padding(start = 8.dp),
+                    painter = painterResource(id = R.drawable.ic_snowflake),
+                    contentDescription = "",
+                    tint = Color(0xFF5185D6)
+                )
+            }
         }
     }
 }
+
+private fun getGoalProgressIndicatorColor(goal: Goal): Color =
+    when {
+        goal.progress == 100 -> Color(0xFF00A45F)
+        goal.isFrozen -> Color(0xFF5185D6)
+        else -> Color.DarkGray
+    }
 
 @Composable
 private fun HomeScreenContentNoGoals(
@@ -302,8 +328,19 @@ private fun HomeScreenContentNoGoals(
     }
 }
 
-private fun getProgressColor(progress: Int): Color =
-    if (progress == 100) Color(0xFF00A45F) else Color(0xFF5185D6)
+private fun getGoalCardBackgroundColor(goal: Goal): Color =
+    when {
+        goal.progress == 100 -> Color(0xFFCEF7E6)
+        goal.isFrozen -> Color(0xFFD0E3FF)
+        else -> Color(0xFFE7E7E7)
+    }
+
+private fun getGoalCardRightBorderColor(goal: Goal): Color =
+    when {
+        goal.progress == 100 -> Color(0xFF00A45F)
+        goal.isFrozen -> Color(0xFF5185D6)
+        else -> Color(0xFF818181)
+    }
 
 @Preview(showBackground = true)
 @Composable
@@ -315,12 +352,13 @@ private fun HomeScreenPreviewGoalsList() = BooksGoalsAppTheme {
                 bookName = "Book Asdfgsdfg dsfgsdfgsdfg sdfgsdfgsdfg",
                 bookAuthor = "Author A",
                 bookPublishYear = 2005,
-                progress = 1
+                progress = 99,
+                isFrozen = true
             ),
             Goal(
                 id = 0,
                 bookName = "Book B",
-                bookAuthor = "Author B",
+                bookAuthor = "Author B sdfg sdfg sdfg sdfg sdfg sdfg sdfg sdfg sdfg",
                 bookPublishYear = 2006,
                 progress = 65
             ),

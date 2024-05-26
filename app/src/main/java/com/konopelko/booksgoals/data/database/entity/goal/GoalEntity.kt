@@ -39,5 +39,8 @@ data class GoalEntity(
     val expectedPagesPerDay: Int,
 
     @ColumnInfo(name = "expected_finish_days_amount")
-    val expectedFinishDaysAmount: Int
+    val expectedFinishDaysAmount: Int,
+
+    @ColumnInfo(name = "is_frozen")
+    val isFrozen: Boolean
 )

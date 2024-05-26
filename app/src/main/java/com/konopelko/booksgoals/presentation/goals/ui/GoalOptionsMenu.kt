@@ -25,6 +25,7 @@ import com.konopelko.booksgoals.presentation.goals.model.GoalMenuOption.FREEZE
 import com.konopelko.booksgoals.presentation.common.theme.BooksGoalsAppTheme
 import com.konopelko.booksgoals.presentation.goals.GoalsIntent
 import com.konopelko.booksgoals.presentation.goals.GoalsIntent.OnGoalOptionClicked
+import com.konopelko.booksgoals.presentation.goals.model.GoalMenuOption.UNFREEZE
 import kotlinx.coroutines.launch
 
 // todo: create [BaseMenuBottomSheet]
@@ -93,9 +94,12 @@ private fun GoalOptionsList(
     }
 }
 
-private fun getGoalMenuOptions(goal: Goal): List<GoalMenuOption> = if(goal.progress == 100) {
-    GoalMenuOption.entries.filter { it != FREEZE }
-} else GoalMenuOption.entries
+private fun getGoalMenuOptions(goal: Goal): List<GoalMenuOption> = 
+    when {
+        goal.progress == 100 -> GoalMenuOption.entries.filter { it != FREEZE && it != UNFREEZE }
+        goal.isFrozen.not() -> GoalMenuOption.entries.filter { it != UNFREEZE }
+        else -> GoalMenuOption.entries.filter { it != FREEZE }
+    }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Preview(showBackground = true)

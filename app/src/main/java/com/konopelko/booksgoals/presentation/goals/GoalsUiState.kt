@@ -15,5 +15,6 @@ data class GoalsUiState(
 
         data class GoalsUpdated(val goals: List<Goal>) : PartialGoalsState
         data class GoalCompletedSuccessfullyState(val goalId: Int) : PartialGoalsState
+        data class GoalIsFrozenChanged(val goalId: Int, val isFrozen: Boolean) : PartialGoalsState
     }
 }

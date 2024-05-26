@@ -1,5 +1,6 @@
 package com.konopelko.booksgoals.presentation.common.component.slider
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.defaultMinSize
@@ -213,14 +214,28 @@ private fun customSliderMeasurePolicy(
         sliderPlaceable.placeRelative(x = 0, y = labelHeight)
 
         // Place indicators below the slider.
-        indicatorPlaceables.forEach { placeable ->
+        indicatorPlaceables.forEachIndexed { index, placeable ->
             // We have to subtract the half width of the each indicator from the indicatorOffset,
             // to place our indicators at the center.
-            placeable.placeRelative(
-                x = (indicatorOffsetX - (placeable.width / 2)).roundToInt(),
-                y = labelHeight + sliderHeight
-            )
-            indicatorOffsetX += indicatorSpacing
+
+            if(gap == 1) {
+                when(index) {
+                    0 -> placeable.placeRelative(
+                        x = (indicatorOffsetX - (placeable.width / 2)).roundToInt(),
+                        y = labelHeight + sliderHeight
+                    )
+                    indicatorPlaceables.lastIndex -> placeable.placeRelative(
+                        x = ((indicatorOffsetX + indicatorSpacing * indicatorPlaceables.size) - (placeable.width / 2)).roundToInt(),
+                        y = labelHeight + sliderHeight
+                    )
+                }
+            } else {
+                placeable.placeRelative(
+                    x = (indicatorOffsetX - (placeable.width / 2)).roundToInt(),
+                    y = labelHeight + sliderHeight
+                )
+                indicatorOffsetX += indicatorSpacing
+            }
         }
     }
 }
@@ -364,6 +379,7 @@ fun Modifier.progress(
         .heightIn(min = height)
         .clip(shape)
 
+@SuppressLint("ModifierFactoryUnreferencedReceiver")
 fun Modifier.thumb(size: Dp = ThumbSize, shape: Shape = CircleShape) =
     defaultMinSize(minWidth = size, minHeight = size).clip(shape)
 

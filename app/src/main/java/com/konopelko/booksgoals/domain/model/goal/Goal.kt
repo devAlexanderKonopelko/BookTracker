@@ -19,5 +19,6 @@ data class Goal(
     val daysInProgress: Int = 1,
     val expectedPagesPerDay: Int = 0,
     val expectedFinishDaysAmount: Int = 0,
-    val progress: Int = 0
+    val progress: Int = 0,
+    val isFrozen: Boolean = false
 ) : Parcelable

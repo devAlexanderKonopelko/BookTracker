@@ -39,7 +39,7 @@ class AddGoalViewModel(
 ) {
 
     private var screenOrigin: AddGoalScreenOrigin = GOALS
-    private var bookPagesPerDay: Int = 20 // move to uiState
+    private var bookPagesPerDay: Int = 1 // move to uiState
     private var goalId: Int = -1
 
     override fun acceptIntent(intent: AddGoalIntent) = when (intent) {

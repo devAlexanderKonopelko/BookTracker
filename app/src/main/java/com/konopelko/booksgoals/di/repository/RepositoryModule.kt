@@ -17,10 +17,7 @@ val repositoryModule = module {
     }
 
     single<GoalRepository> {
-        GoalRepositoryImpl(
-            goalDao = get(),
-            bookDao = get()
-        )
+        GoalRepositoryImpl(goalDao = get())
     }
 
     single<BookRepository> {

@@ -120,9 +120,7 @@ private fun WishesContent(
     modifier = Modifier.fillMaxSize(),
 ) {
     Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(color = backgroundCream),
+        modifier = Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         WishesHeader()

@@ -25,4 +25,9 @@ interface GoalRepository {
         pagesPerDay: Int,
         daysToFinish: Int
     ): Result<Unit>
+
+    suspend fun updateGoalFrozen(
+        goalId: Int,
+        isFrozen: Boolean
+    ): Result<Unit>
 }

@@ -4,10 +4,10 @@ import android.util.Log
 import androidx.lifecycle.viewModelScope
 import com.konopelko.booksgoals.domain.model.goal.Goal
 import com.konopelko.booksgoals.presentation.goals.model.GoalMenuOption
-import com.konopelko.booksgoals.domain.usecase.addbook.AddBookUseCase
 import com.konopelko.booksgoals.domain.usecase.deletegoal.DeleteGoalUseCase
 import com.konopelko.booksgoals.domain.usecase.getgoals.GetGoalsUseCase
 import com.konopelko.booksgoals.domain.usecase.updatebookisfinished.UpdateBookIsFinishedUseCase
+import com.konopelko.booksgoals.domain.usecase.updategoalfrozen.UpdateGoalFrozenUseCase
 import com.konopelko.booksgoals.presentation.common.base.BaseViewModel
 import com.konopelko.booksgoals.presentation.goals.GoalsIntent.HideGoalCompletedMessage
 import com.konopelko.booksgoals.presentation.goals.GoalsIntent.OnArgsReceived
@@ -15,6 +15,7 @@ import com.konopelko.booksgoals.presentation.goals.GoalsIntent.OnGoalOptionClick
 import com.konopelko.booksgoals.presentation.goals.GoalsUiState.PartialGoalsState
 import com.konopelko.booksgoals.presentation.goals.GoalsUiState.PartialGoalsState.GoalCompletedMessageHidden
 import com.konopelko.booksgoals.presentation.goals.GoalsUiState.PartialGoalsState.GoalCompletedSuccessfullyState
+import com.konopelko.booksgoals.presentation.goals.GoalsUiState.PartialGoalsState.GoalIsFrozenChanged
 import com.konopelko.booksgoals.presentation.goals.GoalsUiState.PartialGoalsState.GoalsUpdated
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collectLatest
@@ -24,7 +25,8 @@ class GoalsViewModel(
     initialState: GoalsUiState,
     private val getGoalsUseCase: GetGoalsUseCase,
     private val deleteGoalUseCase: DeleteGoalUseCase,
-    private val updateBookIsFinishedUseCase: UpdateBookIsFinishedUseCase
+    private val updateBookIsFinishedUseCase: UpdateBookIsFinishedUseCase,
+    private val updateGoalFrozenUseCase: UpdateGoalFrozenUseCase
 ) : BaseViewModel<GoalsIntent, GoalsUiState, PartialGoalsState>(
     initialState = initialState
 ) {
@@ -53,6 +55,12 @@ class GoalsViewModel(
             goals = previousState.goals.filter { it.id != partialState.goalId },
             showGoalCompletedMessage = true
         )
+        is GoalIsFrozenChanged -> previousState.copy(
+            goals = previousState.goals.map {
+                if(it.id == partialState.goalId) it.copy(isFrozen = partialState.isFrozen)
+                else it
+            }
+        )
     }
 
     private fun onHideGoalCompletedMessageClicked() {
@@ -64,14 +72,20 @@ class GoalsViewModel(
         goalMenuOption: GoalMenuOption
     ) {
         when(goalMenuOption) {
-            GoalMenuOption.FREEZE -> onFreezeGoalClicked()
+            GoalMenuOption.FREEZE, GoalMenuOption.UNFREEZE -> onFreezeGoalClicked(goal.id, goal.isFrozen)
             GoalMenuOption.FINISH -> onFinishGoalClicked(goal)
             GoalMenuOption.DELETE -> onDeleteGoalClicked(goal.id)
         }
     }
 
-    private fun onFreezeGoalClicked() {
-        //TODO("Not yet implemented")
+    private fun onFreezeGoalClicked(goalId: Int, previousIsGoalFrozen: Boolean) {
+        viewModelScope.launch(Dispatchers.IO) {
+            updateGoalFrozenUseCase(goalId, !previousIsGoalFrozen).onSuccess {
+                updateUiState(GoalIsFrozenChanged(goalId, !previousIsGoalFrozen))
+            }.onError {
+                Log.e("GoalsViewModel", "error occurred while freezing a goal: ${it.exception.stackTrace}")
+            }
+        }
     }
 
     //todo: подумать, нужно ли удалять цель при завершении

@@ -22,7 +22,8 @@ fun GoalEntity.toDomainModel(): Goal = Goal(
         pagesCompletedAmount
     ),
     expectedPagesPerDay = expectedPagesPerDay,
-    expectedFinishDaysAmount = expectedFinishDaysAmount
+    expectedFinishDaysAmount = expectedFinishDaysAmount,
+    isFrozen = isFrozen
 )
 
 fun Goal.toDatabaseModel(): GoalEntity = GoalEntity(
@@ -35,7 +36,8 @@ fun Goal.toDatabaseModel(): GoalEntity = GoalEntity(
     expectedPagesPerDay = expectedPagesPerDay,
     expectedFinishDaysAmount = expectedFinishDaysAmount,
     goalCreationDate = creationDate,
-    bookCoverUrl = bookCoverUrl
+    bookCoverUrl = bookCoverUrl,
+    isFrozen = isFrozen
 )
 
 private fun getGoalProgress(
