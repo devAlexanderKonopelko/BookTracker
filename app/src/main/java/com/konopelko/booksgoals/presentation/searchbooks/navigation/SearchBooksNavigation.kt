@@ -17,6 +17,7 @@ import com.konopelko.booksgoals.presentation.searchbooks.model.SearchBooksArgs
 import com.konopelko.booksgoals.presentation.searchbooks.model.SearchBooksArgsType
 import com.konopelko.booksgoals.presentation.searchbooks.ui.SearchBooksScreen
 import com.konopelko.booksgoals.presentation.wishes.WishesViewModel
+import com.konopelko.booksgoals.presentation.wishes.model.WishesArgs
 import com.konopelko.booksgoals.presentation.wishes.navigation.WishesScreenNavigation
 
 class SearchBooksNavigation(
@@ -48,13 +49,14 @@ class SearchBooksNavigation(
     }
 
     private fun navigateToWishesScreen() {
-        navController.popBackStack(
-            route = WishesScreenNavigation.prepareWishesScreenNameWithArgs(
-                isBookAdded = true,
+        navController.previousBackStackEntry?.savedStateHandle?.let {
+            it[WishesViewModel.ARGS_KEY] = WishesArgs(
+                isWishBookAdded = true,
                 isSelectBookForGoal = false
-            ),
-            inclusive = false
-        )
+            )
+        }
+
+        navController.popBackStack()
     }
 
     private fun navigateToAddGoalScreen(book: Book) {

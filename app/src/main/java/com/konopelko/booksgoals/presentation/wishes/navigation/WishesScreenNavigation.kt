@@ -48,14 +48,7 @@ class WishesScreenNavigation(
 
     private fun onNavigateToSearchBooksScreen() {
         with(navController) {
-            navigate(prepareSearchScreenNameWithArgs(SearchScreenOrigin.ADD_WISH_BOOK)) {
-                //todo: remove and check
-                currentBackStackEntry?.apply {
-                    Log.e("WishesNavigation", "set search screen origin")
-                    savedStateHandle[SearchBooksViewModel.ARGS_SCREEN_ORIGIN_KEY] =
-                        SearchScreenOrigin.ADD_WISH_BOOK
-                }
-            }
+            navigate(prepareSearchScreenNameWithArgs(SearchScreenOrigin.ADD_WISH_BOOK))
         }
     }
 
