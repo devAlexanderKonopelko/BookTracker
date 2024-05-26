@@ -28,6 +28,9 @@ import com.konopelko.booksgoals.presentation.addbook.AddBookUiState.AddBookParti
 import com.konopelko.booksgoals.presentation.common.base.BaseViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.util.Calendar
+
+private val year: Int = Calendar.getInstance().get(Calendar.YEAR)
 
 class AddBookViewModel(
     initialState: AddBookUiState,
@@ -114,7 +117,7 @@ class AddBookViewModel(
         updateUiState(
             PublishYearChanged(
                 publishYear = publishYear,
-                isValid = publishYear.isNotEmpty()
+                isValid = publishYear.isNotEmpty() && publishYear.toInt() in 1500..year
             )
         )
     }
@@ -161,5 +164,5 @@ class AddBookViewModel(
 private fun Book.areFieldsValid(): Boolean =
     title.isNotEmpty() &&
     authorName.isNotEmpty() &&
-    publishYear.isNotEmpty() &&
+    (publishYear.isNotEmpty() && publishYear.toInt() in 1500..year) &&
     pagesAmount.isNotEmpty()
