@@ -44,9 +44,8 @@ import com.bumptech.glide.integration.compose.GlideImage
 import com.bumptech.glide.integration.compose.placeholder
 import com.konopelko.booksgoals.R
 import com.konopelko.booksgoals.domain.model.goal.Goal
-import com.konopelko.booksgoals.presentation.common.theme.BooksGoalsAppTheme
+import com.konopelko.booksgoals.presentation.common.theme.BookTrackerTheme
 import com.konopelko.booksgoals.presentation.common.theme.Typography
-import com.konopelko.booksgoals.presentation.common.theme.backgroundCream
 import com.konopelko.booksgoals.presentation.common.utils.border.drawRightBorder
 import com.konopelko.booksgoals.presentation.goals.GoalsIntent.OnArgsReceived
 import com.konopelko.booksgoals.presentation.goals.GoalsIntent.GoalsNavigationIntent
@@ -344,7 +343,7 @@ private fun getGoalCardRightBorderColor(goal: Goal): Color =
 
 @Preview(showBackground = true)
 @Composable
-private fun HomeScreenPreviewGoalsList() = BooksGoalsAppTheme {
+private fun HomeScreenPreviewGoalsList() = BookTrackerTheme {
     HomeScreenGoalsContent(
         goals = listOf(
             Goal(
@@ -377,6 +376,6 @@ private fun HomeScreenPreviewGoalsList() = BooksGoalsAppTheme {
 
 @Preview(showBackground = true)
 @Composable
-private fun HomeScreenPreviewNoGoals() = BooksGoalsAppTheme {
+private fun HomeScreenPreviewNoGoals() = BookTrackerTheme {
     HomeScreenContentNoGoals()
 }

@@ -21,7 +21,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.konopelko.booksgoals.presentation.addgoal.model.SelectBookOption
-import com.konopelko.booksgoals.presentation.common.theme.BooksGoalsAppTheme
+import com.konopelko.booksgoals.presentation.common.theme.BookTrackerTheme
 import kotlinx.coroutines.launch
 
 // todo: create [BaseMenuBottomSheet]
@@ -94,7 +94,7 @@ private fun GoalOptionsList(
 @OptIn(ExperimentalMaterial3Api::class)
 @Preview(showBackground = true)
 @Composable
-private fun SelectBookOptionsMenuPreview() = BooksGoalsAppTheme {
+private fun SelectBookOptionsMenuPreview() = BookTrackerTheme {
     GoalOptionsList(
         bottomSheetState = rememberModalBottomSheetState(),
         onDismiss = {},

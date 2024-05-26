@@ -15,14 +15,12 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.capitalize
-import androidx.compose.ui.text.intl.Locale
 import androidx.compose.ui.tooling.preview.Preview
 import com.konopelko.booksgoals.domain.model.goal.Goal
 import com.konopelko.booksgoals.presentation.goals.model.GoalMenuOption
 import com.konopelko.booksgoals.presentation.goals.model.GoalMenuOption.DELETE
 import com.konopelko.booksgoals.presentation.goals.model.GoalMenuOption.FREEZE
-import com.konopelko.booksgoals.presentation.common.theme.BooksGoalsAppTheme
+import com.konopelko.booksgoals.presentation.common.theme.BookTrackerTheme
 import com.konopelko.booksgoals.presentation.goals.GoalsIntent
 import com.konopelko.booksgoals.presentation.goals.GoalsIntent.OnGoalOptionClicked
 import com.konopelko.booksgoals.presentation.goals.model.GoalMenuOption.UNFREEZE
@@ -104,7 +102,7 @@ private fun getGoalMenuOptions(goal: Goal): List<GoalMenuOption> =
 @OptIn(ExperimentalMaterial3Api::class)
 @Preview(showBackground = true)
 @Composable
-private fun NotFullProgressGoalOptionMenuPreview() = BooksGoalsAppTheme {
+private fun NotFullProgressGoalOptionMenuPreview() = BookTrackerTheme {
     GoalOptionsList(
         goal = Goal(),
         bottomSheetState = rememberModalBottomSheetState(),
@@ -116,7 +114,7 @@ private fun NotFullProgressGoalOptionMenuPreview() = BooksGoalsAppTheme {
 @OptIn(ExperimentalMaterial3Api::class)
 @Preview(showBackground = true)
 @Composable
-private fun FullProgressGoalOptionMenuPreview() = BooksGoalsAppTheme {
+private fun FullProgressGoalOptionMenuPreview() = BookTrackerTheme {
     GoalOptionsList(
         goal = Goal(progress = 100),
         bottomSheetState = rememberModalBottomSheetState(),

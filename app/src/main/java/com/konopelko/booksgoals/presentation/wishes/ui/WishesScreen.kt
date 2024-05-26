@@ -42,11 +42,9 @@ import com.bumptech.glide.integration.compose.GlideImage
 import com.bumptech.glide.integration.compose.placeholder
 import com.konopelko.booksgoals.R.drawable
 import com.konopelko.booksgoals.domain.model.book.Book
-import com.konopelko.booksgoals.presentation.common.theme.BooksGoalsAppTheme
+import com.konopelko.booksgoals.presentation.common.theme.BookTrackerTheme
 import com.konopelko.booksgoals.presentation.common.theme.Typography
-import com.konopelko.booksgoals.presentation.common.theme.backgroundCream
 import com.konopelko.booksgoals.presentation.common.utils.border.drawRightBorder
-import com.konopelko.booksgoals.presentation.wishes.WishesIntent
 import com.konopelko.booksgoals.presentation.wishes.WishesIntent.HideWishBookDeletedMessage
 import com.konopelko.booksgoals.presentation.wishes.WishesIntent.OnArgsReceived
 import com.konopelko.booksgoals.presentation.wishes.WishesIntent.ResetNavigateToAddGoalScreen
@@ -305,7 +303,7 @@ private fun NoWishesContent(
 
 @Preview(showBackground = true)
 @Composable
-private fun WishesPreview() = BooksGoalsAppTheme {
+private fun WishesPreview() = BookTrackerTheme {
     WishesContent(
         wishesBooks = listOf(
             Book(title = "Book A", authorName = "Author A", publishYear = "2007"),
@@ -320,7 +318,7 @@ private fun WishesPreview() = BooksGoalsAppTheme {
 
 @Preview(showBackground = true)
 @Composable
-private fun WishesSelectBookForGoalPreview() = BooksGoalsAppTheme {
+private fun WishesSelectBookForGoalPreview() = BookTrackerTheme {
     WishesContent(
         wishesBooks = listOf(
             Book(title = "Book A", authorName = "Author A", publishYear = "2007"),
@@ -335,6 +333,6 @@ private fun WishesSelectBookForGoalPreview() = BooksGoalsAppTheme {
 
 @Preview(showBackground = true)
 @Composable
-private fun NoWishesPreview() = BooksGoalsAppTheme {
+private fun NoWishesPreview() = BookTrackerTheme {
     NoWishesContent(onNavigate = {})
 }

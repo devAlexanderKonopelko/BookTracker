@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.safeContentPadding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -33,18 +32,15 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.text.style.TextOverflow.Companion
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.bumptech.glide.Glide
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
-import com.bumptech.glide.integration.compose.Placeholder
 import com.bumptech.glide.integration.compose.placeholder
 import com.konopelko.booksgoals.R
 import com.konopelko.booksgoals.domain.model.book.Book
 import com.konopelko.booksgoals.presentation.searchbooks.model.SearchScreenOrigin
-import com.konopelko.booksgoals.presentation.common.theme.BooksGoalsAppTheme
+import com.konopelko.booksgoals.presentation.common.theme.BookTrackerTheme
 import com.konopelko.booksgoals.presentation.common.utils.debounce.DebounceEffect
 import com.konopelko.booksgoals.presentation.searchbooks.SearchBooksIntent
 import com.konopelko.booksgoals.presentation.searchbooks.SearchBooksIntent.OnArgsReceived
@@ -244,7 +240,7 @@ private fun LoadingContent() = Box(
 
 @Preview(showBackground = true)
 @Composable
-private fun SearchBooksScreenPreview() = BooksGoalsAppTheme {
+private fun SearchBooksScreenPreview() = BookTrackerTheme {
     SearchBooksScreenContent(
         uiState = SearchBooksUiState(
             searchResults = listOf(
@@ -262,7 +258,7 @@ private fun SearchBooksScreenPreview() = BooksGoalsAppTheme {
 
 @Preview(showBackground = true)
 @Composable
-private fun SearchBooksScreenEmptyPreview() = BooksGoalsAppTheme {
+private fun SearchBooksScreenEmptyPreview() = BookTrackerTheme {
     SearchBooksScreenContent(
         uiState = SearchBooksUiState(
             searchResults = listOf(),

@@ -16,6 +16,7 @@ import com.konopelko.booksgoals.presentation.goals.ui.GoalsScreen
 import com.konopelko.booksgoals.presentation.goalstatistics.GoalStatisticsScreen
 import com.konopelko.booksgoals.presentation.goalstatistics.GoalStatisticsViewModel
 import com.konopelko.booksgoals.presentation.goalstatistics.navigation.GoalStatisticsNavigation
+import com.konopelko.booksgoals.presentation.info.ui.InfoScreen
 import com.konopelko.booksgoals.presentation.searchbooks.navigation.SearchBooksNavigation
 import com.konopelko.booksgoals.presentation.totalstatistics.navigation.TotalStatisticsNavigation
 import com.konopelko.booksgoals.presentation.totalstatistics.ui.TotalStatisticsScreen
@@ -78,6 +79,10 @@ fun NavGraphBuilder.mainGraph(
                 args = args
             )
         }
+
+        composable(MainNavOption.InfoScreen.name) {
+            InfoScreen()
+        }
     }
 }
 
@@ -86,7 +91,8 @@ enum class MainNavOption {
     GoalsScreen,
     FinishedBooksScreen,
     TotalStatisticsScreen,
-    AchievementsScreen,
+    AchievementsScreen, // temporary disabled for future feature
+    InfoScreen,
 
     AddGoalScreen,
     GoalDetailsScreen,

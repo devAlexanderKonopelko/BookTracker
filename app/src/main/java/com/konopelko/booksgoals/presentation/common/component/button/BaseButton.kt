@@ -7,7 +7,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import com.konopelko.booksgoals.presentation.common.theme.BooksGoalsAppTheme
+import com.konopelko.booksgoals.presentation.common.theme.BookTrackerTheme
 
 @Composable
 fun BaseButton(
@@ -32,7 +32,7 @@ fun BaseButton(
 
 @Preview(showBackground = true)
 @Composable
-fun BaseButtonPreview() = BooksGoalsAppTheme {
+fun BaseButtonPreview() = BookTrackerTheme {
     BaseButton(
         text = "Button text",
         onClick = {}
@@ -41,7 +41,7 @@ fun BaseButtonPreview() = BooksGoalsAppTheme {
 
 @Preview(showBackground = true)
 @Composable
-fun BaseButtonLoadingPreview() = BooksGoalsAppTheme {
+fun BaseButtonLoadingPreview() = BookTrackerTheme {
     BaseButton(
         text = "Button text",
         isLoading = true,

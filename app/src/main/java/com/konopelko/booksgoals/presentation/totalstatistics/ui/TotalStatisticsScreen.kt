@@ -28,7 +28,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.konopelko.booksgoals.R
-import com.konopelko.booksgoals.presentation.common.theme.BooksGoalsAppTheme
+import com.konopelko.booksgoals.presentation.common.theme.BookTrackerTheme
 import com.konopelko.booksgoals.presentation.goalstatistics.model.ProgressMarkUiModel
 import com.konopelko.booksgoals.presentation.goalstatistics.model.StatisticsScale
 import com.konopelko.booksgoals.presentation.goalstatistics.model.StatisticsScale.MONTH
@@ -387,7 +387,7 @@ private fun setupBottomAxisValueFormatter(statisticsScale: StatisticsScale): Car
 
 @Preview(showBackground = true)
 @Composable
-private fun TotalStatisticsScreenPreview() = BooksGoalsAppTheme {
+private fun TotalStatisticsScreenPreview() = BookTrackerTheme {
     TotalStatisticsContent(
         uiState = TotalStatisticsUiState(
             visibleProgressMarks = listOf(

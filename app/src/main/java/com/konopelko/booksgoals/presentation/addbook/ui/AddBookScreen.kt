@@ -35,7 +35,7 @@ import com.konopelko.booksgoals.presentation.addbook.AddBookIntent.OnTitleChange
 import com.konopelko.booksgoals.presentation.addbook.AddBookUiState
 import com.konopelko.booksgoals.presentation.addbook.AddBookViewModel
 import com.konopelko.booksgoals.presentation.common.component.button.BaseButton
-import com.konopelko.booksgoals.presentation.common.theme.BooksGoalsAppTheme
+import com.konopelko.booksgoals.presentation.common.theme.BookTrackerTheme
 import com.konopelko.booksgoals.presentation.common.theme.Typography
 import org.koin.androidx.compose.getViewModel
 
@@ -155,7 +155,7 @@ private fun AddBookContent(
 
 @Preview(showBackground = true)
 @Composable
-private fun AddBookPreview() = BooksGoalsAppTheme {
+private fun AddBookPreview() = BookTrackerTheme {
     AddBookContent(
         uiState = AddBookUiState(),
         onIntent = {}

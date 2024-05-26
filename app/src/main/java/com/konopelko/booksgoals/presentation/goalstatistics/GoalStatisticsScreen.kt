@@ -31,7 +31,7 @@ import com.bumptech.glide.integration.compose.GlideImage
 import com.bumptech.glide.integration.compose.placeholder
 import com.konopelko.booksgoals.R
 import com.konopelko.booksgoals.domain.model.book.Book
-import com.konopelko.booksgoals.presentation.common.theme.BooksGoalsAppTheme
+import com.konopelko.booksgoals.presentation.common.theme.BookTrackerTheme
 import com.konopelko.booksgoals.presentation.goalstatistics.GoalStatisticsIntent.ArgsReceived
 import com.konopelko.booksgoals.presentation.goalstatistics.GoalStatisticsIntent.GoalStatisticsNavigationIntent
 import com.konopelko.booksgoals.presentation.goalstatistics.GoalStatisticsIntent.SelectedScaleChanged
@@ -316,7 +316,7 @@ private fun setupBottomAxisValueFormatter(statisticsScale: StatisticsScale): Car
 
 @Preview(showBackground = true)
 @Composable
-private fun GoalStatisticsPreview() = BooksGoalsAppTheme {
+private fun GoalStatisticsPreview() = BookTrackerTheme {
     GoalStatisticsContent(
         uiState = GoalStatisticsUiState(
             book = Book(

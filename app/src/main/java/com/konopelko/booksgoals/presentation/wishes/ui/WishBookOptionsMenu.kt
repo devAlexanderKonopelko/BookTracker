@@ -15,12 +15,10 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.capitalize
-import androidx.compose.ui.text.intl.Locale
 import androidx.compose.ui.tooling.preview.Preview
 import com.konopelko.booksgoals.domain.model.book.Book
 import com.konopelko.booksgoals.presentation.wishes.model.WishBookMenuOption
-import com.konopelko.booksgoals.presentation.common.theme.BooksGoalsAppTheme
+import com.konopelko.booksgoals.presentation.common.theme.BookTrackerTheme
 import com.konopelko.booksgoals.presentation.wishes.WishesIntent
 import com.konopelko.booksgoals.presentation.wishes.WishesIntent.OnWishBookMenuOptionClicked
 import kotlinx.coroutines.launch
@@ -94,7 +92,7 @@ private fun GoalOptionsList(
 @OptIn(ExperimentalMaterial3Api::class)
 @Preview(showBackground = true)
 @Composable
-private fun NotFullProgressGoalOptionMenuPreview() = BooksGoalsAppTheme {
+private fun NotFullProgressGoalOptionMenuPreview() = BookTrackerTheme {
     GoalOptionsList(
         book = Book(),
         bottomSheetState = rememberModalBottomSheetState(),

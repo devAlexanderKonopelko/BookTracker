@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -26,10 +25,9 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.konopelko.booksgoals.domain.model.book.Book
-import com.konopelko.booksgoals.presentation.common.theme.BooksGoalsAppTheme
+import com.konopelko.booksgoals.presentation.common.theme.BookTrackerTheme
 import com.konopelko.booksgoals.presentation.common.theme.Typography
 import com.konopelko.booksgoals.presentation.finishedbooks.FinishedBooksViewModel
-import com.konopelko.booksgoals.presentation.goals.GoalsIntent.GoalsNavigationIntent.NavigateToAddGoalScreen
 import org.koin.androidx.compose.getViewModel
 
 @Composable
@@ -146,7 +144,7 @@ private fun NoFinishedBooksContent() = Column(
 
 @Preview(showBackground = true)
 @Composable
-private fun FinishedBooksPreview() = BooksGoalsAppTheme {
+private fun FinishedBooksPreview() = BookTrackerTheme {
     FinishedBooksContent(
         finishedBooks = listOf(
             Book(
@@ -170,6 +168,6 @@ private fun FinishedBooksPreview() = BooksGoalsAppTheme {
 
 @Preview(showBackground = true)
 @Composable
-private fun NoFinishedBooksPreview() = BooksGoalsAppTheme {
+private fun NoFinishedBooksPreview() = BookTrackerTheme {
     NoFinishedBooksContent()
 }

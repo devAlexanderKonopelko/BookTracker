@@ -12,7 +12,6 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
@@ -38,13 +37,11 @@ import com.konopelko.booksgoals.presentation.addgoal.AddGoalIntent.OnPagesPerDay
 import com.konopelko.booksgoals.presentation.addgoal.AddGoalUiState
 import com.konopelko.booksgoals.presentation.addgoal.AddGoalViewModel
 import com.konopelko.booksgoals.presentation.addgoal.model.AddGoalArgs
-import com.konopelko.booksgoals.presentation.addgoal.model.AddGoalScreenOrigin
-import com.konopelko.booksgoals.presentation.addgoal.model.AddGoalScreenOrigin.ADD_WISH_BOOK
 import com.konopelko.booksgoals.presentation.addgoal.model.SelectBookOption.SEARCH_BOOK
 import com.konopelko.booksgoals.presentation.addgoal.model.SelectBookOption.WISHLIST
 import com.konopelko.booksgoals.presentation.common.component.button.BaseButton
 import com.konopelko.booksgoals.presentation.common.component.slider.BookPagesPerDaySlider
-import com.konopelko.booksgoals.presentation.common.theme.BooksGoalsAppTheme
+import com.konopelko.booksgoals.presentation.common.theme.BookTrackerTheme
 import com.konopelko.booksgoals.presentation.common.theme.Purple40
 import com.konopelko.booksgoals.presentation.common.theme.Typography
 import org.koin.androidx.compose.getViewModel
@@ -244,7 +241,7 @@ private fun SelectPagerPerDayContent(
 
 @Preview(showBackground = true)
 @Composable
-private fun AddGoalScreenNoSelectedBookPreview() = BooksGoalsAppTheme {
+private fun AddGoalScreenNoSelectedBookPreview() = BookTrackerTheme {
     AddGoalContent(
         uiState = AddGoalUiState(),
         onSelectBookClicked = {}
@@ -254,7 +251,7 @@ private fun AddGoalScreenNoSelectedBookPreview() = BooksGoalsAppTheme {
 
 @Preview(showBackground = true)
 @Composable
-private fun AddGoalScreenBookSelectedPreview() = BooksGoalsAppTheme {
+private fun AddGoalScreenBookSelectedPreview() = BookTrackerTheme {
     AddGoalContent(
         uiState = AddGoalUiState(
             selectedBook = Book(
