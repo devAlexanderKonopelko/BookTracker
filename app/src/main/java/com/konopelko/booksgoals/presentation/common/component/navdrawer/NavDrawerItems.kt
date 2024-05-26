@@ -26,9 +26,9 @@ object NavDrawerItems {
             TotalStatisticsScreen,
             string.side_menu_statistics_title
         ),
-        AppDrawerItemInfo(
-            AchievementsScreen,
-            string.side_menu_achievements_title
-        )
+//        AppDrawerItemInfo(
+//            AchievementsScreen,
+//            string.side_menu_achievements_title
+//        )
     )
 }

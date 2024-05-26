@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">BooksGoals</string>
+    <string name="app_name">BookTracker</string>
 
     <string name="side_menu_wishes_title">Список Желаний</string>
     <string name="side_menu_goals_title">Текущие цели</string>
