@@ -24,8 +24,12 @@ private fun String.isInWeekScale(): Boolean {
     val monday = today.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY))
     val sunday = monday.plusDays(6)
 
+    // 00:00 of monday
     val mondayMillis = monday.atStartOfDay().toInstant(ZoneOffset.UTC).toEpochMilli()
-    val sundayMillis = sunday.atStartOfDay().toInstant(ZoneOffset.UTC).toEpochMilli()
+
+    // 00:00 of sunday + 23h * 60m * 60s * 1000ms
+    val sundayMillis = sunday.atStartOfDay().toInstant(ZoneOffset.UTC).toEpochMilli() + 23 * 60 * 60 * 1000
+
     val progressMarkMillis = SimpleDateFormat(
         "yyyy/MM/dd HH:mm:ss",
         Locale.getDefault()
@@ -34,11 +38,11 @@ private fun String.isInWeekScale(): Boolean {
         ?.toEpochMilli()
         ?: throw Exception("Failed to parse mark date. date: $this")
 
-    /*
+
     Log.e("DateUtils", "mondayMillis, $mondayMillis")
     Log.e("DateUtils", "sundayMillis, $sundayMillis")
     Log.e("DateUtils", "progressMarkMillis, $progressMarkMillis")
-     */
+
     Log.e("DateUtils", "isInWeekScale: ${progressMarkMillis in mondayMillis..sundayMillis}")
 
 
