@@ -1,6 +1,7 @@
 package com.konopelko.booksgoals.di.ui.home
 
 import com.konopelko.booksgoals.domain.usecase.addbook.AddBookUseCase
+import com.konopelko.booksgoals.domain.usecase.addprogressmark.AddProgressMarkUseCase
 import com.konopelko.booksgoals.domain.usecase.deletegoal.DeleteGoalUseCase
 import com.konopelko.booksgoals.domain.usecase.getgoals.GetGoalsUseCase
 import com.konopelko.booksgoals.domain.usecase.updatebookisfinished.UpdateBookIsFinishedUseCase
@@ -38,13 +39,18 @@ val homeModule = module {
         UpdateGoalFrozenUseCase(repository = get())
     }
 
+    factory {
+        AddProgressMarkUseCase(repository = get())
+    }
+
     viewModel {
         GoalsViewModel(
             initialState = GoalsUiState(),
             getGoalsUseCase = get(),
             deleteGoalUseCase = get(),
             updateBookIsFinishedUseCase = get(),
-            updateGoalFrozenUseCase = get()
+            updateGoalFrozenUseCase = get(),
+            addProgressMarkUseCase = get()
         )
     }
 }

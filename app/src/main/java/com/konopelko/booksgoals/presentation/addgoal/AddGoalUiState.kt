@@ -13,7 +13,7 @@ data class AddGoalUiState(
     val isGoalSaved: Boolean = false,
     val isSelectBookButtonEnabled: Boolean = true,
     val shouldNavigateToGoalDetailsScreen: Boolean = false,
-    val selectedPagesPerDay: Int = 20
+    val selectedPagesPerDay: Int = 1
 ) {
 
     sealed interface AddGoalPartialState {

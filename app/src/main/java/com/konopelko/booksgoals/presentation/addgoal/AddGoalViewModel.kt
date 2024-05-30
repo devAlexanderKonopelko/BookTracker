@@ -39,7 +39,7 @@ class AddGoalViewModel(
 ) {
 
     private var screenOrigin: AddGoalScreenOrigin = GOALS
-    private var bookPagesPerDay: Int = 1 // move to uiState
+    private var bookPagesPerDay: Int = 1 // move to uiState and remove
     private var goalId: Int = -1
 
     override fun acceptIntent(intent: AddGoalIntent) = when (intent) {
@@ -66,6 +66,7 @@ class AddGoalViewModel(
 
         is EditGoalState -> previousState.copy(
             isSelectBookButtonEnabled = false,
+            isAddGoalButtonEnabled = true,
             selectedPagesPerDay = partialState.selectedPagesPerDay,
             selectedBook = partialState.selectedBook,
             daysToFinishGoal = calculateExpectedFinishDaysAmount(

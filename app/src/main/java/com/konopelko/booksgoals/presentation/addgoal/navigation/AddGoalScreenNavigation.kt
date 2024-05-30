@@ -3,6 +3,7 @@ package com.konopelko.booksgoals.presentation.addgoal.navigation
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavController
 import com.konopelko.booksgoals.presentation.addgoal.AddGoalIntent.AddGoalNavigationIntent
+import com.konopelko.booksgoals.presentation.addgoal.AddGoalIntent.AddGoalNavigationIntent.NavigateToAddBookScreen
 import com.konopelko.booksgoals.presentation.addgoal.AddGoalIntent.AddGoalNavigationIntent.NavigateToGoalDetailsScreen
 import com.konopelko.booksgoals.presentation.addgoal.AddGoalIntent.AddGoalNavigationIntent.NavigateToGoalsScreen
 import com.konopelko.booksgoals.presentation.addgoal.AddGoalIntent.AddGoalNavigationIntent.NavigateToSearchBooksScreen
@@ -13,7 +14,8 @@ import com.konopelko.booksgoals.presentation.addgoal.ui.AddGoalScreen
 import com.konopelko.booksgoals.presentation.common.base.navigation.BaseScreenNavigation
 import com.konopelko.booksgoals.presentation.navigation.MainNavOption
 import com.konopelko.booksgoals.presentation.addgoal.model.AddGoalArgsType
-import com.konopelko.booksgoals.presentation.wishes.WishesViewModel
+import com.konopelko.booksgoals.presentation.searchbooks.model.SearchScreenOrigin
+import com.konopelko.booksgoals.presentation.searchbooks.model.SearchScreenOrigin.ADD_GOAL
 import com.konopelko.booksgoals.presentation.wishes.navigation.WishesScreenNavigation
 
 class AddGoalScreenNavigation(
@@ -36,9 +38,14 @@ class AddGoalScreenNavigation(
 
     override fun onNavigate(intent: AddGoalNavigationIntent) = when(intent) {
         NavigateToSearchBooksScreen -> navigateToSearchBooksScreen()
+        NavigateToAddBookScreen -> navigateToAddBookScreen()
         NavigateToWishesScreen -> navigateToWishesScreen()
         NavigateToGoalsScreen -> navigateToGoalsScreen()
         NavigateToGoalDetailsScreen -> navigateToGoalDetailsScreen()
+    }
+
+    private fun navigateToAddBookScreen() {
+        navController.navigate(prepareAddBookScreenNameWithArgs(ADD_GOAL))
     }
 
     private fun navigateToGoalDetailsScreen() {
@@ -69,4 +76,7 @@ class AddGoalScreenNavigation(
             popUpTo(navController.graph.startDestinationId)
         }
     }
+
+    private fun prepareAddBookScreenNameWithArgs(origin: SearchScreenOrigin): String =
+        "${MainNavOption.AddBookScreen.name}?screen_origin=$origin"
 }

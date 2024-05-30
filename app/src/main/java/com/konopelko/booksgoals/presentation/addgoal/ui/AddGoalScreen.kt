@@ -27,6 +27,7 @@ import androidx.compose.ui.unit.dp
 import com.konopelko.booksgoals.domain.model.book.Book
 import com.konopelko.booksgoals.presentation.addgoal.AddGoalIntent
 import com.konopelko.booksgoals.presentation.addgoal.AddGoalIntent.AddGoalNavigationIntent
+import com.konopelko.booksgoals.presentation.addgoal.AddGoalIntent.AddGoalNavigationIntent.NavigateToAddBookScreen
 import com.konopelko.booksgoals.presentation.addgoal.AddGoalIntent.AddGoalNavigationIntent.NavigateToGoalDetailsScreen
 import com.konopelko.booksgoals.presentation.addgoal.AddGoalIntent.AddGoalNavigationIntent.NavigateToGoalsScreen
 import com.konopelko.booksgoals.presentation.addgoal.AddGoalIntent.AddGoalNavigationIntent.NavigateToSearchBooksScreen
@@ -37,6 +38,8 @@ import com.konopelko.booksgoals.presentation.addgoal.AddGoalIntent.OnPagesPerDay
 import com.konopelko.booksgoals.presentation.addgoal.AddGoalUiState
 import com.konopelko.booksgoals.presentation.addgoal.AddGoalViewModel
 import com.konopelko.booksgoals.presentation.addgoal.model.AddGoalArgs
+import com.konopelko.booksgoals.presentation.addgoal.model.AddGoalScreenOrigin.GOAL_DETAILS
+import com.konopelko.booksgoals.presentation.addgoal.model.SelectBookOption.ADD_BOOK
 import com.konopelko.booksgoals.presentation.addgoal.model.SelectBookOption.SEARCH_BOOK
 import com.konopelko.booksgoals.presentation.addgoal.model.SelectBookOption.WISHLIST
 import com.konopelko.booksgoals.presentation.common.component.button.BaseButton
@@ -85,6 +88,7 @@ fun AddGoalScreen(
                 when (selectBookOption) {
                     SEARCH_BOOK -> onNavigate(NavigateToSearchBooksScreen)
                     WISHLIST -> onNavigate(NavigateToWishesScreen)
+                    ADD_BOOK -> onNavigate(NavigateToAddBookScreen)
                 }
             },
             onDismiss = { showSelectBookOptions.value = false }
@@ -144,19 +148,24 @@ private fun AddGoalContent(
 
         Spacer(modifier = Modifier.weight(1f))
 
-        BaseButton(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(
-                    top = 48.dp,
-                    start = 16.dp,
-                    end = 16.dp
-                ),
-            text = "Создать цель",
-            isLoading = isSavingGoal,
-            enabled = isAddGoalButtonEnabled,
-            onClick = { onIntent(OnCreateGoalClicked) }
-        )
+        AnimatedVisibility(
+            visible = if(uiState.screenOrigin != GOAL_DETAILS) isAddGoalButtonEnabled else true
+        ) {
+            BaseButton(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(
+                        top = 48.dp,
+                        start = 16.dp,
+                        end = 16.dp
+                    ),
+                text = if(uiState.screenOrigin == GOAL_DETAILS) "Сохранить изменения" else "Создать цель",
+                isLoading = isSavingGoal,
+                enabled = isAddGoalButtonEnabled,
+                onClick = { onIntent(OnCreateGoalClicked) }
+            )
+        }
+
 
         if (isGoalSaved) {
             LaunchedEffect("toast key") { //todo: move toast key to constant

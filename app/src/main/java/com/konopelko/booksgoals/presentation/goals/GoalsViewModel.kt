@@ -3,6 +3,8 @@ package com.konopelko.booksgoals.presentation.goals
 import android.util.Log
 import androidx.lifecycle.viewModelScope
 import com.konopelko.booksgoals.domain.model.goal.Goal
+import com.konopelko.booksgoals.domain.model.progress.ProgressMark
+import com.konopelko.booksgoals.domain.usecase.addprogressmark.AddProgressMarkUseCase
 import com.konopelko.booksgoals.presentation.goals.model.GoalMenuOption
 import com.konopelko.booksgoals.domain.usecase.deletegoal.DeleteGoalUseCase
 import com.konopelko.booksgoals.domain.usecase.getgoals.GetGoalsUseCase
@@ -20,13 +22,17 @@ import com.konopelko.booksgoals.presentation.goals.GoalsUiState.PartialGoalsStat
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
+import java.util.Calendar
+import java.util.Locale
 
 class GoalsViewModel(
     initialState: GoalsUiState,
     private val getGoalsUseCase: GetGoalsUseCase,
     private val deleteGoalUseCase: DeleteGoalUseCase,
     private val updateBookIsFinishedUseCase: UpdateBookIsFinishedUseCase,
-    private val updateGoalFrozenUseCase: UpdateGoalFrozenUseCase
+    private val updateGoalFrozenUseCase: UpdateGoalFrozenUseCase,
+    private val addProgressMarkUseCase: AddProgressMarkUseCase
 ) : BaseViewModel<GoalsIntent, GoalsUiState, PartialGoalsState>(
     initialState = initialState
 ) {
@@ -88,24 +94,39 @@ class GoalsViewModel(
         }
     }
 
-    //todo: подумать, нужно ли удалять цель при завершении
     private fun onFinishGoalClicked(goal: Goal) {
+        val date = SimpleDateFormat(
+            "yyyy/MM/dd HH:mm:ss",
+            Locale.getDefault()
+        ).format(Calendar.getInstance().time)
+
+        val progressMark = ProgressMark(
+            goalId = goal.id,
+            date = date,
+            isBookFinished = true,
+            pagesAmount = 0
+        )
+
         viewModelScope.launch(Dispatchers.IO) {
             //todo: избавиться от вложенности, реализовать последовательное выполнение, что-то типа zip() из rx
 
-            deleteGoalUseCase(goal.id).onSuccess {
+            addProgressMarkUseCase(progressMark).onSuccess {
+                deleteGoalUseCase(goal.id).onSuccess {
 
-                //todo: replace with update book [isFinished = true]
-                updateBookIsFinishedUseCase(
-                    isFinished = true,
-                    bookId = goal.bookId
-                ).onSuccess {
-                    updateUiState(GoalCompletedSuccessfullyState(goal.id))
+                    //todo: replace with update book [isFinished = true]
+                    updateBookIsFinishedUseCase(
+                        isFinished = true,
+                        bookId = goal.bookId
+                    ).onSuccess {
+                        updateUiState(GoalCompletedSuccessfullyState(goal.id))
+                    }.onError {
+                        Log.e("GoalsViewModel", "error occurred while updating a book: ${it.exception}")
+                    }
                 }.onError {
-                    Log.e("GoalsViewModel", "error occurred while updating a book: ${it.exception}")
+                    Log.e("GoalsViewModel", "error occurred while deleting a goal: ${it.exception}")
                 }
             }.onError {
-                Log.e("GoalsViewModel", "error occurred while deleting a goal: ${it.exception}")
+                Log.e("GoalsViewModel", "error occurred while adding a progress mark: ${it.exception}")
             }
         }
     }

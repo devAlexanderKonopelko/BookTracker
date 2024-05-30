@@ -48,7 +48,9 @@ import com.patrykandpatrick.vico.compose.cartesian.axis.rememberStartAxis
 import com.patrykandpatrick.vico.compose.cartesian.layer.rememberColumnCartesianLayer
 import com.patrykandpatrick.vico.compose.cartesian.marker.rememberDefaultCartesianMarker
 import com.patrykandpatrick.vico.compose.cartesian.rememberCartesianChart
+import com.patrykandpatrick.vico.compose.cartesian.rememberVicoScrollState
 import com.patrykandpatrick.vico.compose.common.component.rememberTextComponent
+import com.patrykandpatrick.vico.core.cartesian.Scroll
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModel
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianValueFormatter
 import com.patrykandpatrick.vico.core.cartesian.data.ColumnCartesianLayerModel
@@ -110,7 +112,10 @@ private fun TotalStatisticsContent(
 
     ColumnChartContent(
         scale = uiState.selectedScale,
-        visibleMarks = uiState.visibleProgressMarks
+        visibleMarks = uiState.visibleProgressMarks,
+        initialScrollPosition = if (uiState.visibleProgressMarks.isNotEmpty()) {
+            uiState.visibleProgressMarks.first().dateMark - 1f
+        } else { 0f }
     )
 
     StatisticsInfoContent(uiState = uiState)
@@ -189,7 +194,8 @@ private fun StatisticsScaleMenu(
 @Composable
 private fun ColumnChartContent(
     scale: StatisticsScale,
-    visibleMarks: List<ProgressMarkUiModel>
+    visibleMarks: List<ProgressMarkUiModel>,
+    initialScrollPosition: Float
 ) = CartesianChartHost(
     modifier = Modifier
         .fillMaxHeight(0.5f)
@@ -234,6 +240,9 @@ private fun ColumnChartContent(
             padding = Dimensions(0f, 0f, 0f, 8f)
         ),
         labelPosition = AbovePoint
+    ),
+    scrollState = rememberVicoScrollState(
+        initialScroll = Scroll.Absolute.x(x = initialScrollPosition)
     )
 )
 
@@ -399,11 +408,12 @@ private fun TotalStatisticsScreenPreview() = BookTrackerTheme {
             ),
             totalStatisticsData = TotalStatisticsData(
                 statisticsTab = TotalStatisticsTab.PAGES,
-                statisticsScale = WEEK,
+                statisticsScale = MONTH,
                 totalUnitsRead = 305,
                 averageReadSpeed = 34,
                 goalsAchieved = 3
-            )
+            ),
+            selectedScale = MONTH
         ),
         onIntent = {}
     )

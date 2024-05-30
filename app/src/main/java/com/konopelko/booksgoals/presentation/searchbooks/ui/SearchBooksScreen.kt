@@ -217,7 +217,7 @@ private fun NoBooksContent(
     verticalArrangement = Arrangement.Center
 ) {
     Text(
-        text = "Ничего не найдено",
+        text = "Ничего не найдено?",
         textAlign = TextAlign.Center
     )
     Button(

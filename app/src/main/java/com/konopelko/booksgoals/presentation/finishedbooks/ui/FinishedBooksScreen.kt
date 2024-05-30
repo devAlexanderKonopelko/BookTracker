@@ -1,5 +1,6 @@
 package com.konopelko.booksgoals.presentation.finishedbooks.ui
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -20,13 +21,19 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
+import com.bumptech.glide.integration.compose.GlideImage
+import com.bumptech.glide.integration.compose.placeholder
+import com.konopelko.booksgoals.R
 import com.konopelko.booksgoals.domain.model.book.Book
 import com.konopelko.booksgoals.presentation.common.theme.BookTrackerTheme
 import com.konopelko.booksgoals.presentation.common.theme.Typography
+import com.konopelko.booksgoals.presentation.common.utils.border.drawRightBorder
 import com.konopelko.booksgoals.presentation.finishedbooks.FinishedBooksViewModel
 import org.koin.androidx.compose.getViewModel
 
@@ -79,6 +86,7 @@ private fun FinishedBooksListContent(
     }
 }
 
+@OptIn(ExperimentalGlideComposeApi::class)
 @Composable
 private fun FinishedBookCard(
     book: Book
@@ -87,28 +95,42 @@ private fun FinishedBookCard(
         .fillMaxWidth()
         .padding(top = 16.dp)
         .background(
-            color = Color.LightGray,
-            shape = RoundedCornerShape(12.dp)
+            color = Color(0xFFE7E7E7),
+            shape = RoundedCornerShape(4.dp)
         )
-        .border(2.dp, Color.Green, RoundedCornerShape(12.dp)),
+        .drawRightBorder(
+            strokeWidth = 20.dp,
+            color = Color(0xFF00A45F),
+            shape = RoundedCornerShape(4.dp)
+        ),
     verticalAlignment = Alignment.CenterVertically
 ) {
-    Box(
-        modifier = Modifier
-            .size(50.dp)
-            .padding(
-                top = 4.dp,
-                bottom = 4.dp,
-                start = 8.dp
-            )
-            .background(
-                color = Color.Gray,
-                shape = RoundedCornerShape(4.dp)
-            )
-    )
+    if (book.coverUrl.isNotEmpty()) {
+        GlideImage(
+            modifier = Modifier
+                .size(60.dp)
+                .padding(8.dp),
+            model = book.coverUrl,
+            contentDescription = "Book image",
+            loading = placeholder(R.drawable.ic_default_book),
+            failure = placeholder(R.drawable.ic_default_book)
+        )
+    } else {
+        Image(
+            modifier = Modifier
+                .size(60.dp)
+                .padding(8.dp),
+            painter = painterResource(id = R.drawable.ic_default_book),
+            contentDescription = ""
+        )
+    }
 
     Column(
-        modifier = Modifier.padding(start = 8.dp),
+        modifier = Modifier.padding(
+            top = 8.dp,
+            start = 8.dp,
+            bottom = 8.dp
+        ),
         verticalArrangement = Arrangement.Center
     ) {
 
@@ -119,13 +141,22 @@ private fun FinishedBookCard(
             overflow = TextOverflow.Ellipsis
         )
 
-        Row {
-            Text(text = book.authorName)
-
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(
+                    top = 8.dp,
+                    end = 16.dp
+                )
+        ) {
             Text(
-                modifier = Modifier.padding(start = 16.dp),
-                text = book.publishYear
+                modifier = Modifier.weight(1f, fill = false),
+                text = book.authorName,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
             )
+
+            Text(text = ", ${book.publishYear}")
         }
     }
 }
@@ -153,8 +184,8 @@ private fun FinishedBooksPreview() = BookTrackerTheme {
                 publishYear = "2007"
             ),
             Book(
-                title = "Book B",
-                authorName = "Author B",
+                title = "Book B asdf asdf asdfasdfasdf asdfasdfasdfasasdfasdff",
+                authorName = "Author B asdfadfasdfasdf sadfasdfasdfasdf",
                 publishYear = "2008"
             ),
             Book(

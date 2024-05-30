@@ -13,6 +13,7 @@ sealed interface AddGoalIntent {
     sealed interface AddGoalNavigationIntent {
 
         data object NavigateToSearchBooksScreen : AddGoalNavigationIntent
+        data object NavigateToAddBookScreen : AddGoalNavigationIntent
         data object NavigateToWishesScreen : AddGoalNavigationIntent
         data object NavigateToGoalsScreen : AddGoalNavigationIntent
         data object NavigateToGoalDetailsScreen : AddGoalNavigationIntent
