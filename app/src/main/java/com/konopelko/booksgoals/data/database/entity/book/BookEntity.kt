@@ -30,5 +30,8 @@ data class BookEntity(
     val isStarted: Boolean,
 
     @ColumnInfo(name = "is_finished")
-    val isFinished: Boolean
+    val isFinished: Boolean,
+
+    @ColumnInfo(name = "finish_date")
+    val finishDate: String
 )

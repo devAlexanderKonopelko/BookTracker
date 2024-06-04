@@ -15,5 +15,5 @@ interface BookRepository {
 
     suspend fun updateBookIsStarted(isStarted: Boolean, bookId: Int): Result<Unit>
 
-    suspend fun updateBookIsFinished(isFinished: Boolean, bookId: Int): Result<Unit>
+    suspend fun updateBookIsFinished(isFinished: Boolean, bookId: Int, finishDate: String): Result<Unit>
 }

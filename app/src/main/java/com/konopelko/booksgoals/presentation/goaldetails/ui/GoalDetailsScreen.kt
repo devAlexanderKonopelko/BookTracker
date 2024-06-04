@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -113,7 +112,8 @@ fun GoalDetailsContent(
         )
         ExpectedInfoContent(
             expectedPagesPerDay = expectedPagesPerDay,
-            expectedFinishDaysAmount = expectedFinishDaysAmount
+            expectedFinishDaysAmount = expectedFinishDaysAmount,
+            pagesLeftAmount = bookPagesAmount - completedPagesAmount
         )
 
         Spacer(modifier = Modifier.weight(1f))
@@ -191,7 +191,8 @@ private fun GoalInfoContent(
 @Composable
 private fun ExpectedInfoContent(
     expectedPagesPerDay: Int,
-    expectedFinishDaysAmount: Int
+    expectedFinishDaysAmount: Int,
+    pagesLeftAmount: Int
 ) = Column(
     modifier = Modifier
         .fillMaxWidth()
@@ -220,6 +221,11 @@ private fun ExpectedInfoContent(
     Text(
         modifier = Modifier.padding(top = 4.dp),
         text = "Ожидаемое время прочтения: $expectedFinishDaysAmount дней",
+        style = MaterialTheme.typography.bodyLarge
+    )
+    Text(
+        modifier = Modifier.padding(top = 4.dp),
+        text = "Оставшиеся страницы: $pagesLeftAmount",
         style = MaterialTheme.typography.bodyLarge
     )
 }
@@ -330,7 +336,7 @@ fun GoalDetailsPreview() {
                 daysInProgress = 10,
                 averageReadSpeed = 20,
                 bookPublishYear = 1960,
-                completedPagesAmount = 435,
+                completedPagesAmount = 45,
                 bookPagesAmount = 870,
                 progress = 78,
                 expectedPagesPerDay = 40,

@@ -12,5 +12,6 @@ data class Book(
     val pagesAmount: String = "", //todo: make Int
     val coverUrl: String = "",
     val isStarted: Boolean = false,
-    val isFinished: Boolean = false
+    val isFinished: Boolean = false,
+    val finishedDate: String = ""
 ): Parcelable

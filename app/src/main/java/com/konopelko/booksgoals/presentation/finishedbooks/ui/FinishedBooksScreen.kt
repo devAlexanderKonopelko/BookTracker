@@ -158,6 +158,13 @@ private fun FinishedBookCard(
 
             Text(text = ", ${book.publishYear}")
         }
+
+        Text(
+            modifier = Modifier
+                .align(Alignment.End)
+                .padding(top = 8.dp, end = 16.dp),
+            text = book.finishedDate.split(" ").first()
+        )
     }
 }
 
@@ -181,17 +188,20 @@ private fun FinishedBooksPreview() = BookTrackerTheme {
             Book(
                 title = "Book A",
                 authorName = "Author A",
-                publishYear = "2007"
+                publishYear = "2007",
+                finishedDate = "27.07.2024"
             ),
             Book(
                 title = "Book B asdf asdf asdfasdfasdf asdfasdfasdfasasdfasdff",
                 authorName = "Author B asdfadfasdfasdf sadfasdfasdfasdf",
-                publishYear = "2008"
+                publishYear = "2008",
+                finishedDate = "13.05.2024"
             ),
             Book(
                 title = "Book C",
                 authorName = "Author C",
-                publishYear = "2009"
+                publishYear = "2009",
+                finishedDate = "23.06.2024"
             ),
         )
     )

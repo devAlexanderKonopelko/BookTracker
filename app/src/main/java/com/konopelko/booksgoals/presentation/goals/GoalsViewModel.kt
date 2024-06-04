@@ -116,7 +116,8 @@ class GoalsViewModel(
                     //todo: replace with update book [isFinished = true]
                     updateBookIsFinishedUseCase(
                         isFinished = true,
-                        bookId = goal.bookId
+                        bookId = goal.bookId,
+                        finishDate = date
                     ).onSuccess {
                         updateUiState(GoalCompletedSuccessfullyState(goal.id))
                     }.onError {

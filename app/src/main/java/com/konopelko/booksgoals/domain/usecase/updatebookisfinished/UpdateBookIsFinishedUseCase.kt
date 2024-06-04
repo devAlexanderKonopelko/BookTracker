@@ -7,6 +7,10 @@ class UpdateBookIsFinishedUseCase(
     private val repository: BookRepository
 ) {
 
-    suspend operator fun invoke(isFinished: Boolean, bookId: Int): Result<Unit> =
-        repository.updateBookIsFinished(isFinished ,bookId)
+    suspend operator fun invoke(
+        isFinished: Boolean,
+        bookId: Int,
+        finishDate: String
+    ): Result<Unit> =
+        repository.updateBookIsFinished(isFinished ,bookId, finishDate)
 }

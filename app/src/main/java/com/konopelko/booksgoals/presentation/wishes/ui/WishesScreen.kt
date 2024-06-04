@@ -267,8 +267,9 @@ private fun WishBookCard(
 @Composable
 private fun WishesHeader() = Text(
     modifier = Modifier.padding(top = 16.dp),
-    text = "Книги, которые я хочу прочитать",
+    text = "Мой список желаний",
     style = Typography.headlineLarge,
+    textAlign = TextAlign.Center
 )
 
 @Composable
@@ -277,6 +278,14 @@ private fun NoWishesContent(
 ) = Box(
     modifier = Modifier.fillMaxSize()
 ) {
+    Text(
+        modifier = Modifier
+            .align(Alignment.TopCenter)
+            .padding(top = 16.dp),
+        text = "Мой список желаний",
+        style = Typography.headlineLarge
+    )
+
     Column(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Center,

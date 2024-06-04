@@ -24,8 +24,13 @@ interface BookDao {
     @Query("UPDATE books SET is_started = :isStarted WHERE id = :bookId")
     fun updateBookIsStarted(isStarted: Boolean, bookId: Int)
 
-    @Query("UPDATE books SET is_finished = :isFinished WHERE id = :bookId")
-    fun updateBookIsFinished(isFinished: Boolean, bookId: Int)
+    @Query(
+        "UPDATE books " +
+        "SET is_finished = :isFinished, " +
+        "finish_date = :finishDate  " +
+        "WHERE id = :bookId"
+    )
+    fun updateBookIsFinished(isFinished: Boolean, bookId: Int, finishDate: String)
 
     @Query("DELETE FROM books WHERE id = :bookId")
     fun deleteBook(bookId: Int)

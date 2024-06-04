@@ -38,11 +38,13 @@ class BookRepositoryImpl(
 
     override suspend fun updateBookIsFinished(
         isFinished: Boolean,
-        bookId: Int
+        bookId: Int,
+        finishDate: String
     ): Result<Unit> = databaseCall {
         bookDao.updateBookIsFinished(
             isFinished = isFinished,
-            bookId = bookId
+            bookId = bookId,
+            finishDate = finishDate
         )
     }
 }
