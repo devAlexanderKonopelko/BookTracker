@@ -66,6 +66,7 @@ import java.util.Locale
 private val monthNames = DateFormatSymbols.getInstance(Locale.getDefault()).shortMonths
 
 private val currentMonth = Calendar.getInstance().get(Calendar.MONTH) + 1
+private val currentDay = Calendar.getInstance().get(Calendar.DAY_OF_MONTH)
 private val monthDays = Calendar.getInstance().getActualMaximum(Calendar.DAY_OF_MONTH)
 private val weekDays = listOf("Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Вс")
 
@@ -117,9 +118,11 @@ private fun GoalStatisticsContent(
     ColumnChartContent(
         scale = uiState.selectedStatisticsScale,
         visibleMarks = uiState.visibleProgressMarks,
-        initialScrollPosition = if (uiState.visibleProgressMarks.isNotEmpty()) {
-            uiState.visibleProgressMarks.first().dateMark - 1f
-        } else { 0f }
+        initialScrollPosition = when(uiState.selectedStatisticsScale) {
+            MONTH -> currentDay.toFloat() - 1 // to fully see current date on X axis
+            YEAR -> currentMonth.toFloat() - 1
+            else -> 1f
+        }
     )
 
     Spacer(modifier = Modifier.height(32.dp))
