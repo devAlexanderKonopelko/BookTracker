@@ -67,6 +67,7 @@ class HomeActivity : ComponentActivity() {
                             defaultPick = appStartScreen,
                             onNavOptionClicked = { onUserPickedOption ->
                                 navController.navigate(onUserPickedOption.name) {
+                                    launchSingleTop = true
                                     popUpTo(MainRoute.name)
                                 }
                             },

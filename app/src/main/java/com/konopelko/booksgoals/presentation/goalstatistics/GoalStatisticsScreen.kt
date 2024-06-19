@@ -46,7 +46,9 @@ import com.patrykandpatrick.vico.compose.cartesian.axis.rememberStartAxis
 import com.patrykandpatrick.vico.compose.cartesian.layer.rememberColumnCartesianLayer
 import com.patrykandpatrick.vico.compose.cartesian.marker.rememberDefaultCartesianMarker
 import com.patrykandpatrick.vico.compose.cartesian.rememberCartesianChart
+import com.patrykandpatrick.vico.compose.cartesian.rememberVicoScrollState
 import com.patrykandpatrick.vico.compose.common.component.rememberTextComponent
+import com.patrykandpatrick.vico.core.cartesian.Scroll.Absolute
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModel
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianValueFormatter
 import com.patrykandpatrick.vico.core.cartesian.data.ColumnCartesianLayerModel
@@ -114,7 +116,10 @@ private fun GoalStatisticsContent(
 
     ColumnChartContent(
         scale = uiState.selectedStatisticsScale,
-        visibleMarks = uiState.visibleProgressMarks
+        visibleMarks = uiState.visibleProgressMarks,
+        initialScrollPosition = if (uiState.visibleProgressMarks.isNotEmpty()) {
+            uiState.visibleProgressMarks.first().dateMark - 1f
+        } else { 0f }
     )
 
     Spacer(modifier = Modifier.height(32.dp))
@@ -167,7 +172,8 @@ private fun BookInfoContent(book: Book) = Column(
 @Composable
 private fun ColumnChartContent(
     scale: StatisticsScale,
-    visibleMarks: List<ProgressMarkUiModel>
+    visibleMarks: List<ProgressMarkUiModel>,
+    initialScrollPosition: Float
 ) = CartesianChartHost(
     modifier = Modifier
         .fillMaxHeight()
@@ -213,6 +219,9 @@ private fun ColumnChartContent(
             padding = Dimensions(0f, 0f, 0f, 8f)
         ),
         labelPosition = LabelPosition.AbovePoint
+    ),
+    scrollState = rememberVicoScrollState(
+        initialScroll = Absolute.x(x = initialScrollPosition)
     )
 )
 

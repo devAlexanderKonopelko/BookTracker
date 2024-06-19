@@ -94,12 +94,13 @@ fun <T : Enum<T>> NavDrawerContent(
                     ),
                     item = item
                 ) { navOption ->
-                    if (currentPick == navOption) {
-                        coroutineScope.launch {
-                            drawerState.close()
-                        }
-                        return@AppDrawerItem
-                    }
+                    //todo: check full navigation and remove if not breaks
+//                    if (currentPick == navOption) {
+//                        coroutineScope.launch {
+//                            drawerState.close()
+//                        }
+//                        return@AppDrawerItem
+//                    }
 
                     currentPick = navOption
 
